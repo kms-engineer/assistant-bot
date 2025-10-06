@@ -1,0 +1,116 @@
+from typing import List
+from ..services.contact_service import ContactService
+
+
+def add_contact(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Add command requires 2 arguments: name and phone")
+
+    name, phone = args[0], args[1]
+    return service.add_contact(name, phone)
+
+
+def change_contact(args: List[str], service: ContactService) -> str:
+    if len(args) < 3:
+        raise ValueError("Change command requires 3 arguments: name, old phone, and new phone")
+
+    name, old_phone, new_phone = args[0], args[1], args[2]
+    return service.change_phone(name, old_phone, new_phone)
+
+
+def show_phone(args: List[str], service: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Phone command requires 1 argument: name")
+
+    name = args[0]
+    phones = service.get_phones(name)
+
+    if not phones:
+        return f"{name} has no phone numbers."
+
+    phones_str = "; ".join(phones)
+    return f"{name}: {phones_str}"
+
+
+def show_all(args: List[str], service: ContactService) -> str:
+    contacts = service.get_all_contacts()
+
+    if not contacts:
+        return "No contacts found."
+
+    lines = ["All contacts:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
+
+
+def add_birthday(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Add-birthday command requires 2 arguments: name and birthday (DD.MM.YYYY)")
+
+    name, birthday = args[0], args[1]
+    return service.add_birthday(name, birthday)
+
+
+def show_birthday(args: List[str], service: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Show-birthday command requires 1 argument: name")
+
+    name = args[0]
+    birthday = service.get_birthday(name)
+
+    if birthday:
+        return f"{name}'s birthday: {birthday}"
+    else:
+        return f"No birthday set for {name}."
+
+
+def birthdays(args: List[str], service: ContactService) -> str:
+    upcoming = service.get_upcoming_birthdays()
+
+    if not upcoming:
+        return "No upcoming birthdays in the next 7 days."
+
+    lines = ["Upcoming birthdays:"]
+    for contact in upcoming:
+        lines.append(f"{contact['name']}: {contact['congratulation_date']}")
+    return "\n".join(lines)
+
+
+def add_email(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Add-email command requires 2 arguments: name and email")
+
+    name, email = args[0], args[1]
+    return service.add_email(name, email)
+
+
+def add_address(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Add-address command requires 2 arguments: name and address")
+
+    name = args[0]
+    address = " ".join(args[1:])
+    return service.add_address(name, address)
+
+
+def save_contacts(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Save command requires a filename argument")
+
+    filename = args[0]
+    saved_filename = service.save_address_book(filename, user_provided=True)
+    return f"Address book saved to {saved_filename}."
+
+
+def load_contacts(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Load command requires a filename argument")
+
+    filename = args[0]
+    count = service.load_address_book(filename, user_provided=True)
+    return f"Address book loaded from {service.get_current_filename()}. {count} contact(s) found."
+
+
+def hello(args: List[str], service: ContactService) -> str:
+    return "How can I help you?"
