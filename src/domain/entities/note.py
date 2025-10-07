@@ -1,9 +1,11 @@
 import uuid
 from typing import Optional
+
+from .entity import Entity
 from ..value_objects.tag import Tag
 
 
-class Note:
+class Note(Entity):
 
     def __init__(self, text: str, note_id: Optional[str] = None):
         if not text or not text.strip():

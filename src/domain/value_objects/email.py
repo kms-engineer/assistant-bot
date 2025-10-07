@@ -7,6 +7,7 @@ from .field import Field
 class Email(Field):
 
     def __init__(self, value: str):
-        if not EmailValidator.validate(value):
-            raise ValueError(f"Invalid email format: '{value}'")
+        validation_result = EmailValidator.validate(value)
+        if validation_result is not True:
+            raise ValueError(str(validation_result))
         super().__init__(value)
