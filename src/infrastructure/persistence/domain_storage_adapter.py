@@ -26,11 +26,13 @@ class DomainStorageAdapter:
     def save_contacts(self, address_book, filename: str, **kwargs) -> str:
         if self.storage.file_extension == '.pkl':
             data = address_book
-        else:
+        elif self.storage.file_extension == '.json':
             data = [
                 self.serializer.contact_to_dict(contact)
                 for contact in address_book.data.values()
             ]
+        else:
+            data = address_book
 
         saved_filename = self.storage.save(data, filename, **kwargs)
         return self.ensure_suffix(saved_filename)

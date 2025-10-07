@@ -1,6 +1,6 @@
 from typing import Optional
 from ...domain.entities.note import Note
-from ...infrastructure.storage.storage_interface import StorageInterface
+from ...infrastructure.storage.storage import Storage
 from ...infrastructure.storage.json_storage import JsonStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE
@@ -9,7 +9,7 @@ from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAd
 
 class NoteService:
 
-    def __init__(self, storage: StorageInterface = None, serializer: JsonSerializer = None):
+    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.notes: dict[str, Note] = {}

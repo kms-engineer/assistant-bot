@@ -1,7 +1,7 @@
 from typing import Optional
 from ...domain.address_book import AddressBook
 from ...domain.entities.contact import Contact
-from ...infrastructure.storage.storage_interface import StorageInterface
+from ...infrastructure.storage.storage import Storage
 from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_CONTACTS_FILE
@@ -10,7 +10,7 @@ from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAd
 
 class ContactService:
 
-    def __init__(self, storage: StorageInterface = None, serializer: JsonSerializer = None):
+    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else PickleStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.address_book = AddressBook()
