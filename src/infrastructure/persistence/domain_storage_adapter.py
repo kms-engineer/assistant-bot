@@ -1,10 +1,10 @@
 from typing import Any, Optional
-from ..storage.storage_interface import StorageInterface
+from ..storage.storage import Storage
 from ..serialization.json_serializer import JsonSerializer
 
 class DomainStorageAdapter:
 
-    def __init__(self, storage: StorageInterface, serializer: JsonSerializer = None):
+    def __init__(self, storage: Storage, serializer: JsonSerializer = None):
         self.storage = storage
         self.serializer = serializer if serializer else JsonSerializer()
         self.resolver = getattr(storage, 'resolver', None)
