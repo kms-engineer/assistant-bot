@@ -1,6 +1,8 @@
 from ...application.services.contact_service import ContactService
 from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.storage.json_storage import JsonStorage
+from ...infrastructure.persistence.migrator import migrate_files
+from ...infrastructure.persistence.data_path_resolver import HOME_DATA_DIR, DEFAULT_DATA_DIR
 from .command_parser import CommandParser
 from .command_handler import CommandHandler
 from .ui_messages import UIMessages
@@ -20,6 +22,8 @@ def main() -> None:
     # storage = PickleStorage()
     storage = JsonStorage()
     contact_service = ContactService(storage)
+
+    migrate_files(DEFAULT_DATA_DIR, HOME_DATA_DIR)
 
     print(UIMessages.LOADING)
     try:
