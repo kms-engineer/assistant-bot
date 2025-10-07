@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from ..validators.phone_validator import PhoneValidator
 from .field import Field
 
 
+@dataclass
 class Phone(Field):
 
     def __init__(self, raw: str):
@@ -11,11 +13,3 @@ class Phone(Field):
                 f"Invalid phone number: '{raw}'. Expected exactly 10 digits after normalization."
             )
         super().__init__(digits)
-
-    @staticmethod
-    def normalize(raw: str) -> str:
-        return PhoneValidator.normalize(raw)
-
-    @staticmethod
-    def validate(phone: str) -> bool:
-        return PhoneValidator.validate(phone)

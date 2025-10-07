@@ -1,11 +1,11 @@
+from dataclasses import dataclass
+from ..validators.tag_validator import TagValidator
 from .field import Field
 
 
+@dataclass
 class Tag(Field):
 
     def __init__(self, value: str):
-        if not value or not value.strip():
-            raise ValueError("Tag cannot be empty")
-        if len(value) > 50:
-            raise ValueError("Tag too long (max 50 characters)")
+        TagValidator.validate(value)
         super().__init__(value.strip())
