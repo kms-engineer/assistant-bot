@@ -3,6 +3,8 @@ from ...infrastructure.persistence.data_path_resolver import *
 from ...application.services.contact_service import ContactService
 from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.storage.json_storage import JsonStorage
+from ...infrastructure.persistence.migrator import migrate_files
+from ...infrastructure.persistence.data_path_resolver import HOME_DATA_DIR, DEFAULT_DATA_DIR
 from ...infrastructure.storage.sqlite_storage import SQLiteStorage
 from .command_parser import CommandParser
 from .command_handler import CommandHandler
@@ -20,10 +22,14 @@ def save_and_exit(service: ContactService) -> None:
 
 
 def main() -> None:
+    migrate_files(DEFAULT_DATA_DIR, HOME_DATA_DIR)
+
     # storage = PickleStorage()
     # storage = JsonStorage()
     storage = SQLiteStorage(DBBase)
     contact_service = ContactService(storage)
+
+
 
     print(UIMessages.LOADING)
     try:
