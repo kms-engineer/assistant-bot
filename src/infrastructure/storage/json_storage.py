@@ -3,11 +3,13 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Any, Optional
-from .storage_interface import StorageInterface
+
+from .storage import Storage
+from .storage_type import StorageType
 from ..persistence.data_path_resolver import DataPathResolver
 
 
-class JsonStorage(StorageInterface):
+class JsonStorage(Storage):
 
     def __init__(self, data_dir: Path = None):
         self.resolver = DataPathResolver(data_dir) if data_dir else DataPathResolver()
@@ -15,6 +17,10 @@ class JsonStorage(StorageInterface):
     @property
     def file_extension(self) -> str:
         return '.json'
+
+    @property
+    def storage_type(self) -> StorageType:
+        return StorageType.JSON
 
     def save(self, data: Any, filename: str, **kwargs) -> str:
         filename = self.resolver.ensure_json_suffix(filename)

@@ -3,11 +3,13 @@ import pickle
 import tempfile
 from pathlib import Path
 from typing import Optional, Any
-from .storage_interface import StorageInterface
+
+from .storage import Storage
+from .storage_type import StorageType
 from ..persistence.data_path_resolver import DataPathResolver, RESERVED_BASENAME
 
 
-class PickleStorage(StorageInterface):
+class PickleStorage(Storage):
 
     def __init__(self, data_dir: Path = None):
         self.resolver = DataPathResolver(data_dir) if data_dir else DataPathResolver()
@@ -15,6 +17,10 @@ class PickleStorage(StorageInterface):
     @property
     def file_extension(self) -> str:
         return '.pkl'
+
+    @property
+    def storage_type(self) -> StorageType:
+        return StorageType.PICKLE
 
     def save(self, data: Any, filename: str, **kwargs) -> str:
         user_provided = kwargs.get('user_provided', False)
