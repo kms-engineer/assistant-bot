@@ -5,7 +5,7 @@ from datetime import datetime
 class BirthdayValidator:
 
     @staticmethod
-    def validate(birthday: str) -> bool | str:
+    def validate(birthday: str):
         if not re.fullmatch(r"\d{2}\.\d{2}\.\d{4}", birthday):
             return "Invalid date format. Use DD.MM.YYYY"
 
