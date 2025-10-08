@@ -5,8 +5,14 @@ class PhoneValidator:
 
     @staticmethod
     def validate(phone: str) -> bool:
-        return phone.isdigit() and len(phone) == 10
+        if phone.startswith('+'):
+            return bool(re.fullmatch(r"\+\d{8,15}", phone))
+        return bool(re.fullmatch(r'\d{9,10}', phone))
 
     @staticmethod
     def normalize(raw: str) -> str:
-        return re.sub(r"\D+", "", raw)
+        if raw.startswith('+'):
+            normalized = '+' + re.sub(r"\D+", '', raw[1:])
+        else:
+            normalized = re.sub(r"\D+", '', raw)
+        return normalized
