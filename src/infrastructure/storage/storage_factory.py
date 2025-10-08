@@ -1,21 +1,41 @@
+from pathlib import Path
+
 from .storage import Storage
 from .json_storage import JsonStorage
 from .pickle_storage import PickleStorage
+from .sqlite_storage import SQLiteStorage
+from .storage_type import StorageType
+from ...domain.models.dbbase import DBBase
+
 
 class StorageFactory:
 
+
+    @staticmethod
+    def create_storage(storage_type: StorageType) -> Storage:
+        if not storage_type:
+            raise ValueError("Storage type cannot be None.")
+        match storage_type:
+            case StorageType.JSON:
+                return JsonStorage()
+            case StorageType.PICKLE:
+                return PickleStorage()
+            case StorageType.SQLITE:
+                return SQLiteStorage(DBBase)
+            case _:
+                raise ValueError(f"Unsupported storage type: {storage_type}")
+
+
+    @staticmethod
     def get_storage(filepath: str) -> Storage:
-
-        filepath_lower = filepath.lower()
-
-        if filepath_lower.endswith('.json'):
+        if bool(filepath and filepath.strip()):
+            raise ValueError("Filepath cannot be empty or whitespace.")
+        filepath = Path(filepath.lower())
+        if filepath.suffix.endswith('.json'):
             return JsonStorage(filepath)
-        
-        elif filepath_lower.endswith('.pkl') or filepath_lower.endswith('.pickle'):
+        elif filepath.suffix.endswith('.pkl') or filepath.suffix.endswith('.pickle'):
             return PickleStorage(filepath)
-            
-        # elif filepath_lower.endswith('.db') or filepath_lower.endswith('.sqlite') or filepath_lower.endswith('.sqlite3'):
-        #     return SQLiteStorage(filepath)
-            
+        elif filepath.suffix.endswith('.db') or filepath.suffix.endswith('.sqlite') or filepath.suffix.endswith('.sqlite3'):
+            return SQLiteStorage(DBBase, filepath)
         else:
-            raise ValueError(f"Unsupported filetype: {filepath}.\nSupported extensions: .json, .pkl, .db, .sqlite.")
+            raise ValueError(f"Unsupported filetype: {filepath}.\nSupported extensions: .json, .pkl, .pickle, .db, .sqlite, .sqlite3")

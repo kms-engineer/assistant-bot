@@ -1,6 +1,10 @@
 from typing import Any, Optional
 from ..storage.storage import Storage
 from ..serialization.json_serializer import JsonSerializer
+from ..storage.storage_type import StorageType
+from ...application.exceptions.base import StorageException
+from ...domain.notebook import Notebook
+
 
 class DomainStorageAdapter:
 
@@ -24,15 +28,16 @@ class DomainStorageAdapter:
         return filename
 
     def save_contacts(self, address_book, filename: str, **kwargs) -> str:
-        if self.storage.file_extension == '.pkl':
+        if self.storage.storage_type == StorageType.PICKLE \
+                or self.storage.storage_type == StorageType.SQLITE:
             data = address_book
-        elif self.storage.file_extension == '.json':
+        elif self.storage.storage_type == StorageType.JSON:
             data = [
                 self.serializer.contact_to_dict(contact)
                 for contact in address_book.data.values()
             ]
         else:
-            data = address_book
+            raise StorageException("Unsupported storage type for saving contacts")
 
         saved_filename = self.storage.save(data, filename, **kwargs)
         return self.ensure_suffix(saved_filename)
@@ -56,14 +61,17 @@ class DomainStorageAdapter:
         else:
             return None, normalized_filename
 
-    def save_notes(self, notes_dict: dict, filename: str, **kwargs) -> str:
-        if self.storage.file_extension == '.pkl':
-            data = notes_dict
-        else:
+    def save_notes(self, notebook: Notebook, filename: str, **kwargs) -> str:
+        if self.storage.storage_type == StorageType.PICKLE \
+                or self.storage.storage_type == StorageType.SQLITE:
+            data = notebook.data
+        elif self.storage.storage_type == StorageType.JSON:
             data = [
                 self.serializer.note_to_dict(note)
-                for note in notes_dict.values()
+                for note in notebook.data.values()
             ]
+        else:
+            raise StorageException("Unsupported storage type for saving notes")
 
         saved_filename = self.storage.save(data, filename, **kwargs)
         return self.ensure_suffix(saved_filename)
@@ -81,3 +89,5 @@ class DomainStorageAdapter:
                 notes_dict[note.id] = note
 
         return notes_dict, normalized_filename
+
+

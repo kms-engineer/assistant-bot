@@ -23,12 +23,12 @@ Available commands:
     LOADING = "Loading address book..."
 
     @staticmethod
-    def saved_successfully(filename: str) -> str:
-        return f"Address book saved to file: {filename}"
+    def saved_successfully(entity: str, filename: str) -> str:
+        return f"{entity} saved to file: {filename}"
 
     @staticmethod
-    def loaded_successfully(count: int) -> str:
-        return f"Address book loaded. {count} contact(s) found.\n"
+    def loaded_successfully(entity: str, count: int) -> str:
+        return f"{entity} loaded. {count} contact(s) found.\n"
 
     @staticmethod
     def error(message: str) -> str:

@@ -9,15 +9,17 @@ from ..persistence.data_path_resolver import DataPathResolver
 from ..storage.storage import Storage
 from ...domain.address_book import AddressBook
 from ...domain.mappers.contact_mapper import ContactMapper
+from ...domain.mappers.note_mapper import NoteMapper
 from ...domain.models.dbcontact import DBContact
+from ...domain.notebook import Notebook
 
 T = TypeVar("T")
 
-# from ..logging.logger import setup_logger
-# log = setup_logger()
+from ..logging.logger import setup_logger
+log = setup_logger()
 
-import logging
-log = logging.getLogger(__name__)
+# import logging
+# log = logging.getLogger(__name__)
 
 
 class SQLiteStorage(Storage):
@@ -102,12 +104,12 @@ class SQLiteStorage(Storage):
                 db_model = ContactMapper.to_dbmodel(contact)
                 self.save_entity(db_model)
             return filename
-        # elif isinstance(data, Notebook):
-        #     for note in data.notes:
-        #         db_model = NoteMapper.to_dbmodel(note)
-        #         self.save_entity(db_model)
+        elif isinstance(data, Notebook):
+            for note in data.values():
+                db_model = NoteMapper.to_dbmodel(note)
+                self.save_entity(db_model)
 
-        return "Unsupported data type for save operation. Supported: AddressBook"
+        return "Unsupported data type for save operation. Supported: AddressBook, Notebook"
 
 
     def load(self, filename: str, **kwargs) -> Optional[Any]:
