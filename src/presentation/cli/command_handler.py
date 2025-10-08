@@ -1,4 +1,5 @@
 from typing import Dict, Callable, List
+from difflib import get_close_matches
 from ...application.services.contact_service import ContactService
 from ...application.commands import contact_commands
 from .error_handler import handle_errors
@@ -37,5 +38,6 @@ class CommandHandler:
         if command in self.commands:
             return self.commands[command](args)
 
-        available = [*self.commands.keys(), 'close', 'exit']
-        return UIMessages.invalid_command(available)
+        available = [*self.commands.keys(), "close", "exit"]
+        suggestion = get_close_matches(command, available, n=1, cutoff=0.6)
+        return UIMessages.invalid_command(available, suggestion[0] if suggestion else None)
