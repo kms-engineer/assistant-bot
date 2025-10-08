@@ -6,8 +6,8 @@ class PhoneValidator:
     @staticmethod
     def validate(phone: str) -> bool:
         if phone.startswith('+'):
-            return bool(re.fullmatch(r"\+\d{11,15}", phone))
-        return bool(re.fullmatch(r'\d{10}', phone))
+            return bool(re.fullmatch(r"\+\d{8,15}", phone))
+        return bool(re.fullmatch(r'\d{9,10}', phone))
 
     @staticmethod
     def normalize(raw: str) -> str:
