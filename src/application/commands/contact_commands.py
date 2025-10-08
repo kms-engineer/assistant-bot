@@ -18,6 +18,14 @@ def change_contact(args: List[str], service: ContactService) -> str:
     return service.change_phone(name, old_phone, new_phone)
 
 
+def delete_contact(args: List[str], servic: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Phone command requires 1 argument: name")
+    
+    name = args[0]
+    return servic.delete_phone(name)
+
+
 def show_phone(args: List[str], service: ContactService) -> str:
     if len(args) < 1:
         raise ValueError("Phone command requires 1 argument: name")

@@ -7,6 +7,7 @@ Available commands:
   hello                            - Show greeting
   add <name> <phone>               - Add new contact
   change <name> <old> <new>        - Update contact's phone
+  delete-contact <name>            - Delete contact
   phone <name>                     - Show contact's phone number(s)
   all                              - Show all contacts
   add-birthday <name> <DD.MM.YYYY> - Add birthday to contact

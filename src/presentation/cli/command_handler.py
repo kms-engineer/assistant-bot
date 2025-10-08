@@ -14,6 +14,7 @@ class CommandHandler:
             "hello": self._wrap(contact_commands.hello),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
+            "delete-contact": self._wrap(contact_commands.delete_contact),
             "phone": self._wrap(contact_commands.show_phone),
             "all": self._wrap(contact_commands.show_all),
             "add-birthday": self._wrap(contact_commands.add_birthday),
