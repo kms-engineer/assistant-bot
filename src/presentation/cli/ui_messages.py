@@ -39,5 +39,6 @@ Available commands:
     def invalid_command(available_commands: list, suggestion: Optional[str] = None) -> str:
         available = ', '.join(sorted(available_commands))
         if suggestion:
-            return f"Invalid command. Did you mean '{suggestion}'? Available commands: {available}"
+            return (f"Invalid command. Did you mean '{suggestion}'? \n"
+                    f"Available commands: {available}")
         return f"Invalid command. Available commands: {available}"
