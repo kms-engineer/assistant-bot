@@ -1,5 +1,6 @@
 from typing import Optional
 
+
 class UIMessages:
     WELCOME = """Welcome to the assistant bot!
 
@@ -12,7 +13,7 @@ Available commands:
   all                              - Show all contacts
   add-birthday <name> <DD.MM.YYYY> - Add birthday to contact
   show-birthday <name>             - Show contact's birthday
-  birthdays                        - Show upcoming birthdays
+  birthdays <amount>               - Show upcoming birthdays for <amount> days ahead or 7 days by default (max=365)
   add-email <name> <email>         - Add email to contact
   add-address <name> <address>     - Add address to contact
   save <filename>                  - Save address book to file
