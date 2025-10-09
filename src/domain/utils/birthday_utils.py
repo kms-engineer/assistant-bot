@@ -12,4 +12,4 @@ def move_to_monday_if_weekend(input_date: date) -> date:
     weekday = input_date.weekday()
     if weekday >= 5:  # Weekend (5=Saturday, 6=Sunday)
         return input_date + timedelta(days=(7 - weekday))
-    return input_date
+    return input_date if weekday >= 5 else input_date + timedelta(days=(7 - weekday))
