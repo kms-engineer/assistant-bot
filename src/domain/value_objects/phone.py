@@ -8,7 +8,7 @@ class Phone(Field):
         digits = PhoneValidator.normalize(raw)
         if not PhoneValidator.validate(digits):
             raise ValueError(
-                f"Invalid phone number: '{raw}'. Expected exactly 10 digits after normalization."
+                f"Invalid phone number: '{raw}'. Expected 9-15 digits after normalization."
             )
         super().__init__(digits)
 

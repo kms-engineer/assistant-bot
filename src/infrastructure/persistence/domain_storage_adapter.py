@@ -47,9 +47,16 @@ class DomainStorageAdapter:
             return loaded, normalized_filename
         elif isinstance(loaded, list):
             address_book = AddressBook()
+            seen_ids = set()
             for contact_dict in loaded:
                 contact = self.serializer.dict_to_contact(contact_dict)
-                address_book.add_record(contact)
+                if contact.id in seen_ids:
+                    continue
+                seen_ids.add(contact.id)
+                try:
+                    address_book.add_record(contact)
+                except KeyError:
+                    continue
             return address_book, normalized_filename
         else:
             return None, normalized_filename
@@ -76,6 +83,7 @@ class DomainStorageAdapter:
         elif isinstance(loaded, list):
             for note_dict in loaded:
                 note = self.serializer.dict_to_note(note_dict)
-                notes_dict[note.id] = note
+                if note.id not in notes_dict:
+                    notes_dict[note.id] = note
 
         return notes_dict, normalized_filename
