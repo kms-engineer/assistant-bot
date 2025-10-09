@@ -53,6 +53,11 @@ class ContactService:
         record = self.address_book.find(name)
         record.edit_phone(old_phone, new_phone)
         return "Contact phone number updated."
+    
+    def delete_phone(self, name: str) -> str:
+        record = self.address_book.find(name)
+        self.address_book.delete(name)
+        return "Contact deleted."
 
     def get_phones(self, name: str) -> list[str]:
         record = self.address_book.find(name)
