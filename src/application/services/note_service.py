@@ -1,5 +1,6 @@
-from typing import Optional
+from typing import Optional, Set
 from ...domain.entities.note import Note
+from ...domain.utils.id_generator import IDGenerator
 from ...infrastructure.storage.storage_interface import StorageInterface
 from ...infrastructure.storage.json_storage import JsonStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
@@ -14,6 +15,9 @@ class NoteService:
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.notes: dict[str, Note] = {}
         self._current_filename = DEFAULT_NOTES_FILE
+
+    def get_ids(self) -> Set[str]:
+        return set(self.notes.keys())
 
     def load_notes(self, filename: str = DEFAULT_NOTES_FILE) -> int:
         loaded_notes, normalized_filename = self.storage.load_notes(
@@ -37,7 +41,12 @@ class NoteService:
         return saved_filename
 
     def add_note(self, text: str) -> str:
-        note = Note(text)
+        note = Note.create(
+            text,
+            lambda: IDGenerator.generate_unique_id(
+                lambda: self.get_ids()
+            )
+        )
         self.notes[note.id] = note
         return note.id
 

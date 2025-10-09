@@ -1,6 +1,7 @@
 from typing import Optional
 from ...domain.address_book import AddressBook
 from ...domain.entities.contact import Contact
+from ...domain.utils.id_generator import IDGenerator
 from ...infrastructure.storage.storage_interface import StorageInterface
 from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
@@ -40,52 +41,56 @@ class ContactService:
 
     def add_contact(self, name: str, phone: str) -> str:
         try:
-            record = self.address_book.find(name)
-            record.add_phone(phone)
+            contact = self.address_book.find(name)
+            contact.add_phone(phone)
             return "Contact updated."
         except KeyError:
-            record = Contact(name)
-            record.add_phone(phone)
-            self.address_book.add_record(record)
+            contact = Contact.create(
+                name,
+                lambda: IDGenerator.generate_unique_id(
+                    lambda: self.address_book.get_ids()
+                )
+            )
+            contact.add_phone(phone)
+            self.address_book.add_record(contact)
             return "Contact added."
 
     def change_phone(self, name: str, old_phone: str, new_phone: str) -> str:
-        record = self.address_book.find(name)
-        record.edit_phone(old_phone, new_phone)
+        contact = self.address_book.find(name)
+        contact.edit_phone(old_phone, new_phone)
         return "Contact phone number updated."
     
-    def delete_phone(self, name: str) -> str:
-        record = self.address_book.find(name)
+    def delete_contact(self, name: str) -> str:
         self.address_book.delete(name)
         return "Contact deleted."
 
     def get_phones(self, name: str) -> list[str]:
-        record = self.address_book.find(name)
-        return [phone.value for phone in record.phones]
+        contact = self.address_book.find(name)
+        return [phone.value for phone in contact.phones]
 
     def get_all_contacts(self) -> list[Contact]:
         return list(self.address_book.data.values())
 
     def add_birthday(self, name: str, birthday: str) -> str:
-        record = self.address_book.find(name)
-        record.add_birthday(birthday)
+        contact = self.address_book.find(name)
+        contact.add_birthday(birthday)
         return f"Birthday added for {name}."
 
     def get_birthday(self, name: str) -> Optional[str]:
-        record = self.address_book.find(name)
-        return record.birthday.value if record.birthday else None
+        contact = self.address_book.find(name)
+        return contact.birthday.value if contact.birthday else None
 
     def get_upcoming_birthdays(self) -> list[dict]:
         return self.address_book.get_upcoming_birthdays()
 
     def add_email(self, name: str, email: str) -> str:
-        record = self.address_book.find(name)
-        record.add_email(email)
+        contact = self.address_book.find(name)
+        contact.add_email(email)
         return f"Email added for {name}."
 
     def add_address(self, name: str, address: str) -> str:
-        record = self.address_book.find(name)
-        record.add_address(address)
+        contact = self.address_book.find(name)
+        contact.add_address(address)
         return f"Address added for {name}."
 
     def get_current_filename(self) -> str:
