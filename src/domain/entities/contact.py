@@ -1,5 +1,4 @@
-import uuid
-from typing import Optional
+from typing import Optional, Callable
 from ..value_objects.name import Name
 from ..value_objects.phone import Phone
 from ..value_objects.birthday import Birthday
@@ -9,13 +8,20 @@ from ..value_objects.address import Address
 
 class Contact:
 
-    def __init__(self, name: str, contact_id: Optional[str] = None):
-        self.id = contact_id if contact_id else str(uuid.uuid4())
+    def __init__(self, name: str, contact_id: str):
+        if not contact_id:
+            raise ValueError("Contact ID is required")
+        self.id = contact_id
         self.name = Name(name)
         self.phones: list[Phone] = []
         self.birthday: Optional[Birthday] = None
         self.email: Optional[Email] = None
         self.address: Optional[Address] = None
+
+    @classmethod
+    def create(cls, name: str, id_generator: Callable[[], str]) -> 'Contact':
+        contact_id = id_generator()
+        return cls(name, contact_id)
 
     def add_phone(self, phone: str) -> None:
         phone_obj = Phone(phone)
