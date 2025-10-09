@@ -23,4 +23,4 @@ class BirthdayValidator:
             datetime.strptime(birthday, "%d.%m.%Y")
             return True
         except ValueError:
-            raise(f"Invalid day: {day:02d} for month {month:02d}/{year}")
+            raise ValueError(f"Invalid day: {day:02d} for month {month:02d}/{year}")
