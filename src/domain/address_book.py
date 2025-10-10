@@ -1,10 +1,12 @@
 from collections import UserDict
+from datetime import date, timedelta
 from typing import Optional, Set
-from datetime import datetime, timedelta
+
 from .entities.contact import Contact
-from .utils.birthday_utils import get_birthday_for_year, move_to_monday_if_weekend
+from .utils.birthday_utils import get_next_birthday_date, parse_date
 
 DATE_FORMAT = "%d.%m.%Y"
+
 
 class AddressBook(UserDict):
 
@@ -35,32 +37,29 @@ class AddressBook(UserDict):
             raise KeyError("Contact not found")
         del self.data[contact_id]
 
-    def get_upcoming_birthdays(self) -> list[dict]:
+    def get_upcoming_birthdays(self, days_ahead) -> list[dict]:
         upcoming_birthdays = []
-        today = datetime.today().date()
+        today = date.today()
+        next_n_days = today + timedelta(days=days_ahead)
 
         for contact in self.data.values():
             if contact.birthday is None:
                 continue
 
             try:
-                orig_birthday = datetime.strptime(contact.birthday.value, DATE_FORMAT).date()
+                orig_birthday = parse_date(contact.birthday.value, DATE_FORMAT)
             except ValueError:
                 continue
 
             try:
-                congratulation_date = get_birthday_for_year(orig_birthday, today.year)
-                if congratulation_date < today:
-                    congratulation_date = get_birthday_for_year(orig_birthday, today.year + 1)
+                next_birthday_date = get_next_birthday_date(orig_birthday, today)
             except ValueError:
                 continue
 
-            next_7days = today + timedelta(days=7)
-            if today <= congratulation_date <= next_7days:
-                congratulation_date = move_to_monday_if_weekend(congratulation_date)
+            if today <= next_birthday_date <= next_n_days:
                 upcoming_birthdays.append({
                     "name": contact.name.value,
-                    "congratulation_date": congratulation_date.strftime(DATE_FORMAT)
+                    "birthdays_date": next_birthday_date.strftime(DATE_FORMAT)
                 })
 
         return upcoming_birthdays

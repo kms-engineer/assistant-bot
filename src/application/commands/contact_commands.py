@@ -1,4 +1,5 @@
 from typing import List
+
 from ..services.contact_service import ContactService
 
 
@@ -74,14 +75,24 @@ def show_birthday(args: List[str], service: ContactService) -> str:
 
 
 def birthdays(args: List[str], service: ContactService) -> str:
-    upcoming = service.get_upcoming_birthdays()
+    if len(args) < 1:
+        days = 7
+    else:
+        try:
+            days = int(args[0])
+            if days > 365:
+                return f"Max amount of days for upcoming birthdays is 365."
+        except ValueError:
+            raise (f"Invalid amount of days ahead: {args[0]}")
+
+    upcoming = service.get_upcoming_birthdays(days)
 
     if not upcoming:
-        return "No upcoming birthdays in the next 7 days."
+        return f"No upcoming birthdays in the next {days} days."
 
     lines = ["Upcoming birthdays:"]
     for contact in upcoming:
-        lines.append(f"{contact['name']}: {contact['congratulation_date']}")
+        lines.append(f"{contact['name']}: {contact['birthdays_date']}")
     return "\n".join(lines)
 
 

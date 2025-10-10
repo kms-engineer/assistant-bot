@@ -1,12 +1,13 @@
 from typing import Optional
+
 from ...domain.address_book import AddressBook
 from ...domain.entities.contact import Contact
 from ...domain.utils.id_generator import IDGenerator
-from ...infrastructure.storage.storage_interface import StorageInterface
-from ...infrastructure.storage.pickle_storage import PickleStorage
-from ...infrastructure.serialization.json_serializer import JsonSerializer
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_CONTACTS_FILE
 from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
+from ...infrastructure.serialization.json_serializer import JsonSerializer
+from ...infrastructure.storage.pickle_storage import PickleStorage
+from ...infrastructure.storage.storage_interface import StorageInterface
 
 
 class ContactService:
@@ -59,7 +60,7 @@ class ContactService:
         contact = self.address_book.find(name)
         contact.edit_phone(old_phone, new_phone)
         return "Contact phone number updated."
-    
+
     def delete_contact(self, name: str) -> str:
         self.address_book.delete(name)
         return "Contact deleted."
@@ -80,8 +81,8 @@ class ContactService:
         contact = self.address_book.find(name)
         return contact.birthday.value if contact.birthday else None
 
-    def get_upcoming_birthdays(self) -> list[dict]:
-        return self.address_book.get_upcoming_birthdays()
+    def get_upcoming_birthdays(self, days_ahead) -> list[dict]:
+        return self.address_book.get_upcoming_birthdays(days_ahead)
 
     def add_email(self, name: str, email: str) -> str:
         contact = self.address_book.find(name)
