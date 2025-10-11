@@ -104,6 +104,22 @@ def add_email(args: List[str], service: ContactService) -> str:
     return service.add_email(name, email)
 
 
+def edit_email(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Edit-email command requires 2 arguments: name and new email adress")
+    
+    name, email = args[0], args[1]
+    return service.edit_email(name, email)
+
+
+def remove_email(args: List[str], service: ContactService):
+    if len(args) < 1:
+        raise ValueError("Remove-email command requires 1 argument: name")
+    
+    name = args[0]
+    return service.remove_email(name)
+
+
 def add_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Add-address command requires 2 arguments: name and address")
@@ -111,6 +127,22 @@ def add_address(args: List[str], service: ContactService) -> str:
     name = args[0]
     address = " ".join(args[1:])
     return service.add_address(name, address)
+
+
+def edit_address(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Edit-address command requires 2 arguments: name and new adress")
+    
+    name, address = args[0], " ".join(args[1:])
+    return service.edit_address(name, address)
+
+
+def remove_address(args: List[str], service: ContactService):
+    if len(args) < 1:
+        raise ValueError("Remove-address command requires 1 argument: name")
+    
+    name = args[0]
+    return service.remove_address(name)
 
 
 def save_contacts(args: List[str], service: ContactService) -> str:
