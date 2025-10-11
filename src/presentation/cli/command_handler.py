@@ -21,7 +21,11 @@ class CommandHandler:
             "show-birthday": self._wrap(contact_commands.show_birthday),
             "birthdays": self._wrap(contact_commands.birthdays),
             "add-email": self._wrap(contact_commands.add_email),
+            "edit-email": self._wrap(contact_commands.edit_email),
+            "remove-email": self._wrap(contact_commands.remove_email),
             "add-address": self._wrap(contact_commands.add_address),
+            "edit-address": self._wrap(contact_commands.edit_address),
+            "remove-address": self._wrap(contact_commands.remove_address),
             "save": self._wrap(contact_commands.save_contacts),
             "load": self._wrap(contact_commands.load_contacts),
         }

@@ -54,6 +54,12 @@ class Contact:
     def add_email(self, email: str) -> None:
         self.email = Email(email)
 
+    def remove_email(self) -> None:
+        self.email = None
+
+    def remove_address(self) -> None:
+        self.address = None
+
     def add_address(self, address: str) -> None:
         self.address = Address(address)
 
