@@ -127,9 +127,10 @@ class ContactService:
         
     def remove_address(self, name: str) -> str:
         contact = self.address_book.find(name)
+        address = contact.address
         if contact.address:
             contact.remove_address()
-            return f"Address {contact.address} from {name} removed successfully"
+            return f"Address {address} from {name} removed successfully"
         else:
             raise ValueError(f"Can't remove address for {name}.\nAddress is not set yet.")
 
