@@ -107,7 +107,7 @@ def add_email(args: List[str], service: ContactService) -> str:
 def edit_email(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-email command requires 2 arguments: name and new email adress")
-    
+
     name, email = args[0], args[1]
     return service.edit_email(name, email)
 
@@ -115,7 +115,7 @@ def edit_email(args: List[str], service: ContactService) -> str:
 def remove_email(args: List[str], service: ContactService):
     if len(args) < 1:
         raise ValueError("Remove-email command requires 1 argument: name")
-    
+
     name = args[0]
     return service.remove_email(name)
 
@@ -132,7 +132,7 @@ def add_address(args: List[str], service: ContactService) -> str:
 def edit_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-address command requires 2 arguments: name and new adress")
-    
+
     name, address = args[0], " ".join(args[1:])
     return service.edit_address(name, address)
 
@@ -140,9 +140,41 @@ def edit_address(args: List[str], service: ContactService) -> str:
 def remove_address(args: List[str], service: ContactService):
     if len(args) < 1:
         raise ValueError("Remove-address command requires 1 argument: name")
-    
+
     name = args[0]
     return service.remove_address(name)
+
+
+def search(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Search command requires a search_text argument")
+
+    search_text = args[0]
+    contacts = service.search(search_text)
+
+    if not contacts:
+        return f"No contact name, email or phone found for provided search text: {search_text}"
+
+    lines = ["Found contacts:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
+
+
+def find(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Find command requires a search_text argument")
+
+    search_text = args[0]
+    contacts = service.search(search_text, exact=True)
+
+    if not contacts:
+        return f"No contact name, email or phone found for provided search text: {search_text}"
+
+    lines = ["Found contacts:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
 
 
 def save_contacts(args: List[str], service: ContactService) -> str:

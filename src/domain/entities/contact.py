@@ -1,9 +1,10 @@
 from typing import Optional, Callable
-from ..value_objects.name import Name
-from ..value_objects.phone import Phone
+
+from ..value_objects.address import Address
 from ..value_objects.birthday import Birthday
 from ..value_objects.email import Email
-from ..value_objects.address import Address
+from ..value_objects.name import Name
+from ..value_objects.phone import Phone
 
 
 class Contact:
@@ -62,6 +63,15 @@ class Contact:
 
     def add_address(self, address: str) -> None:
         self.address = Address(address)
+
+    def is_matching(self, search_text: str, exact: bool) -> bool:
+        if exact:
+            return search_text == str(self.name) or search_text == str(self.email) or any(
+                search_text == str(phone) for phone in self.phones)
+        else:
+            return search_text.casefold() in str(self.name).casefold() or \
+                   search_text.casefold() in str(self.email).casefold() or \
+                   any(search_text.casefold() in str(phone).casefold() for phone in self.phones)
 
     def __str__(self) -> str:
         phones_str = "; ".join(p.value for p in self.phones) or "—"

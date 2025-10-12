@@ -28,6 +28,8 @@ class CommandHandler:
             "remove-address": self._wrap(contact_commands.remove_address),
             "save": self._wrap(contact_commands.save_contacts),
             "load": self._wrap(contact_commands.load_contacts),
+            "search": self._wrap(contact_commands.search),
+            "find": self._wrap(contact_commands.find),
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
