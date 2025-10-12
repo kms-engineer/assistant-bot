@@ -39,5 +39,5 @@ def delete_note(args: List[str], service: NoteService) -> str:
     if not args:
         raise ValueError("Delete-note command requires ID argument")
 
-    note_id = args[0]  # ID нотатки
+    note_id = args[0] 
     return service.delete_note(note_id)
