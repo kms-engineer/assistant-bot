@@ -88,20 +88,20 @@ class ContactService:
         contact = self.address_book.find(name)
         contact.add_email(email)
         return f"Email added for {name}."
-    
+
     def edit_email(self, name: str, email: str) -> str:
         contact = self.address_book.find(name)
         if contact.email:
-            # I keep it in methond due to security and scaling reasons
-            # We counld add some extra logic in remove_email later
-            # There is no need to have email edit, remove and add methonds in Contact\
+            # I keep it in method due to security and scaling reasons
+            # We could add some extra logic in remove_email later
+            # There is no need to have email edit, remove and add methods in Contact\
             # We could just reuse add and remove method here
             contact.remove_email()
             contact.add_email(email)
             return f"New email is set for {name}"
         else:
             raise ValueError(f"Email is not set YET for {name}")
-        
+
     def remove_email(self, name: str) -> str:
         contact = self.address_book.find(name)
         email = contact.email
@@ -115,7 +115,7 @@ class ContactService:
         contact = self.address_book.find(name)
         contact.add_address(address)
         return f"Address added for {name}."
-    
+
     def edit_address(self, name: str, address: str):
         contact = self.address_book.find(name)
         if contact.address:
@@ -124,7 +124,7 @@ class ContactService:
             return f"New address is set for {name}"
         else:
             raise ValueError(f"Address is not set YET for {name}")
-        
+
     def remove_address(self, name: str) -> str:
         contact = self.address_book.find(name)
         address = contact.address
@@ -133,6 +133,9 @@ class ContactService:
             return f"Address {address} from {name} removed successfully"
         else:
             raise ValueError(f"Can't remove address for {name}.\nAddress is not set yet.")
+
+    def search(self, search_text: str, exact=False) -> list[Contact]:
+        return list(filter(lambda c: c.is_matching(search_text, exact), self.address_book.values()))
 
     def get_current_filename(self) -> str:
         return self._current_filename
