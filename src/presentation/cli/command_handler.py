@@ -12,6 +12,7 @@ class CommandHandler:
         self.contact_service = contact_service
         self.commands: Dict[str, Callable] = {
             "hello": self._wrap(contact_commands.hello),
+            "help": self._wrap(contact_commands.help),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
             "delete-contact": self._wrap(contact_commands.delete_contact),

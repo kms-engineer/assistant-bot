@@ -2,10 +2,10 @@ from typing import Optional
 
 
 class UIMessages:
-    WELCOME = """Welcome to the assistant bot!
-
-Available commands:
+    WELCOME = "Welcome to the assistant bot!"
+    COMMAND_LIST = """Available commands:
   hello                            - Show greeting
+  help                             - Show commands list
   add <name> <phone>               - Add new contact
   change <name> <old> <new>        - Update contact's phone
   delete-contact <name>            - Delete contact
