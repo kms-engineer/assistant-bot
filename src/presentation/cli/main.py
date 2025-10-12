@@ -35,7 +35,7 @@ def main() -> None:
     parser = CommandParser()
     handler = CommandHandler(contact_service)
 
-    print(UIMessages.WELCOME)
+    print(UIMessages.WELCOME + '\n\n' + UIMessages.COMMAND_LIST)
 
     while True:
         try:

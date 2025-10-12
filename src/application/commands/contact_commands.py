@@ -1,6 +1,7 @@
 from typing import List
 
 from ..services.contact_service import ContactService
+from ...presentation.cli.ui_messages import UIMessages
 
 
 def add_contact(args: List[str], service: ContactService) -> str:
@@ -197,3 +198,6 @@ def load_contacts(args: List[str], service: ContactService) -> str:
 
 def hello(args: List[str], service: ContactService) -> str:
     return "How can I help you?"
+
+def help(args: List[str], service: ContactService) -> str:
+    return UIMessages.COMMAND_LIST
