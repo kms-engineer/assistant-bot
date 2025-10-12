@@ -66,7 +66,7 @@ def main() -> None:
     handler = CommandHandler(contact_service)
     regex_gate = RegexCommandGate()
 
-    print(UIMessages.WELCOME)
+    print(UIMessages.WELCOME + '\n\n' + UIMessages.COMMAND_LIST)
 
     while True:
         try:
