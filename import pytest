@@ -1,0 +1,68 @@
+import pytest
+from src.domain.entities.fields import Name
+
+
+class TestNameField:
+    def test_valid_names(self):
+        valid_names = [
+            "John",
+            "Mary Jane",
+            "Anna-Maria",
+            "Анна",
+            "Олександр Петрович",
+            "Jean-Claude"
+        ]
+        
+        for name in valid_names:
+            name_field = Name(name)
+            assert name_field.value == name
+    
+    def test_empty_name(self):
+        with pytest.raises(ValueError, match="Name cannot be empty"):
+            Name("")
+        
+        with pytest.raises(ValueError, match="Name cannot be empty"):
+            Name("   ")
+    
+    def test_too_short_name(self):
+        with pytest.raises(ValueError, match="Name must be at least 2 characters long"):
+            Name("A")
+    
+    def test_too_long_name(self):
+        long_name = "A" * 51
+        with pytest.raises(ValueError, match="Name must be no more than 50 characters long"):
+            Name(long_name)
+    
+    def test_invalid_characters(self):
+        invalid_names = [
+            "John123",
+            "Mary@gmail.com",
+            "Test!",
+            "Name#1",
+            "User$"
+        ]
+        
+        for name in invalid_names:
+            with pytest.raises(ValueError, match="Name can only contain letters, spaces, and hyphens"):
+                Name(name)
+    
+    def test_invalid_format(self):
+        invalid_formats = [
+            " John",
+            "John ",
+            "-John",
+            "John-",
+            " John Doe ",
+            "-Mary-"
+        ]
+        
+        for name in invalid_formats:
+            with pytest.raises(ValueError, match="Name cannot start or end with space or hyphen"):
+                Name(name)
+    
+    def test_non_string_input(self):
+        with pytest.raises(ValueError, match="Name must be a string"):
+            Name(123)
+        
+        with pytest.raises(ValueError, match="Name must be a string"):
+            Name(None)

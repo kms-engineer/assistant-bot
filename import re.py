@@ -1,0 +1,48 @@
+import re
+from typing import Any
+
+
+class Field:
+    def __init__(self, value: Any = None):
+        self.value = None
+        if value is not None:
+            self.value = self.validate(value)
+    
+    def validate(self, value: Any) -> Any:
+        return value
+    
+    def __str__(self) -> str:
+        return str(self.value) if self.value is not None else ""
+
+
+class Name(Field):
+    MIN_LENGTH = 2
+    MAX_LENGTH = 50
+    
+    def validate(self, value: Any) -> str:
+        if not isinstance(value, str):
+            raise ValueError("Name must be a string")
+        
+        # Remove leading/trailing whitespace
+        value = value.strip()
+        
+        # Check if empty
+        if not value:
+            raise ValueError("Name cannot be empty")
+        
+        # Check length
+        if len(value) < self.MIN_LENGTH:
+            raise ValueError(f"Name must be at least {self.MIN_LENGTH} characters long")
+        
+        if len(value) > self.MAX_LENGTH:
+            raise ValueError(f"Name must be no more than {self.MAX_LENGTH} characters long")
+        
+        # Check allowed characters (letters, spaces, hyphens)
+        if not re.match(r'^[a-zA-Zа-яА-ЯіІїЇєЄ\s\-]+$', value):
+            raise ValueError("Name can only contain letters, spaces, and hyphens")
+        
+        # Check that it doesn't start or end with space/hyphen
+        if value.startswith(('-', ' ')) or value.endswith(('-', ' ')):
+            raise ValueError("Name cannot start or end with space or hyphen")
+        
+        return value
