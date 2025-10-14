@@ -34,6 +34,18 @@ def test_phone_creation_with_invalid_length(invalid_raw_input, expected_error_me
 
 @pytest.mark.parametrize("non_string_input", [
     1234567890,
+])
+def test_phone_creation_with_non_string_input(non_string_input):
+    """
+    Tests that creating a Phone with a non-string input raises a TypeError
+    when normalization is attempted.
+    """
+    with pytest.raises(TypeError):
+        Phone(non_string_input)
+
+
+
+@pytest.mark.parametrize("non_string_input", [
     None,
     [],
 ])
@@ -42,5 +54,5 @@ def test_phone_creation_with_non_string_input(non_string_input):
     Tests that creating a Phone with a non-string input raises a TypeError
     when normalization is attempted.
     """
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Phone(non_string_input)

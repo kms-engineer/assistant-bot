@@ -11,4 +11,5 @@ class Phone(Field):
         validation_result = PhoneValidator.validate(digits)
         if validation_result is not True:
             raise ValueError(str(validation_result))
+
         super().__init__(digits)

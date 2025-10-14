@@ -14,7 +14,7 @@ class NoteService:
     def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notes = dict[str, Note] = {}
+        self.notes = {}
         if storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
         else:
@@ -29,16 +29,16 @@ class NoteService:
             default=[]
         )
 
-        self.notebook = loaded_notes
+        self.notes = loaded_notes
         self._current_filename = normalized_filename
 
-        return len(self.notebook)
+        return len(self.notes)
 
     def save_notes(self, filename: Optional[str] = None) -> str:
         target = filename if filename else self._current_filename
 
         saved_filename = self.storage.save_notes(
-            self.notebook,
+            self.notes,
             target
         )
         self._current_filename = saved_filename

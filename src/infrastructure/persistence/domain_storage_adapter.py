@@ -1,8 +1,10 @@
+import json
 from typing import Any, Optional
 from ..storage.storage import Storage
 from ..serialization.json_serializer import JsonSerializer
 from ..storage.storage_type import StorageType
 from ...application.exceptions.base import StorageException
+from ...domain.entities.note import Note
 from ...domain.notebook import Notebook
 
 
@@ -68,15 +70,17 @@ class DomainStorageAdapter:
         else:
             return None, normalized_filename
 
-    def save_notes(self, notebook: Notebook, filename: str, **kwargs) -> str:
-        if self.storage.storage_type == StorageType.PICKLE \
-                or self.storage.storage_type == StorageType.SQLITE:
-            data = notebook.data
+    def save_notes(self, notes: dict[str, Note], filename: str, **kwargs) -> str:
+        if self.storage.storage_type == StorageType.PICKLE:
+            data = notes
         elif self.storage.storage_type == StorageType.JSON:
             data = [
                 self.serializer.note_to_dict(note)
-                for note in notebook.data.values()
+                for note in notes.values()
             ]
+
+        elif self.storage.storage_type == StorageType.SQLITE:
+            raise StorageException("Not implemented type for saving notes")
         else:
             raise StorageException("Unsupported storage type for saving notes")
 
