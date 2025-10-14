@@ -6,7 +6,7 @@ class BirthdayValidator:
     _pattern = r"\d{2}\.\d{2}\.\d{4}"
 
     @staticmethod
-    def validate(birthday: str) -> bool | str:
+    def validate(birthday: str, date_format: str = "%d.%m.%Y") -> bool | str:
         if not StringValidator.is_string(birthday):
             return "Birthday must be a string"
         if not StringValidator.is_not_empty(birthday):
@@ -14,18 +14,16 @@ class BirthdayValidator:
         if not StringValidator.exactly_match_pattern(birthday, BirthdayValidator._pattern):
             return "Birthday contain invalid date format. Use DD.MM.YYYY"
 
-        day, month, year = map(int, birthday.split('.'))
-        current_year = datetime.now().year
-
-        if year > current_year:
-            return "Birthday cannot be in future"
-        if year < 1900:
-            return f"Birthday contain invalid year: {year} (must be from 1900 onwards)"
-        if not (1 <= month <= 12):
-            return f"Birthday contain invalid month: {month:02d}"
-
         try:
-            datetime.strptime(birthday, "%d.%m.%Y")
+            birthday_date = datetime.strptime(birthday, "%d.%m.%Y")
+            today = datetime.now()
+
+            if birthday_date > today:
+                return "Birthday cannot be in future"
+            if birthday_date.year < 1900:
+                return f"Birthday contain invalid year: {birthday_date.year} (must be from 1900 onwards)"
+            if not (1 <= birthday_date.month <= 12):
+                return f"Birthday contain invalid month: {birthday_date:02d}"
             return True
         except ValueError:
-            return f"Birthday contain invalid day: {day:02d} for month {month:02d}/{year}"
+            return f"Birthday contain invalid date: {birthday}"

@@ -35,7 +35,7 @@ class DataPathResolver:
         return filename if filename.endswith(".db") else f"{filename}.db"
 
     @staticmethod
-    def validate_filename(filename: str, allowed_extensions: tuple = ('.pkl', '.json', '.db')) -> None:
+    def validate_filename(filename: str, allowed_extensions: tuple = ('.pkl', '.pickle', '.json', '.db', '.sqlite', '.sqlite3')) -> None:
         checks = [
             (not isinstance(filename, str) or not filename, "Filename must be a non-empty string"),
             (os.path.basename(filename) != filename, "Filename must not contain directories"),

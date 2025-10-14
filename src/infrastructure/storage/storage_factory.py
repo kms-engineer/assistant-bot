@@ -5,6 +5,7 @@ from .json_storage import JsonStorage
 from .pickle_storage import PickleStorage
 from .sqlite_storage import SQLiteStorage
 from .storage_type import StorageType
+from ..persistence.data_path_resolver import DataPathResolver
 from ...domain.models.dbbase import DBBase
 
 
@@ -28,8 +29,7 @@ class StorageFactory:
 
     @staticmethod
     def get_storage(filepath: str) -> Storage:
-        if bool(filepath and filepath.strip()):
-            raise ValueError("Filepath cannot be empty or whitespace.")
+        DataPathResolver.validate_filename(filepath)
         filepath = Path(filepath.lower())
         if filepath.suffix.endswith('.json'):
             return JsonStorage(filepath)

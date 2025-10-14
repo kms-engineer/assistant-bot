@@ -17,4 +17,6 @@ class NumberValidator:
     
     @staticmethod
     def is_number(value: str) -> bool:
+        if not value:
+            return False
         return value.isdigit()
