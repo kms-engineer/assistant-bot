@@ -2,18 +2,26 @@ import uuid
 from typing import Optional
 
 from .entity import Entity
+from typing import Callable
 from ..value_objects.tag import Tag
 
 
 class Note(Entity):
 
-    def __init__(self, text: str, note_id: Optional[str] = None):
+    def __init__(self, text: str, note_id: str):
         if not text or not text.strip():
             raise ValueError("Note text cannot be empty")
+        if not note_id:
+            raise ValueError("Note ID is required")
 
-        self.id = note_id if note_id else str(uuid.uuid4())
+        self.id = note_id
         self.text = text.strip()
         self.tags: list[Tag] = []
+
+    @classmethod
+    def create(cls, text: str, id_generator: Callable[[], str]) -> 'Note':
+        note_id = id_generator()
+        return cls(text, note_id)
 
     def add_tag(self, tag: str) -> None:
         tag_obj = Tag(tag)

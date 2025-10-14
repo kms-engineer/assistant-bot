@@ -1,5 +1,7 @@
 from typing import List
+
 from ..services.contact_service import ContactService
+from ...presentation.cli.ui_messages import UIMessages
 
 
 def add_contact(args: List[str], service: ContactService) -> str:
@@ -16,6 +18,14 @@ def change_contact(args: List[str], service: ContactService) -> str:
 
     name, old_phone, new_phone = args[0], args[1], args[2]
     return service.change_phone(name, old_phone, new_phone)
+
+
+def delete_contact(args: List[str], service: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Delete-contact command requires 1 argument: name")
+
+    name = args[0]
+    return service.delete_contact(name)
 
 
 def show_phone(args: List[str], service: ContactService) -> str:
@@ -66,14 +76,24 @@ def show_birthday(args: List[str], service: ContactService) -> str:
 
 
 def birthdays(args: List[str], service: ContactService) -> str:
-    upcoming = service.get_upcoming_birthdays()
+    if len(args) < 1:
+        days = 7
+    else:
+        try:
+            days = int(args[0])
+            if days > 365:
+                return f"Max amount of days for upcoming birthdays is 365."
+        except ValueError:
+            raise (f"Invalid amount of days ahead: {args[0]}")
+
+    upcoming = service.get_upcoming_birthdays(days)
 
     if not upcoming:
-        return "No upcoming birthdays in the next 7 days."
+        return f"No upcoming birthdays in the next {days} days."
 
     lines = ["Upcoming birthdays:"]
     for contact in upcoming:
-        lines.append(f"{contact['name']}: {contact['congratulation_date']}")
+        lines.append(f"{contact['name']}: {contact['birthdays_date']}")
     return "\n".join(lines)
 
 
@@ -85,6 +105,22 @@ def add_email(args: List[str], service: ContactService) -> str:
     return service.add_email(name, email)
 
 
+def edit_email(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Edit-email command requires 2 arguments: name and new email adress")
+
+    name, email = args[0], args[1]
+    return service.edit_email(name, email)
+
+
+def remove_email(args: List[str], service: ContactService):
+    if len(args) < 1:
+        raise ValueError("Remove-email command requires 1 argument: name")
+
+    name = args[0]
+    return service.remove_email(name)
+
+
 def add_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Add-address command requires 2 arguments: name and address")
@@ -92,6 +128,54 @@ def add_address(args: List[str], service: ContactService) -> str:
     name = args[0]
     address = " ".join(args[1:])
     return service.add_address(name, address)
+
+
+def edit_address(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Edit-address command requires 2 arguments: name and new adress")
+
+    name, address = args[0], " ".join(args[1:])
+    return service.edit_address(name, address)
+
+
+def remove_address(args: List[str], service: ContactService):
+    if len(args) < 1:
+        raise ValueError("Remove-address command requires 1 argument: name")
+
+    name = args[0]
+    return service.remove_address(name)
+
+
+def search(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Search command requires a search_text argument")
+
+    search_text = args[0]
+    contacts = service.search(search_text)
+
+    if not contacts:
+        return f"No contact name, email or phone found for provided search text: {search_text}"
+
+    lines = ["Found contacts:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
+
+
+def find(args: List[str], service: ContactService) -> str:
+    if not args:
+        raise ValueError("Find command requires a search_text argument")
+
+    search_text = args[0]
+    contacts = service.search(search_text, exact=True)
+
+    if not contacts:
+        return f"No contact name, email or phone found for provided search text: {search_text}"
+
+    lines = ["Found contacts:"]
+    for contact in contacts:
+        lines.append(str(contact))
+    return "\n".join(lines)
 
 
 def save_contacts(args: List[str], service: ContactService) -> str:
@@ -114,3 +198,6 @@ def load_contacts(args: List[str], service: ContactService) -> str:
 
 def hello(args: List[str], service: ContactService) -> str:
     return "How can I help you?"
+
+def help(args: List[str], service: ContactService) -> str:
+    return UIMessages.COMMAND_LIST

@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, Set
 from ...domain.entities.note import Note
-from ...domain.notebook import Notebook
 from ...infrastructure.storage.storage import Storage
+from ...domain.utils.id_generator import IDGenerator
 from ...infrastructure.storage.json_storage import JsonStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE, DEFAULT_ADDRESS_BOOK_DATABASE_NAME
@@ -14,11 +14,14 @@ class NoteService:
     def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notebook = Notebook()
+        self.notes = dict[str, Note] = {}
         if storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
         else:
             self._current_filename = DEFAULT_NOTES_FILE
+
+    def get_ids(self) -> Set[str]:
+        return set(self.notes.keys())
 
     def load_notes(self, filename: str = DEFAULT_NOTES_FILE) -> int:
         loaded_notes, normalized_filename = self.storage.load_notes(
@@ -42,7 +45,12 @@ class NoteService:
         return saved_filename
 
     def add_note(self, text: str) -> str:
-        note = Note(text)
+        note = Note.create(
+            text,
+            lambda: IDGenerator.generate_unique_id(
+                lambda: self.get_ids()
+            )
+        )
         self.notes[note.id] = note
         return note.id
 

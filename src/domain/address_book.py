@@ -1,65 +1,65 @@
 from collections import UserDict
-from typing import Optional
-from datetime import datetime, timedelta
-from .entities.contact import Contact
-from .utils.birthday_utils import get_birthday_for_year, move_to_monday_if_weekend
+from datetime import date, timedelta
+from typing import Optional, Set
 
+from .entities.contact import Contact
+from .utils.birthday_utils import get_next_birthday_date, parse_date
 
 DATE_FORMAT = "%d.%m.%Y"
 
 
 class AddressBook(UserDict):
 
-    def add_record(self, record: Contact) -> None:
-        key = record.id
+    def get_ids(self) -> Set[str]:
+        return set(self.data.keys())
+
+    def add_record(self, contact: Contact) -> None:
+        key = contact.id
         if key in self.data:
-            raise KeyError(f"Record with ID '{key}' already exists")
-        self.data[key] = record
+            raise KeyError(f"Contact with ID '{key}' already exists")
+        self.data[key] = contact
 
     def find(self, contact_name: str) -> Contact:
-        for record in self.data.values():
-            if record.name.value == contact_name:
-                return record
+        for contact in self.data.values():
+            if contact.name.value == contact_name:
+                return contact
         raise KeyError("Contact not found")
 
-    def find_by_id(self, record_id: str) -> Optional[Contact]:
-        return self.data.get(record_id)
+    def find_by_id(self, contact_id: str) -> Optional[Contact]:
+        return self.data.get(contact_id)
 
     def delete(self, contact_name: str) -> None:
-        record = self.find(contact_name)
-        del self.data[record.id]
+        contact = self.find(contact_name)
+        del self.data[contact.id]
 
-    def delete_by_id(self, record_id: str) -> None:
-        if record_id not in self.data:
-            raise KeyError("Record not found")
-        del self.data[record_id]
+    def delete_by_id(self, contact_id: str) -> None:
+        if contact_id not in self.data:
+            raise KeyError("Contact not found")
+        del self.data[contact_id]
 
-    def get_upcoming_birthdays(self) -> list[dict]:
+    def get_upcoming_birthdays(self, days_ahead) -> list[dict]:
         upcoming_birthdays = []
-        today = datetime.today().date()
+        today = date.today()
+        next_n_days = today + timedelta(days=days_ahead)
 
-        for record in self.data.values():
-            if record.birthday is None:
+        for contact in self.data.values():
+            if contact.birthday is None:
                 continue
 
             try:
-                orig_birthday = datetime.strptime(record.birthday.value, DATE_FORMAT).date()
+                orig_birthday = parse_date(contact.birthday.value, DATE_FORMAT)
             except ValueError:
                 continue
 
             try:
-                congratulation_date = get_birthday_for_year(orig_birthday, today.year)
-                if congratulation_date < today:
-                    congratulation_date = get_birthday_for_year(orig_birthday, today.year + 1)
+                next_birthday_date = get_next_birthday_date(orig_birthday, today)
             except ValueError:
                 continue
 
-            next_7days = today + timedelta(days=7)
-            if today <= congratulation_date <= next_7days:
-                congratulation_date = move_to_monday_if_weekend(congratulation_date)
+            if today <= next_birthday_date <= next_n_days:
                 upcoming_birthdays.append({
-                    "name": record.name.value,
-                    "congratulation_date": congratulation_date.strftime(DATE_FORMAT)
+                    "name": contact.name.value,
+                    "birthdays_date": next_birthday_date.strftime(DATE_FORMAT)
                 })
 
         return upcoming_birthdays
