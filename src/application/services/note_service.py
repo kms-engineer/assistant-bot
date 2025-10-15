@@ -1,20 +1,24 @@
 from typing import Optional, Set
 from ...domain.entities.note import Note
+from ...infrastructure.storage.storage import Storage
 from ...domain.utils.id_generator import IDGenerator
-from ...infrastructure.storage.storage_interface import StorageInterface
 from ...infrastructure.storage.json_storage import JsonStorage
 from ...infrastructure.serialization.json_serializer import JsonSerializer
-from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE
+from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE, DEFAULT_ADDRESS_BOOK_DATABASE_NAME
 from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
+from ...infrastructure.storage.storage_type import StorageType
 
 
 class NoteService:
 
-    def __init__(self, storage: StorageInterface = None, serializer: JsonSerializer = None):
+    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notes: dict[str, Note] = {}
-        self._current_filename = DEFAULT_NOTES_FILE
+        self.notes = {}
+        if storage.storage_type == StorageType.SQLITE:
+            self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
+        else:
+            self._current_filename = DEFAULT_NOTES_FILE
 
     def get_ids(self) -> Set[str]:
         return set(self.notes.keys())

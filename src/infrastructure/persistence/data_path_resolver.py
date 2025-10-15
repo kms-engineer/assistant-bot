@@ -7,7 +7,9 @@ APPLICATION_DIR = ".assistant-bot"
 DEFAULT_DATA_DIR = "data"
 HOME_DATA_DIR = Path.home() / APPLICATION_DIR / DEFAULT_DATA_DIR
 RESERVED_BASENAME = "addressbook"
-DEFAULT_CONTACTS_FILE = "addressbook.pkl"
+DEFAULT_CONTACTS_FILE = RESERVED_BASENAME + ".pkl"
+DEFAULT_ADDRESS_BOOK_DATABASE_NAME = RESERVED_BASENAME + ".db"
+DEFAULT_JSON_FILE = RESERVED_BASENAME + ".json"
 DEFAULT_NOTES_FILE = "notes.json"
 
 
@@ -29,7 +31,11 @@ class DataPathResolver:
         return filename if filename.endswith(".json") else f"{filename}.json"
 
     @staticmethod
-    def validate_filename(filename: str, allowed_extensions: tuple = ('.pkl', '.json')) -> None:
+    def ensure_db_suffix(filename: str) -> str:
+        return filename if filename.endswith(".db") else f"{filename}.db"
+
+    @staticmethod
+    def validate_filename(filename: str, allowed_extensions: tuple = ('.pkl', '.pickle', '.json', '.db', '.sqlite', '.sqlite3')) -> None:
         checks = [
             (not isinstance(filename, str) or not filename, "Filename must be a non-empty string"),
             (os.path.basename(filename) != filename, "Filename must not contain directories"),
