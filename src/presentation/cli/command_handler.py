@@ -1,15 +1,17 @@
 from typing import Dict, Callable, List
 from difflib import get_close_matches
 from ...application.services.contact_service import ContactService
-from ...application.commands import contact_commands
+from ...application.services.note_service import NoteService
+from ...application.commands import contact_commands, note_commands
 from .error_handler import handle_errors
 from .ui_messages import UIMessages
 
 
 class CommandHandler:
 
-    def __init__(self, contact_service: ContactService):
+    def __init__(self, contact_service: ContactService, note_service: NoteService):
         self.contact_service = contact_service
+        self.note_service = note_service
         self.commands: Dict[str, Callable] = {
             "hello": self._wrap(contact_commands.hello),
             "help": self._wrap(contact_commands.help),
@@ -31,12 +33,24 @@ class CommandHandler:
             "load": self._wrap(contact_commands.load_contacts),
             "search": self._wrap(contact_commands.search),
             "find": self._wrap(contact_commands.find),
+            # Note commands
+            "add-note": self._wrap_note(note_commands.add_note),
+            "show-notes": self._wrap_note(note_commands.show_notes),
+            "edit-note": self._wrap_note(note_commands.edit_note),
+            "delete-note": self._wrap_note(note_commands.delete_note),
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.contact_service)
+        return wrapper
+
+    def _wrap_note(self, command_func: Callable) -> Callable:
+        """Wrapper for note commands"""
+        @handle_errors
+        def wrapper(args: List[str]) -> str:
+            return command_func(args, self.note_service)
         return wrapper
 
     def handle(self, command: str, args: List[str]) -> str:

@@ -22,8 +22,12 @@ class UIMessages:
   remove-address <name>            - Remove address in an existing contact if set
   save <filename>                  - Save address book to file
   load <filename>                  - Load address book from file
-  search <search_text>             - Search matching (not strict) names/emails/phones 
+  search <search_text>             - Search matching (not strict) names/emails/phones
   find <search_text>               - Find exact matching names/emails/phones
+  add-note <text>                  - Add new note
+  show-notes                       - Show all notes
+  edit-note <id> <new text>        - Edit note by ID
+  delete-note <id>                 - Delete note by ID
   close, exit                      - Exit the bot
 """
 
