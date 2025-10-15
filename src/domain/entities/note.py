@@ -1,8 +1,12 @@
+import uuid
+from typing import Optional
+
+from .entity import Entity
 from typing import Callable
 from ..value_objects.tag import Tag
 
 
-class Note:
+class Note(Entity):
 
     def __init__(self, text: str, note_id: str):
         if not text or not text.strip():
