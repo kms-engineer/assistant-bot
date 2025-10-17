@@ -4,3 +4,26 @@ requires = [
     "wheel"
 ]
 build-backend = "setuptools.build_meta"
+[project]
+name = "neoversity-group1-assistant-bot"
+version = "1.0.0"
+dependencies = [
+    "sqlalchemy==2.0.4"
+]
+authors = [
+    { name="Oleksandr Popov", email="oleksandr.popov@outlook.com" },
+]
+description = "Students project for learning Python"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "Apache-2.0"
+license-files = ["LICEN[CS]E*"]
+
+
+[project.urls]
+Homepage = "https://github.com/kms-engineer/assistant-bot"
+Issues = "https://github.com/kms-engineer/assistant-bot/issues"
