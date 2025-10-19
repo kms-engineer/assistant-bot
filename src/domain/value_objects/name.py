@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from ..validators.string_validator import StringValidator
+from ..validators.name_validator import NameValidator
 from .field import Field
 
 
@@ -7,6 +7,7 @@ from .field import Field
 class Name(Field):
 
     def __init__(self, value: str):
-        if not StringValidator.is_not_empty(value):
-            raise ValueError("Name cannot be empty or whitespace.")
+        validation_result = NameValidator.validate(value)
+        if validation_result is not True:
+            raise ValueError(str(validation_result))
         super().__init__(value.strip())
