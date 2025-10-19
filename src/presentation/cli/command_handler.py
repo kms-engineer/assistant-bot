@@ -1,10 +1,12 @@
-from typing import Dict, Callable, List
+import os
 from difflib import get_close_matches
-from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService
-from ...application.commands import contact_commands, note_commands
+from typing import Dict, Callable, List
+
 from .error_handler import handle_errors
 from .ui_messages import UIMessages
+from ...application.commands import contact_commands, note_commands
+from ...application.services.contact_service import ContactService
+from ...application.services.note_service import NoteService
 
 
 class CommandHandler:
@@ -14,7 +16,6 @@ class CommandHandler:
         self.note_service = note_service
         self.commands: Dict[str, Callable] = {
             "hello": self._wrap(contact_commands.hello),
-            "help": self._wrap(contact_commands.help),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
             "delete-contact": self._wrap(contact_commands.delete_contact),
@@ -37,25 +38,35 @@ class CommandHandler:
             "add-note": self._wrap_note(note_commands.add_note),
             "show-notes": self._wrap_note(note_commands.show_notes),
             "edit-note": self._wrap_note(note_commands.edit_note),
-            "delete-note": self._wrap_note(note_commands.delete_note),
+            "delete-note": self._wrap_note(note_commands.delete_note)
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.contact_service)
+
         return wrapper
 
     def _wrap_note(self, command_func: Callable) -> Callable:
         """Wrapper for note commands"""
+
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.note_service)
+
         return wrapper
 
     def handle(self, command: str, args: List[str]) -> str:
         if command in ("close", "exit"):
             return "exit"
+
+        if command == 'help':
+            return UIMessages.COMMAND_LIST
+
+        if command == 'clear':
+            os.system('cls') if os.name == 'nt' else os.system('clear')
+            return command
 
         if command in self.commands:
             return self.commands[command](args)

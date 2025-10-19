@@ -84,7 +84,7 @@ def birthdays(args: List[str], service: ContactService) -> str:
             if days > 365:
                 return f"Max amount of days for upcoming birthdays is 365."
         except ValueError:
-            raise (f"Invalid amount of days ahead: {args[0]}")
+            raise ValueError(f"Invalid amount of days ahead: {args[0]}")
 
     upcoming = service.get_upcoming_birthdays(days)
 
@@ -199,5 +199,3 @@ def load_contacts(args: List[str], service: ContactService) -> str:
 def hello(args: List[str], service: ContactService) -> str:
     return "How can I help you?"
 
-def help(args: List[str], service: ContactService) -> str:
-    return UIMessages.COMMAND_LIST
