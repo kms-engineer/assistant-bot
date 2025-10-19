@@ -45,6 +45,14 @@ data/*.pkl
 data/*.json
 !data/.gitkeep
 
+# Trained models (downloaded from Hugging Face)
+models/assistant-bot-intent-classifier/
+models/assistant-bot-ner-model/
+models/intent_classifier/
+models/ner_model/
+!models/.gitkeep
+!models/README.md
+
 # Logs
 *.log
 logs/

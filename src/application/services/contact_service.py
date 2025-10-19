@@ -123,7 +123,7 @@ class ContactService:
             contact.add_address(address)
             return f"New address is set for {name}"
         else:
-            raise ValueError(f"Address is not set YET for {name}")
+            return self.add_address(name, address)
 
     def remove_address(self, name: str) -> str:
         contact = self.address_book.find(name)

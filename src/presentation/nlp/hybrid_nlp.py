@@ -1,0 +1,434 @@
+from typing import Dict, Tuple
+from .intent_classifier import IntentClassifier
+from .span_extractor import SpanExtractor
+from .ner_model import NERModel
+from .entity_validator import EntityValidator
+from .template_parser import TemplateParser
+from .post_rules import PostProcessingRules
+
+
+class HybridNLP:
+    # Confidence thresholds
+    INTENT_CONFIDENCE_THRESHOLD = 0.6
+    ENTITY_CONFIDENCE_THRESHOLD = 0.5
+
+    def __init__(
+        self,
+        intent_model_path: str = None,
+        ner_model_path: str = None,
+        use_pretrained: bool = True,
+        default_region: str = "US"
+    ):
+        print("Initializing Hybrid NLP System...")
+        print("Architecture: Intent → Regex → Validation → NER → Template Parser\n")
+
+        # Initialize components
+        try:
+            self.intent_classifier = IntentClassifier(
+                model_path=intent_model_path,
+                use_pretrained=use_pretrained
+            )
+            print("Intent Classifier loaded (RoBERTa)")
+        except Exception as e:
+            print(f"Intent Classifier failed: {e}")
+            self.intent_classifier = None
+
+        try:
+            self.span_extractor = SpanExtractor(
+                model_path=None,  # Regex-based, no model needed
+                use_pretrained=use_pretrained
+            )
+            print("Span Extractor loaded (Regex)")
+        except Exception as e:
+            print(f"Span Extractor failed: {e}")
+            self.span_extractor = None
+
+        try:
+            self.ner_model = NERModel(
+                model_path=ner_model_path,
+                use_pretrained=use_pretrained
+            )
+            print("NER Model loaded (RoBERTa Token Classification)")
+        except Exception as e:
+            print(f"NER Model failed: {e}")
+            self.ner_model = None
+
+        try:
+            self.entity_validator = EntityValidator()
+            print("Entity Validator loaded")
+        except Exception as e:
+            print(f"Entity Validator failed: {e}")
+            self.entity_validator = None
+
+        try:
+            self.template_parser = TemplateParser(verbose=False)
+            print("Template Parser loaded (keyword + regex)")
+        except Exception as e:
+            print(f"Template Parser failed: {e}")
+            self.template_parser = None
+
+        try:
+            self.post_processor = PostProcessingRules(default_region=default_region)
+            print("Post-Processing Rules loaded")
+        except Exception as e:
+            print(f"Post-Processing Rules failed: {e}")
+            self.post_processor = None
+
+        print("\nHybrid NLP System ready!\n")
+
+    def process(self, user_text: str, verbose: bool = False) -> Dict:
+        if verbose:
+            print(f"\nProcessing: '{user_text}'")
+            print("=" * 60)
+
+        # Step 1: Intent Classification (RoBERTa)
+        intent, intent_confidence = self._classify_intent(user_text, verbose)
+
+        # Step 2: Regex Entity Extraction
+        entities_regex, spans, entity_probs = self._extract_entities_regex(user_text, verbose)
+
+        # Step 3: Validation Check
+        validation_result = self._validate_entities(entities_regex, intent, verbose)
+
+        # Step 4: Decide on entity source
+        entities = None
+        source = "regex"
+
+        if validation_result['needs_ner']:
+            # Step 4a: Use NER Model
+            entities_ner = self._extract_entities_ner(user_text, verbose)
+            # Merge: prefer NER for missing fields, keep regex for found fields
+            entities = self._merge_entities(entities_regex, entities_ner, validation_result, verbose)
+            source = "ner"
+        else:
+            # Step 4b: Use regex results
+            entities = entities_regex
+
+        # Step 5: Final validation check - use template parser if still invalid
+        final_validation = self._validate_entities(entities, intent, verbose=False)
+
+        if final_validation['needs_ner'] and self._should_use_template_parser(intent, intent_confidence):
+            if verbose:
+                print("[Template Parser] Both regex and NER failed, using Template Parser")
+            result = self._use_template_parser(user_text, intent, entities, verbose)
+            source = "template"
+        else:
+            result = {
+                "intent": intent,
+                "confidence": intent_confidence,
+                "entities": entities,
+                "raw": {
+                    "spans": spans,
+                    "probs": entity_probs,
+                    "source": source
+                }
+            }
+
+        # Step 6: Post-Processing (normalization, validation, enrichment)
+        result = self._post_process(result, verbose)
+
+        if verbose:
+            print("=" * 60)
+            print(f"Final Result: {result['intent']} (confidence: {result['confidence']:.2f})")
+            print(f"Entities: {result['entities']}")
+            print(f"Source: {result['raw']['source']}")
+            print(f"Valid: {result.get('validation', {}).get('valid', 'unknown')}")
+
+        return result
+
+    def _classify_intent(self, text: str, verbose: bool = False) -> Tuple[str, float]:
+        if self.intent_classifier:
+            intent, confidence = self.intent_classifier.predict(text)
+            if verbose:
+                print(f"[Intent] {intent} (confidence: {confidence:.2f})")
+            return intent, confidence
+        else:
+            if verbose:
+                print("[Intent] Classifier not available, using 'help'")
+            return "help", 0.3
+
+    def _extract_entities_regex(self, text: str, verbose: bool = False) -> Tuple[Dict, list, Dict]:
+        if self.span_extractor:
+            entities, spans, probs = self.span_extractor.extract(text)
+            if verbose:
+                print(f"[Regex] Extracted: {entities}")
+                if probs:
+                    print(f"[Regex] Probabilities: {probs}")
+            return entities, spans, probs
+        else:
+            if verbose:
+                print("[Regex] Extractor not available")
+            return {}, [], {}
+
+    def _extract_entities_ner(self, text: str, verbose: bool = False) -> Dict:
+        if self.ner_model:
+            entities = self.ner_model.extract_entities(text, verbose=verbose)
+            if verbose:
+                print(f"[NER Model] Extracted: {entities}")
+            return entities
+        else:
+            if verbose:
+                print("[NER Model] Not available")
+            return {}
+
+    def _validate_entities(self, entities: Dict, intent: str, verbose: bool = False) -> Dict:
+        if self.entity_validator:
+            validation = self.entity_validator.validate(entities, intent)
+            if verbose:
+                print(f"[Validation] Result: {validation}")
+            return validation
+        else:
+            # No validator, assume valid
+            return {
+                "valid": True,
+                "missing_required": [],
+                "optional_count": 0,
+                "optional_needed": 0,
+                "needs_ner": False,
+                "reason": "No validator available"
+            }
+
+    def _merge_entities(
+        self,
+        entities_regex: Dict,
+        entities_ner: Dict,
+        validation_result: Dict,
+        verbose: bool = False
+    ) -> Dict:
+        merged = {}
+
+        # Fields where regex is more accurate (structured data)
+        regex_preferred = {'phone', 'email', 'birthday', 'tag', 'id'}
+
+        # Fields where NER is more accurate (unstructured data)
+        ner_preferred = {'name', 'address'}
+
+        # Get all possible entity keys
+        all_keys = set(entities_regex.keys()) | set(entities_ner.keys())
+
+        for key in all_keys:
+            regex_value = entities_regex.get(key)
+            ner_value = entities_ner.get(key)
+
+            # Context-aware selection
+            if key in regex_preferred:
+                # Prefer regex for structured data
+                if regex_value:
+                    merged[key] = regex_value
+                elif ner_value:
+                    merged[key] = ner_value
+            elif key in ner_preferred:
+                # Prefer NER for unstructured data
+                if ner_value:
+                    merged[key] = ner_value
+                elif regex_value:
+                    merged[key] = regex_value
+            else:
+                # For unknown fields, prefer whichever has higher confidence
+                # Default to regex first (fallback behavior)
+                if regex_value:
+                    merged[key] = regex_value
+                elif ner_value:
+                    merged[key] = ner_value
+
+        if verbose:
+            print(f"[Merge] Regex: {entities_regex}")
+            print(f"[Merge] NER: {entities_ner}")
+            print(f"[Merge] Strategy: regex_preferred={regex_preferred}, ner_preferred={ner_preferred}")
+            print(f"[Merge] Merged: {merged}")
+
+        return merged
+
+    def _should_use_template_parser(self, intent: str, intent_confidence: float) -> bool:
+        return intent_confidence < self.INTENT_CONFIDENCE_THRESHOLD
+
+    def _use_template_parser(
+        self,
+        text: str,
+        intent_hint: str,
+        entities_hint: Dict,
+        verbose: bool = False
+    ) -> Dict:
+        if verbose:
+            print("[Template Parser] Parsing with keyword matching and regex...")
+
+        if self.template_parser:
+            result = self.template_parser.generate_structured_output(
+                text,
+                intent_hint=intent_hint,
+                entities_hint=entities_hint
+            )
+            result['raw']['source'] = 'template'
+
+            # Handle conflict resolution: trust higher confidence
+            if 'intent' in result and intent_hint:
+                if result.get('confidence', 0) < 0.5:
+                    # If template parser has low confidence, keep original intent
+                    result['intent'] = intent_hint
+                    if verbose:
+                        print(f"[Template Parser] Kept original intent '{intent_hint}' due to low parser confidence")
+
+            return result
+        else:
+            # Template parser not available, use primary results
+            if verbose:
+                print("[Template Parser] Not available, using primary results")
+            return {
+                "intent": intent_hint,
+                "confidence": 0.5,
+                "entities": entities_hint,
+                "raw": {"spans": [], "probs": {}, "source": "primary"}
+            }
+
+    def _post_process(self, result: Dict, verbose: bool = False) -> Dict:
+        if verbose:
+            print("[Post-Processing] Normalizing and validating...")
+
+        if self.post_processor:
+            # Process entities
+            processed_entities = self.post_processor.process(
+                result['entities'],
+                result['intent']
+            )
+            result['entities'] = processed_entities
+
+            # Validate entities for intent
+            validation = self.post_processor.validate_entities_for_intent(
+                processed_entities,
+                result['intent']
+            )
+
+            # Add validation errors if any
+            if '_validation_errors' in processed_entities:
+                validation['errors'] = processed_entities['_validation_errors']
+                # Remove from entities
+                del processed_entities['_validation_errors']
+            else:
+                validation['errors'] = []
+
+            result['validation'] = validation
+
+            if verbose:
+                if not validation['valid']:
+                    print(f"[Post-Processing] Missing required entities: {validation['missing']}")
+                if validation['errors']:
+                    print(f"[Post-Processing] Validation errors: {validation['errors']}")
+        else:
+            result['validation'] = {
+                'valid': True,
+                'missing': [],
+                'errors': []
+            }
+
+        return result
+
+    def get_command_args(self, nlp_result: Dict) -> Tuple[str, list]:
+        intent = nlp_result['intent']
+        entities = nlp_result['entities']
+
+        # Map intents to commands
+        # This mapping should match the existing CommandHandler expectations
+        intent_to_command = {
+            'add_contact': 'add',
+            'edit_phone': 'change',
+            'edit_email': 'edit-email',
+            'edit_address': 'edit-address',
+            'delete_contact': 'delete-contact',
+            'list_all_contacts': 'all',
+            'search_contacts': 'search',
+            'add_birthday': 'add-birthday',
+            'list_birthdays': 'birthdays',
+            'add_note': 'add-note',
+            'edit_note': 'edit-note',
+            'delete_note': 'delete-note',
+            'show_notes': 'show-notes',
+            'add_note_tag': 'add-note-tag',
+            'remove_note_tag': 'remove-note-tag',
+            'search_notes_text': 'search-notes-text',
+            'search_notes_by_tag': 'search-notes-by-tag',
+            'hello': 'hello',
+            'help': 'help',
+            'exit': 'exit'
+        }
+
+        command = intent_to_command.get(intent, 'help')
+
+        # Build args list based on intent
+        args = []
+
+        if intent == 'add_contact':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'phone' in entities:
+                args.append(entities['phone'])
+            if 'email' in entities:
+                args.append(entities['email'])
+            if 'address' in entities:
+                args.append(entities['address'])
+
+        elif intent == 'edit_phone':
+            if 'name' in entities:
+                args.append(entities['name'])
+            # Would need old and new phone - this is complex, may need user clarification
+            if 'phone' in entities:
+                args.append(entities.get('old_phone', ''))
+                args.append(entities['phone'])
+
+        elif intent == 'edit_email':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'email' in entities:
+                args.append(entities['email'])
+
+        elif intent == 'edit_address':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'address' in entities:
+                args.append(entities['address'])
+
+        elif intent == 'delete_contact':
+            if 'name' in entities:
+                args.append(entities['name'])
+
+        elif intent == 'search_contacts':
+            if 'name' in entities:
+                args.append(entities['name'])
+
+        elif intent == 'add_birthday':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'birthday' in entities:
+                args.append(entities['birthday'])
+
+        elif intent == 'list_birthdays':
+            args.append('7')  # Default 7 days
+
+        elif intent == 'add_note':
+            if 'note_text' in entities:
+                args.append(entities['note_text'])
+
+        elif intent == 'edit_note':
+            if 'id' in entities:
+                args.append(entities['id'])
+            if 'note_text' in entities:
+                args.append(entities['note_text'])
+
+        elif intent == 'delete_note':
+            if 'id' in entities:
+                args.append(entities['id'])
+
+        elif intent in ['add_note_tag', 'remove_note_tag']:
+            if 'id' in entities:
+                args.append(entities['id'])
+            if 'tag' in entities:
+                args.append(entities['tag'])
+
+        elif intent == 'search_notes_text':
+            if 'note_text' in entities:
+                args.append(entities['note_text'])
+
+        elif intent == 'search_notes_by_tag':
+            if 'tag' in entities:
+                args.append(entities['tag'])
+
+        return command, args
