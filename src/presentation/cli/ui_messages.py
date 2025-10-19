@@ -22,8 +22,12 @@ class UIMessages:
   remove-address <name>            - Remove address in an existing contact if set
   save <filename>                  - Save address book to file
   load <filename>                  - Load address book from file
-  search <search_text>             - Search matching (not strict) names/emails/phones 
+  search <search_text>             - Search matching (not strict) names/emails/phones
   find <search_text>               - Find exact matching names/emails/phones
+  add-note <text>                  - Add new note
+  show-notes                       - Show all notes
+  edit-note <id> <new text>        - Edit note by ID
+  delete-note <id>                 - Delete note by ID
   close, exit                      - Exit the bot
 """
 
@@ -32,12 +36,12 @@ class UIMessages:
     LOADING = "Loading address book..."
 
     @staticmethod
-    def saved_successfully(filename: str) -> str:
-        return f"Address book saved to file: {filename}"
+    def saved_successfully(entity: str, filename: str) -> str:
+        return f"{entity} saved to file: {filename}"
 
     @staticmethod
-    def loaded_successfully(count: int) -> str:
-        return f"Address book loaded. {count} contact(s) found.\n"
+    def loaded_successfully(entity: str, count: int) -> str:
+        return f"{entity} loaded. {count} contact(s) found.\n"
 
     @staticmethod
     def error(message: str) -> str:

@@ -1,3 +1,10 @@
+import uuid
+from typing import Optional
+
+from .entity import Entity
+from ..validators.phone_validator import PhoneValidator
+from ..value_objects.name import Name
+from ..value_objects.phone import Phone
 from typing import Optional, Callable
 
 from ..value_objects.address import Address
@@ -7,7 +14,7 @@ from ..value_objects.name import Name
 from ..value_objects.phone import Phone
 
 
-class Contact:
+class Contact(Entity):
 
     def __init__(self, name: str, contact_id: str):
         if not contact_id:
@@ -31,7 +38,7 @@ class Contact:
         self.phones.append(phone_obj)
 
     def find_phone(self, phone: str) -> Phone:
-        norm = Phone.normalize(phone)
+        norm = PhoneValidator.normalize(phone)
         for p in self.phones:
             if p.value == norm:
                 return p
