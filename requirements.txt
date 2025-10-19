@@ -1,2 +1,2 @@
 # Python 3.10+ is recommended
-sqlalchemy>=2.0.4
+sqlalchemy==2.0.4
