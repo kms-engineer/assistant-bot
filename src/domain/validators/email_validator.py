@@ -1,34 +1,55 @@
 import re
+from typing import Union
 from .string_validator import StringValidator
 
 
 class EmailValidator:
-    MAX_LENGTH = 100
-    # Basic email regex pattern
-    EMAIL_PATTERN = r'^[a-zA-Z0-9][a-zA-Z0-9._-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$'
+    """Validator for email field with comprehensive validation rules."""
+
+    # Pre-compiled regex pattern for email validation
+    # Basic email pattern: localpart@domain.tld
+    _EMAIL_PATTERN = re.compile(
+        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    )
+
+    # Error message constants
+    ERROR_EMPTY = "Email cannot be empty or whitespace"
+    ERROR_INVALID_FORMAT = "Email must be a valid email address (e.g., user@example.com)"
 
     @staticmethod
-    def validate(value):
+    def validate(email: str) -> Union[str, bool]:
         """
-        Validates an email address.
+        Validate email field according to business rules.
+
+        Validation rules:
+        - Cannot be empty or whitespace only
+        - Must match standard email format: localpart@domain.tld
+        - Allows alphanumeric, dots, underscores, percent, plus, and hyphens in local part
+        - Domain must have at least one dot and valid TLD
+
+        Args:
+            email: The email string to validate
 
         Returns:
-            True if valid, or an error message string if invalid
+            True if valid, error message string if invalid
+
+        Examples:
+            >>> EmailValidator.validate("user@example.com")
+            True
+            >>> EmailValidator.validate("invalid-email")
+            'Email must be a valid email address (e.g., user@example.com)'
+            >>> EmailValidator.validate("")
+            'Email cannot be empty or whitespace'
         """
-        # Check if value is a string
-        if not StringValidator.is_string(value):
-            return "Email must be a string"
+        # Check if not empty
+        if not StringValidator.is_not_empty(email):
+            return EmailValidator.ERROR_EMPTY
 
-        # Check if empty or whitespace
-        if StringValidator.is_empty(value):
-            return "Email cannot be empty or whitespace"
+        # Trim and convert to lowercase for validation
+        trimmed_email = email.strip().lower()
 
-        # Check max length
-        if len(value) > EmailValidator.MAX_LENGTH:
-            return f"Email cannot exceed {EmailValidator.MAX_LENGTH} characters. Current length: {len(value)}"
-
-        # Check email format
-        if not re.match(EmailValidator.EMAIL_PATTERN, value):
-            return f"Email format is invalid. Current value: {value}"
+        # Format validation: must match email pattern
+        if not EmailValidator._EMAIL_PATTERN.fullmatch(trimmed_email):
+            return EmailValidator.ERROR_INVALID_FORMAT
 
         return True

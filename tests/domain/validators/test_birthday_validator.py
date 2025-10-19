@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from src.domain.validators.birthday_validator import BirthdayValidator
 
 # Based on the current date: Tuesday, October 14, 2025
-TODAY = datetime(2025, 10, 14)
+TODAY = datetime.now().date()
 CURRENT_YEAR = TODAY.year
 
 @pytest.mark.parametrize("valid_birthday", [
