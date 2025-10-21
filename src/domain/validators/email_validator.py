@@ -1,10 +1,9 @@
 import re
-from typing import Union
+from typing import Union, Dict
 from .string_validator import StringValidator
 
 
 class EmailValidator:
-    """Validator for email field with comprehensive validation rules."""
 
     # Pre-compiled regex pattern for email validation
     # Basic email pattern: localpart@domain.tld
@@ -18,29 +17,6 @@ class EmailValidator:
 
     @staticmethod
     def validate(email: str) -> Union[str, bool]:
-        """
-        Validate email field according to business rules.
-
-        Validation rules:
-        - Cannot be empty or whitespace only
-        - Must match standard email format: localpart@domain.tld
-        - Allows alphanumeric, dots, underscores, percent, plus, and hyphens in local part
-        - Domain must have at least one dot and valid TLD
-
-        Args:
-            email: The email string to validate
-
-        Returns:
-            True if valid, error message string if invalid
-
-        Examples:
-            >>> EmailValidator.validate("user@example.com")
-            True
-            >>> EmailValidator.validate("invalid-email")
-            'Email must be a valid email address (e.g., user@example.com)'
-            >>> EmailValidator.validate("")
-            'Email cannot be empty or whitespace'
-        """
         # Check if not empty
         if not StringValidator.is_not_empty(email):
             return EmailValidator.ERROR_EMPTY
@@ -53,3 +29,43 @@ class EmailValidator:
             return EmailValidator.ERROR_INVALID_FORMAT
 
         return True
+
+    @staticmethod
+    def validate_and_raise(email: str) -> None:
+        result = EmailValidator.validate(email)
+        if result is not True:
+            raise ValueError(result)
+
+    @staticmethod
+    def normalize_for_nlp(entities: Dict) -> Dict:
+        if 'email' not in entities or not entities['email']:
+            return entities
+
+        email_raw = entities['email']
+
+        try:
+            from email_validator import validate_email, EmailNotValidError
+
+            # Validate email
+            validated = validate_email(email_raw, check_deliverability=False)
+            entities['email'] = validated.normalized
+            entities['_email_valid'] = True
+
+        except EmailNotValidError as e:
+            entities['_email_valid'] = False
+            if '_validation_errors' not in entities:
+                entities['_validation_errors'] = []
+            entities['_validation_errors'].append(f"Invalid email: {e}")
+        except ImportError:
+            # Fallback to basic validation if library not available
+            result = EmailValidator.validate(email_raw)
+            if result is True:
+                entities['email'] = email_raw.strip().lower()
+                entities['_email_valid'] = True
+            else:
+                entities['_email_valid'] = False
+                if '_validation_errors' not in entities:
+                    entities['_validation_errors'] = []
+                entities['_validation_errors'].append(str(result))
+
+        return entities

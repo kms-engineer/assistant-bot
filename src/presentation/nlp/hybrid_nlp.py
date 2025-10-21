@@ -96,9 +96,13 @@ class HybridNLP:
 
         if validation_result['needs_ner']:
             # Step 4a: Use NER Model
-            entities_ner = self._extract_entities_ner(user_text, verbose)
+            entities_ner, ner_confidences = self._extract_entities_ner(user_text, verbose)
             # Merge: prefer NER for missing fields, keep regex for found fields
-            entities = self._merge_entities(entities_regex, entities_ner, validation_result, verbose)
+            entities = self._merge_entities(
+                entities_regex, entities_ner,
+                entity_probs, ner_confidences,
+                validation_result, verbose
+            )
             source = "ner"
         else:
             # Step 4b: Use regex results
@@ -160,16 +164,17 @@ class HybridNLP:
                 print("[Regex] Extractor not available")
             return {}, [], {}
 
-    def _extract_entities_ner(self, text: str, verbose: bool = False) -> Dict:
+    def _extract_entities_ner(self, text: str, verbose: bool = False) -> Tuple[Dict, Dict]:
         if self.ner_model:
-            entities = self.ner_model.extract_entities(text, verbose=verbose)
+            entities, confidences = self.ner_model.extract_entities(text, verbose=verbose)
             if verbose:
                 print(f"[NER Model] Extracted: {entities}")
-            return entities
+                print(f"[NER Model] Confidences: {confidences}")
+            return entities, confidences
         else:
             if verbose:
                 print("[NER Model] Not available")
-            return {}
+            return {}, {}
 
     def _validate_entities(self, entities: Dict, intent: str, verbose: bool = False) -> Dict:
         if self.entity_validator:
@@ -192,6 +197,8 @@ class HybridNLP:
         self,
         entities_regex: Dict,
         entities_ner: Dict,
+        regex_confidences: Dict,
+        ner_confidences: Dict,
         validation_result: Dict,
         verbose: bool = False
     ) -> Dict:
@@ -201,7 +208,10 @@ class HybridNLP:
         regex_preferred = {'phone', 'email', 'birthday', 'tag', 'id'}
 
         # Fields where NER is more accurate (unstructured data)
-        ner_preferred = {'name', 'address'}
+        ner_preferred = {'name', 'address', 'note_text'}
+
+        # Confidence threshold for overriding preferences
+        CONFIDENCE_OVERRIDE_THRESHOLD = 0.3  # If confidence difference > 0.3, override preference
 
         # Get all possible entity keys
         all_keys = set(entities_regex.keys()) | set(entities_ner.keys())
@@ -210,32 +220,60 @@ class HybridNLP:
             regex_value = entities_regex.get(key)
             ner_value = entities_ner.get(key)
 
-            # Context-aware selection
-            if key in regex_preferred:
-                # Prefer regex for structured data
-                if regex_value:
+            # Get confidence scores (default to 1.0 for regex, 0.5 for NER if not available)
+            regex_conf = regex_confidences.get(key, 1.0 if regex_value else 0.0)
+            ner_conf = ner_confidences.get(key, 0.5 if ner_value else 0.0)
+
+            # If only one source has the entity, use it
+            if regex_value and not ner_value:
+                merged[key] = regex_value
+                if verbose:
+                    print(f"[Merge] {key}: Using regex (only source) - '{regex_value}'")
+                continue
+            elif ner_value and not regex_value:
+                merged[key] = ner_value
+                if verbose:
+                    print(f"[Merge] {key}: Using NER (only source) - '{ner_value}'")
+                continue
+            elif not regex_value and not ner_value:
+                continue
+
+            # Both sources have the entity - use confidence-based selection
+            confidence_diff = abs(regex_conf - ner_conf)
+
+            if confidence_diff > CONFIDENCE_OVERRIDE_THRESHOLD:
+                # Significant confidence difference - use higher confidence source
+                if regex_conf > ner_conf:
                     merged[key] = regex_value
-                elif ner_value:
+                    if verbose:
+                        print(f"[Merge] {key}: Using regex (higher confidence {regex_conf:.2f} > {ner_conf:.2f}) - '{regex_value}'")
+                else:
                     merged[key] = ner_value
-            elif key in ner_preferred:
-                # Prefer NER for unstructured data
-                if ner_value:
-                    merged[key] = ner_value
-                elif regex_value:
-                    merged[key] = regex_value
+                    if verbose:
+                        print(f"[Merge] {key}: Using NER (higher confidence {ner_conf:.2f} > {regex_conf:.2f}) - '{ner_value}'")
             else:
-                # For unknown fields, prefer whichever has higher confidence
-                # Default to regex first (fallback behavior)
-                if regex_value:
+                # Similar confidence - use preference-based selection
+                if key in regex_preferred:
                     merged[key] = regex_value
-                elif ner_value:
+                    if verbose:
+                        print(f"[Merge] {key}: Using regex (preferred for structured data, conf={regex_conf:.2f}) - '{regex_value}'")
+                elif key in ner_preferred:
                     merged[key] = ner_value
+                    if verbose:
+                        print(f"[Merge] {key}: Using NER (preferred for unstructured data, conf={ner_conf:.2f}) - '{ner_value}'")
+                else:
+                    # No preference - use higher confidence
+                    if regex_conf >= ner_conf:
+                        merged[key] = regex_value
+                        if verbose:
+                            print(f"[Merge] {key}: Using regex (conf={regex_conf:.2f} >= {ner_conf:.2f}) - '{regex_value}'")
+                    else:
+                        merged[key] = ner_value
+                        if verbose:
+                            print(f"[Merge] {key}: Using NER (conf={ner_conf:.2f} > {regex_conf:.2f}) - '{ner_value}'")
 
         if verbose:
-            print(f"[Merge] Regex: {entities_regex}")
-            print(f"[Merge] NER: {entities_ner}")
-            print(f"[Merge] Strategy: regex_preferred={regex_preferred}, ner_preferred={ner_preferred}")
-            print(f"[Merge] Merged: {merged}")
+            print(f"[Merge] Final merged: {merged}")
 
         return merged
 

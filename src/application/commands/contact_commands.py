@@ -2,22 +2,30 @@ from typing import List
 
 from ..services.contact_service import ContactService
 from ...presentation.cli.ui_messages import UIMessages
+from ...domain.value_objects.name import Name
+from ...domain.value_objects.phone import Phone
+from ...domain.value_objects.email import Email
+from ...domain.value_objects.address import Address
+from ...domain.value_objects.birthday import Birthday
 
 
 def add_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Add command requires 2 arguments: name and phone")
 
-    name, phone = args[0], args[1]
-    return service.add_contact(name, phone)
+    name_vo = Name(args[0])
+    phone_vo = Phone(args[1])
+    return service.add_contact(name_vo, phone_vo)
 
 
 def change_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 3:
         raise ValueError("Change command requires 3 arguments: name, old phone, and new phone")
 
-    name, old_phone, new_phone = args[0], args[1], args[2]
-    return service.change_phone(name, old_phone, new_phone)
+    name = args[0]
+    old_phone_vo = Phone(args[1])
+    new_phone_vo = Phone(args[2])
+    return service.change_phone(name, old_phone_vo, new_phone_vo)
 
 
 def delete_contact(args: List[str], service: ContactService) -> str:
@@ -58,8 +66,9 @@ def add_birthday(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Add-birthday command requires 2 arguments: name and birthday (DD.MM.YYYY)")
 
-    name, birthday = args[0], args[1]
-    return service.add_birthday(name, birthday)
+    name = args[0]
+    birthday_vo = Birthday(args[1])
+    return service.add_birthday(name, birthday_vo)
 
 
 def show_birthday(args: List[str], service: ContactService) -> str:
@@ -101,16 +110,18 @@ def add_email(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Add-email command requires 2 arguments: name and email")
 
-    name, email = args[0], args[1]
-    return service.add_email(name, email)
+    name = args[0]
+    email_vo = Email(args[1])
+    return service.add_email(name, email_vo)
 
 
 def edit_email(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-email command requires 2 arguments: name and new email adress")
 
-    name, email = args[0], args[1]
-    return service.edit_email(name, email)
+    name = args[0]
+    email_vo = Email(args[1])
+    return service.edit_email(name, email_vo)
 
 
 def remove_email(args: List[str], service: ContactService):
@@ -126,16 +137,17 @@ def add_address(args: List[str], service: ContactService) -> str:
         raise ValueError("Add-address command requires 2 arguments: name and address")
 
     name = args[0]
-    address = " ".join(args[1:])
-    return service.add_address(name, address)
+    address_vo = Address(" ".join(args[1:]))
+    return service.add_address(name, address_vo)
 
 
 def edit_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-address command requires 2 arguments: name and new adress")
 
-    name, address = args[0], " ".join(args[1:])
-    return service.edit_address(name, address)
+    name = args[0]
+    address_vo = Address(" ".join(args[1:]))
+    return service.edit_address(name, address_vo)
 
 
 def remove_address(args: List[str], service: ContactService):
@@ -199,5 +211,5 @@ def load_contacts(args: List[str], service: ContactService) -> str:
 def hello(args: List[str], service: ContactService) -> str:
     return "How can I help you?"
 
-def help(args: List[str], service: ContactService) -> str:
-    return UIMessages.COMMAND_LIST
+def help(args: List[str], service: ContactService, nlp_mode: bool = False) -> str:
+    return UIMessages.get_command_list(nlp_mode)

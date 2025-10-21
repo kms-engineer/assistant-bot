@@ -1,4 +1,5 @@
 import argparse
+from difflib import get_close_matches
 from src.application.services.note_service import NoteService
 from src.infrastructure.storage.storage_factory import StorageFactory
 from src.infrastructure.storage.storage_type import StorageType
@@ -69,7 +70,17 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
             nlp_result = nlp_manager.process_input(user_input, verbose=False)
 
             if nlp_result is None:
-                return "NLP processor not available. Please try rephrasing your command."
+                # NLP processor not available - suggest similar commands
+                return _get_nlp_failure_message(user_input, handler)
+
+            # Check confidence - if very low, suggest commands
+            confidence = nlp_result.get('confidence', 0.0)
+            LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
+
+            if confidence < LOW_CONFIDENCE_THRESHOLD:
+                # Low confidence result - might be wrong, suggest alternatives
+                suggestion_msg = _get_nlp_failure_message(user_input, handler)
+                return f"Low confidence understanding (confidence: {confidence:.2f}).\n{suggestion_msg}"
 
             # Check if validation passed
             if nlp_result.get('validation', {}).get('valid', False):
@@ -91,9 +102,28 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
 
                 return response
         except Exception as e:
-            return f"NLP processing error: {e}\nPlease try rephrasing your command."
+            # NLP processing failed - suggest similar commands
+            return _get_nlp_failure_message(user_input, handler, error=str(e))
 
-    return ""
+    # NLP manager not available
+    return _get_nlp_failure_message(user_input, handler)
+
+
+def _get_nlp_failure_message(user_input: str, handler: CommandHandler, error: str = None) -> str:
+    # Get example phrases for NLP
+    examples = handler.get_nlp_command_examples()
+
+    # Try to find similar command examples
+    suggestions = get_close_matches(user_input.lower(), examples, n=1, cutoff=0.6)
+
+    base_message = "Could not understand the command."
+    if error:
+        base_message = f"NLP processing error: {error}"
+
+    if suggestions:
+        return f"{base_message}\n\nDid you mean: \"{suggestions[0]}\"?\n\nType 'help' for all available commands."
+    else:
+        return f"{base_message}\n\nPlease try rephrasing or type 'help' for available commands."
 
 
 def main() -> None:
@@ -126,17 +156,21 @@ def main() -> None:
         print(f"Failed to load notes: {e}. Starting with empty notes.")
 
     parser = CommandParser()
-    handler = CommandHandler(contact_service, note_service)
     regex_gate = RegexCommandGate()
 
     # Initialize NLP manager for NLP mode
     nlp_manager = None
-    if mode == CLIMode.NLP:
+    is_nlp_mode = mode == CLIMode.NLP
+    if is_nlp_mode:
         from .nlp_manager import NLPManager
         nlp_manager = NLPManager()
         nlp_manager.initialize_nlp_processor(use_pretrained=True)
 
-    print(UIMessages.WELCOME + '\n\n' + UIMessages.COMMAND_LIST)
+    # Create handler with nlp_mode flag
+    handler = CommandHandler(contact_service, note_service, nlp_mode=is_nlp_mode)
+
+    # Show mode-appropriate help
+    print(UIMessages.WELCOME + '\n\n' + UIMessages.get_command_list(is_nlp_mode))
 
     while True:
         try:

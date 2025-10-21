@@ -8,7 +8,11 @@ def handle_errors(func: Callable) -> Callable:
         try:
             return func(*args, **kwargs)
         except KeyError as e:
-            return f"Contact not found: {e}"
+            error_msg = str(e).strip("'\"")
+            if "Note" in error_msg:
+                return f"Note not found: {error_msg}"
+            else:
+                return f"Contact not found: {error_msg}"
         except ValueError as e:
             return f"Error: {e}"
         except IndexError as e:

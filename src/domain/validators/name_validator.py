@@ -1,10 +1,9 @@
 import re
-from typing import Union
+from typing import Union, Dict
 from .string_validator import StringValidator
 
 
 class NameValidator:
-    """Validator for name field with comprehensive validation rules."""
 
     MIN_LENGTH = 2
     MAX_LENGTH = 50
@@ -21,31 +20,6 @@ class NameValidator:
 
     @staticmethod
     def validate(name: str) -> Union[str, bool]:
-        """
-        Validate name field according to business rules.
-
-        Validation rules:
-        - Cannot be empty or whitespace only
-        - Must be between 2 and 50 characters (after trimming)
-        - Only allows letters (including international), spaces, and hyphens
-        - Supports names like: "John", "Mary-Jane", "José García"
-
-        Args:
-            name: The name string to validate
-
-        Returns:
-            True if valid, error message string if invalid
-
-        Examples:
-            >>> NameValidator.validate("John Doe")
-            True
-            >>> NameValidator.validate("A")
-            'Name must be at least 2 characters long'
-            >>> NameValidator.validate("John123")
-            'Name can only contain letters, spaces, and hyphens'
-            >>> NameValidator.validate("")
-            'Name cannot be empty or whitespace'
-        """
         # Check if not empty
         if not StringValidator.is_not_empty(name):
             return NameValidator.ERROR_EMPTY
@@ -66,3 +40,35 @@ class NameValidator:
             return NameValidator.ERROR_INVALID_CHARS
 
         return True
+
+    @staticmethod
+    def validate_and_raise(name: str) -> None:
+        result = NameValidator.validate(name)
+        if result is not True:
+            raise ValueError(result)
+
+    @staticmethod
+    def normalize_for_nlp(entities: Dict) -> Dict:
+        if 'name' not in entities or not entities['name']:
+            return entities
+
+        name_raw = entities['name'].strip()
+
+        # Capitalize each word
+        name_cleaned = ' '.join(word.capitalize() for word in name_raw.split())
+
+        # Remove extra whitespace
+        name_cleaned = re.sub(r'\s+', ' ', name_cleaned)
+
+        entities['name'] = name_cleaned
+
+        # Validate: should have at least 2 characters
+        if len(name_cleaned) < 2:
+            entities['_name_valid'] = False
+            if '_validation_errors' not in entities:
+                entities['_validation_errors'] = []
+            entities['_validation_errors'].append(f"Name too short: {name_cleaned}")
+        else:
+            entities['_name_valid'] = True
+
+        return entities

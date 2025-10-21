@@ -3,6 +3,11 @@ from typing import Optional
 from ...domain.address_book import AddressBook
 from ...domain.entities.contact import Contact
 from ...domain.utils.id_generator import IDGenerator
+from ...domain.value_objects.name import Name
+from ...domain.value_objects.phone import Phone
+from ...domain.value_objects.email import Email
+from ...domain.value_objects.address import Address
+from ...domain.value_objects.birthday import Birthday
 from ...infrastructure.storage.storage import Storage
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_CONTACTS_FILE
 from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
@@ -41,9 +46,9 @@ class ContactService:
         self._current_filename = saved_filename
         return saved_filename
 
-    def add_contact(self, name: str, phone: str) -> str:
+    def add_contact(self, name: Name, phone: Phone) -> str:
         try:
-            contact = self.address_book.find(name)
+            contact = self.address_book.find(name.value)
             contact.add_phone(phone)
             return "Contact updated."
         except KeyError:
@@ -57,7 +62,7 @@ class ContactService:
             self.address_book.add_record(contact)
             return "Contact added."
 
-    def change_phone(self, name: str, old_phone: str, new_phone: str) -> str:
+    def change_phone(self, name: str, old_phone: Phone, new_phone: Phone) -> str:
         contact = self.address_book.find(name)
         contact.edit_phone(old_phone, new_phone)
         return "Contact phone number updated."
@@ -73,7 +78,7 @@ class ContactService:
     def get_all_contacts(self) -> list[Contact]:
         return list(self.address_book.data.values())
 
-    def add_birthday(self, name: str, birthday: str) -> str:
+    def add_birthday(self, name: str, birthday: Birthday) -> str:
         contact = self.address_book.find(name)
         contact.add_birthday(birthday)
         return f"Birthday added for {name}."
@@ -85,12 +90,12 @@ class ContactService:
     def get_upcoming_birthdays(self, days_ahead) -> list[dict]:
         return self.address_book.get_upcoming_birthdays(days_ahead)
 
-    def add_email(self, name: str, email: str) -> str:
+    def add_email(self, name: str, email: Email) -> str:
         contact = self.address_book.find(name)
         contact.add_email(email)
         return f"Email added for {name}."
 
-    def edit_email(self, name: str, email: str) -> str:
+    def edit_email(self, name: str, email: Email) -> str:
         contact = self.address_book.find(name)
         if contact.email:
             # I keep it in method due to security and scaling reasons
@@ -112,12 +117,12 @@ class ContactService:
         else:
             raise ValueError(f"Can't remove email for {name}.\nEmail is not set yet.")
 
-    def add_address(self, name: str, address: str) -> str:
+    def add_address(self, name: str, address: Address) -> str:
         contact = self.address_book.find(name)
         contact.add_address(address)
         return f"Address added for {name}."
 
-    def edit_address(self, name: str, address: str):
+    def edit_address(self, name: str, address: Address):
         contact = self.address_book.find(name)
         if contact.address:
             contact.remove_address()

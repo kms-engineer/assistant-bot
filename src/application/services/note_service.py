@@ -1,5 +1,6 @@
 from typing import Optional, Set
 from ...domain.entities.note import Note
+from ...domain.value_objects.tag import Tag
 from ...infrastructure.storage.storage import Storage
 from ...domain.utils.id_generator import IDGenerator
 from ...infrastructure.storage.json_storage import JsonStorage
@@ -15,7 +16,7 @@ class NoteService:
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.notes = {}
-        if storage.storage_type == StorageType.SQLITE:
+        if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
         else:
             self._current_filename = DEFAULT_NOTES_FILE
@@ -66,13 +67,13 @@ class NoteService:
         del self.notes[note_id]
         return "Note deleted."
 
-    def add_tag(self, note_id: str, tag: str) -> str:
+    def add_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].add_tag(tag)
         return "Tag added."
 
-    def remove_tag(self, note_id: str, tag: str) -> str:
+    def remove_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].remove_tag(tag)

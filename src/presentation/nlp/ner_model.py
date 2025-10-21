@@ -88,12 +88,18 @@ class NERModel:
             self.ner_pipeline = None
             self.id2label = self.ID2LABEL
 
-    def extract_entities(self, text: str, verbose: bool = False) -> Dict[str, str]:
+    def extract_entities(self, text: str, verbose: bool = False) -> Tuple[Dict[str, str], Dict[str, float]]:
+        """
+        Extract entities from text.
+
+        Returns:
+            Tuple of (entities dict, confidence scores dict)
+        """
         if not self.is_finetuned:
             # Model not trained, use fallback regex extraction
             if verbose:
                 print("[NER] Model not trained, using fallback regex")
-            return self._regex_fallback(text)
+            return self._regex_fallback(text), {}
 
         if verbose:
             print(f"[NER] Extracting entities from: '{text}'")
@@ -102,21 +108,28 @@ class NERModel:
         try:
             ner_results = self.ner_pipeline(text)
 
-            # Parse results into structured format
-            entities = self._parse_ner_results(ner_results, text)
+            # Parse results into structured format with confidence scores
+            entities, confidences = self._parse_ner_results(ner_results, text)
 
             if verbose:
                 print(f"[NER] Extracted entities: {entities}")
+                print(f"[NER] Confidence scores: {confidences}")
 
-            return entities
+            return entities, confidences
 
         except Exception as e:
             if verbose:
                 print(f"[NER] Error during extraction: {e}")
             # Fallback to regex on error
-            return self._regex_fallback(text)
+            return self._regex_fallback(text), {}
 
-    def _parse_ner_results(self, ner_results: List[Dict], text: str) -> Dict[str, str]:
+    def _parse_ner_results(self, ner_results: List[Dict], text: str) -> Tuple[Dict[str, str], Dict[str, float]]:
+        """
+        Parse NER results and extract confidence scores.
+
+        Returns:
+            Tuple of (entities dict, confidence scores dict)
+        """
         entities = {
             "name": None,
             "phone": None,
@@ -129,10 +142,15 @@ class NERModel:
             "days": None
         }
 
+        # Track confidence scores for each entity
+        confidences = {}
+        entity_scores = {}  # Accumulate scores for multi-token entities
+
         # Group entities by type
         for result in ner_results:
             entity_group = result['entity_group']  # e.g., "NAME", "PHONE"
             word = result['word'].strip()
+            score = result.get('score', 1.0)  # Confidence score from model
 
             # Clean up RoBERTa tokenization artifacts
             word = word.replace('Ġ', ' ').strip()
@@ -144,6 +162,7 @@ class NERModel:
             if entity_key in entities:
                 if entities[entity_key] is None:
                     entities[entity_key] = word
+                    entity_scores[entity_key] = [score]
                 else:
                     # Append to existing entity
                     if entity_key in ["phone", "email", "birthday", "id"]:
@@ -152,13 +171,17 @@ class NERModel:
                     else:
                         # Spaces for text fields
                         entities[entity_key] += " " + word
+                    entity_scores[entity_key].append(score)
 
-        # Clean up extracted entities
+        # Clean up extracted entities and calculate average confidence
         for key in entities:
             if entities[key]:
                 entities[key] = entities[key].strip()
+                # Average confidence for multi-token entities
+                if key in entity_scores:
+                    confidences[key] = sum(entity_scores[key]) / len(entity_scores[key])
 
-        return entities
+        return entities, confidences
 
     def _regex_fallback(self, text: str) -> Dict[str, str]:
         import re

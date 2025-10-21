@@ -1,10 +1,9 @@
 import re
-from typing import Union
+from typing import Union, Dict
 from .string_validator import StringValidator
 
 
 class AddressValidator:
-    """Validator for address field with comprehensive validation rules."""
 
     MIN_LENGTH = 5
     MAX_LENGTH = 200
@@ -20,29 +19,6 @@ class AddressValidator:
 
     @staticmethod
     def validate(address: str) -> Union[str, bool]:
-        """
-        Validate address field according to business rules.
-
-        Validation rules:
-        - Cannot be empty or whitespace only
-        - Must be between 5 and 200 characters (after trimming)
-        - Must contain at least one alphanumeric character
-        - Only allows letters, numbers, spaces, and punctuation (.,/-#)
-
-        Args:
-            address: The address string to validate
-
-        Returns:
-            True if valid, error message string if invalid
-
-        Examples:
-            >>> AddressValidator.validate("123 Main Street")
-            True
-            >>> AddressValidator.validate("ab")
-            'Address must be at least 5 characters long'
-            >>> AddressValidator.validate("")
-            'Address cannot be empty or whitespace'
-        """
         # Check if not empty
         if not StringValidator.is_not_empty(address):
             return AddressValidator.ERROR_EMPTY
@@ -64,3 +40,34 @@ class AddressValidator:
             return AddressValidator.ERROR_INVALID_CHARS
 
         return True
+
+    @staticmethod
+    def validate_and_raise(address: str) -> None:
+        result = AddressValidator.validate(address)
+        if result is not True:
+            raise ValueError(result)
+
+    @staticmethod
+    def normalize_for_nlp(entities: Dict) -> Dict:
+        if 'address' not in entities or not entities['address']:
+            return entities
+
+        address_raw = entities['address'].strip()
+
+        # Try to extract city (capitalized word(s) at the end)
+        city_match = re.search(r',\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)$', address_raw)
+        if city_match:
+            entities['city'] = city_match.group(1)
+        else:
+            city_pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)\b$'
+            match = re.search(city_pattern, address_raw)
+            if match:
+                potential_city = match.group(1)
+                # Exclude common street suffixes
+                if potential_city.lower() not in ['street', 'road', 'avenue', 'drive', 'lane']:
+                    entities['city'] = potential_city
+
+        # Normalize whitespace
+        entities['address'] = re.sub(r'\s+', ' ', address_raw)
+
+        return entities

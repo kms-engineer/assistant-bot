@@ -3,6 +3,8 @@ from typing import Optional
 
 class UIMessages:
     WELCOME = "Welcome to the assistant bot!"
+
+    # Classic mode command list (technical format)
     COMMAND_LIST = """Available commands:
   hello                            - Show greeting
   help                             - Show commands list
@@ -28,12 +30,75 @@ class UIMessages:
   show-notes                       - Show all notes
   edit-note <id> <new text>        - Edit note by ID
   delete-note <id>                 - Delete note by ID
+  add-tag <note_id> <tag>          - Add tag to note
+  remove-tag <note_id> <tag>       - Remove tag from note
+  search-notes <query>             - Search notes by text content
+  search-by-tag <tag>              - Search notes by tag
   close, exit                      - Exit the bot
+"""
+
+    # NLP mode command list (natural language format)
+    NLP_COMMAND_LIST = """You can talk to me naturally! Here are some things you can say:
+
+📇 CONTACT MANAGEMENT:
+  • "Add <name> to my contacts with phone <phone>" (name and phone required)
+  • "Add <name> with phone <phone> and birthday <DD.MM.YYYY>"
+  • "Add <name> with phone <phone> and email <email>"
+  • "Add <name> with phone <phone> from <address>"
+  • "Change phone for <name> from <old phone> to <new phone>"
+  • "Delete contact <name>"
+  • "Show phone for <name>"
+  • "Show all contacts"
+
+🎂 BIRTHDAYS:
+  • "Add birthday <DD.MM.YYYY> for <name>"
+  • "Show birthday for <name>"
+  • "Show upcoming birthdays" (for next 7 days)
+  • "Show birthdays for next <days> days" (max 365 days)
+
+📧 EMAIL & ADDRESS:
+  • "Add email <email> for <name>"
+  • "Edit email for <name> to <new email>"
+  • "Remove email from <name>"
+  • "Add address <address> for <name>"
+  • "Edit address for <name> to <new address>"
+  • "Remove address from <name>"
+
+🔍 SEARCH:
+  • "Search for <text>" (partial match in names, emails, phones)
+  • "Find exact <text>" (exact match only)
+
+📝 NOTES:
+  • "Add note: <text>"
+  • "Show all notes"
+  • "Edit note <id> with text: <new text>"
+  • "Delete note <id>"
+  • "Add tag <tag> to note <id>"
+  • "Remove tag <tag> from note <id>"
+  • "Search notes for <query>"
+  • "Find notes with tag <tag>"
+
+💾 FILE OPERATIONS:
+  • "Save contacts to <filename>"
+  • "Load contacts from <filename>"
+
+❓ HELP & EXIT:
+  • "Help" or "Show commands"
+  • "Exit" or "Goodbye" or "Close"
+
+💡 TIP: You can use natural language! For example:
+   Instead of: "add John 1234567890"
+   Just say: "Add John to my contacts with phone 1234567890"
 """
 
     GOODBYE = "Good bye!"
     SAVING = "Saving address book..."
     LOADING = "Loading address book..."
+
+    @staticmethod
+    def get_command_list(nlp_mode: bool = False) -> str:
+        """Get command list based on mode."""
+        return UIMessages.NLP_COMMAND_LIST if nlp_mode else UIMessages.COMMAND_LIST
 
     @staticmethod
     def saved_successfully(entity: str, filename: str) -> str:
