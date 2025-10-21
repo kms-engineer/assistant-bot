@@ -10,12 +10,13 @@ from ...domain.validators.name_validator import NameValidator
 from ...domain.validators.tag_validator import TagValidator
 from ...domain.validators.note_text_validator import NoteTextValidator
 from ...domain.validators.intent_validator import IntentValidator
+from ...config import NLPConfig
 
 
 class PostProcessingRules:
 
-    def __init__(self, default_region: str = "US"):
-        self.default_region = default_region
+    def __init__(self, default_region: str = None):
+        self.default_region = default_region or NLPConfig.DEFAULT_REGION
         self._original_text = None  # Store original text for context-aware extraction
 
     def process(self, entities: Dict[str, str], intent: str) -> Dict[str, any]:

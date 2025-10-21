@@ -1,12 +1,12 @@
 import re
 from typing import Union, Dict
-from .string_validator import StringValidator
+from ...config import ValidationConfig
 
 
 class AddressValidator:
 
-    MIN_LENGTH = 5
-    MAX_LENGTH = 200
+    MIN_LENGTH = ValidationConfig.ADDRESS_MIN_LENGTH
+    MAX_LENGTH = ValidationConfig.ADDRESS_MAX_LENGTH
 
     # Pre-compiled regex patterns for performance
     _ADDRESS_PATTERN = re.compile(r'^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s.,/\-#]+$')
@@ -19,19 +19,19 @@ class AddressValidator:
 
     @staticmethod
     def validate(address: str) -> Union[str, bool]:
-        # Check if not empty
-        if not StringValidator.is_not_empty(address):
+        # Check if address is a string and not empty
+        if not isinstance(address, str) or not address or len(address.strip()) == 0:
             return AddressValidator.ERROR_EMPTY
 
         # Trim for length validation
         trimmed_address = address.strip()
 
         # Check minimum length
-        if not StringValidator.has_min_length(trimmed_address, AddressValidator.MIN_LENGTH):
+        if len(trimmed_address) < AddressValidator.MIN_LENGTH:
             return AddressValidator.ERROR_TOO_SHORT
 
         # Check maximum length
-        if not StringValidator.has_max_length(trimmed_address, AddressValidator.MAX_LENGTH):
+        if len(trimmed_address) > AddressValidator.MAX_LENGTH:
             return AddressValidator.ERROR_TOO_LONG
 
         # Combined format validation: checks both allowed characters and alphanumeric requirement

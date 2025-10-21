@@ -1,23 +1,23 @@
 import re
 from typing import Dict
-from .string_validator import StringValidator
+from ...config import ValidationConfig
 
 
 class TagValidator:
-    MAX_LENGTH = 50
+    MAX_LENGTH = ValidationConfig.TAG_MAX_LENGTH
 
     @staticmethod
     def validate(value):
         # Check if value is a string
-        if not StringValidator.is_string(value):
+        if not isinstance(value, str):
             return "Tag must be a string"
 
         # Check if empty or whitespace
-        if StringValidator.is_empty(value):
+        if not value or len(value.strip()) == 0:
             return "Tag cannot be empty"
 
         # Check max length
-        if not StringValidator.has_max_length(value, TagValidator.MAX_LENGTH):
+        if len(value) > TagValidator.MAX_LENGTH:
             return f"Tag too long (max {TagValidator.MAX_LENGTH} characters)"
 
         return True

@@ -2,6 +2,7 @@ import re
 from typing import List
 
 from .base import Entity, ExtractionStrategy
+from src.config import RegexPatterns, ConfidenceConfig, EntityConfig
 
 
 class RegexExtractor:
@@ -10,19 +11,14 @@ class RegexExtractor:
         self._compile_patterns()
 
     def _compile_patterns(self):
-        # Phone patterns (various formats)
+        # Compile patterns from config
         self.phone_pattern = re.compile(
             r'\b(?:\+?1[-.]?)?'  # Optional country code
             r'(?:\(?\d{3}\)?[-.\s]?)?'  # Area code
             r'\d{3}[-.\s]?\d{4}\b'  # Main number
         )
 
-        # Email pattern
-        self.email_pattern = re.compile(
-            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-        )
-
-        # Birthday pattern (various formats)
+        self.email_pattern = re.compile(RegexPatterns.EMAIL_PATTERN)
         self.birthday_pattern = re.compile(
             r'\b(?:'
             r'\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|'  # DD.MM.YYYY, DD/MM/YYYY, etc.
@@ -31,15 +27,8 @@ class RegexExtractor:
             r'\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}'  # DD Month YYYY
             r')\b'
         )
-
-        # Tag pattern (hashtag)
-        self.tag_pattern = re.compile(r'#\w+')
-
-        # UUID pattern (for note/contact IDs)
-        self.uuid_pattern = re.compile(
-            r'\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b',
-            re.IGNORECASE
-        )
+        self.tag_pattern = re.compile(RegexPatterns.TAG_PATTERN)
+        self.uuid_pattern = re.compile(RegexPatterns.UUID_PATTERN, re.IGNORECASE)
 
     def extract_all(self, text: str) -> List[Entity]:
         entities = []
@@ -52,7 +41,7 @@ class RegexExtractor:
                 start=phone_match.start(),
                 end=phone_match.end(),
                 entity_type='phone',
-                confidence=0.75,
+                confidence=ConfidenceConfig.REGEX_PHONE_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -64,7 +53,7 @@ class RegexExtractor:
                 start=email_match.start(),
                 end=email_match.end(),
                 entity_type='email',
-                confidence=0.80,
+                confidence=ConfidenceConfig.REGEX_EMAIL_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -76,7 +65,7 @@ class RegexExtractor:
                 start=birthday_match.start(),
                 end=birthday_match.end(),
                 entity_type='birthday',
-                confidence=0.70,
+                confidence=ConfidenceConfig.REGEX_BIRTHDAY_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -87,7 +76,7 @@ class RegexExtractor:
                 start=tag_match.start(),
                 end=tag_match.end(),
                 entity_type='tag',
-                confidence=0.95,
+                confidence=ConfidenceConfig.REGEX_TAG_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -99,7 +88,7 @@ class RegexExtractor:
                 start=uuid_match.start(),
                 end=uuid_match.end(),
                 entity_type='id',
-                confidence=1.0,
+                confidence=ConfidenceConfig.REGEX_ID_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -112,7 +101,7 @@ class RegexExtractor:
                 start=start,
                 end=start + len(note_text),
                 entity_type='note_text',
-                confidence=0.75,
+                confidence=ConfidenceConfig.REGEX_NOTE_TEXT_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 
@@ -165,9 +154,10 @@ class RegexExtractor:
         # Remove any remaining quotes
         cleaned = cleaned.strip('\'"''')
 
-        # Final validation
+        # Final validation using config
         alphanumeric = re.sub(r'[^\w\s]', '', cleaned)
-        if len(alphanumeric) >= 2 and (len(cleaned) >= 3 or len(cleaned.split()) >= 1):
+        if (len(alphanumeric) >= EntityConfig.NOTE_MIN_ALPHANUMERIC and
+            (len(cleaned) >= EntityConfig.NOTE_MIN_LENGTH_OR_WORDS or len(cleaned.split()) >= 1)):
             return cleaned
 
         return None

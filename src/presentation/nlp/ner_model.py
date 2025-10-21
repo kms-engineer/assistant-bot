@@ -7,34 +7,12 @@ from transformers import (
     AutoModelForTokenClassification,
     pipeline
 )
+from src.config import EntityConfig, ModelConfig
 
 class NERModel:
 
-    # IOB2 format labels
-    ENTITY_LABELS = [
-        "O",              # Outside (not an entity)
-        "B-NAME",         # Beginning of name
-        "I-NAME",         # Inside name (continuation)
-        "B-PHONE",        # Beginning of phone
-        "I-PHONE",        # Inside phone
-        "B-EMAIL",        # Beginning of email
-        "I-EMAIL",        # Inside email
-        "B-ADDRESS",      # Beginning of address
-        "I-ADDRESS",      # Inside address
-        "B-BIRTHDAY",     # Beginning of birthday
-        "I-BIRTHDAY",     # Inside birthday
-        "B-TAG",          # Beginning of tag
-        "I-TAG",          # Inside tag
-        "B-NOTE_TEXT",    # Beginning of note text
-        "I-NOTE_TEXT",    # Inside note text
-        "B-ID",           # Beginning of ID
-        "I-ID",           # Inside ID
-        "B-DAYS",         # Beginning of days/period
-        "I-DAYS",         # Inside days/period
-    ]
-
-    # Mapping from label to ID
-    LABEL2ID = {label: idx for idx, label in enumerate(ENTITY_LABELS)}
+    # Mapping from label to ID (generated from config)
+    LABEL2ID = {label: idx for idx, label in enumerate(EntityConfig.ENTITY_LABELS)}
     ID2LABEL = {idx: label for label, idx in LABEL2ID.items()}
 
     def __init__(self, model_path: str = None, use_pretrained: bool = True):
@@ -47,7 +25,7 @@ class NERModel:
             print(f"Loading fine-tuned NER model from {model_path}")
         elif use_pretrained:
             # Use base model (will need fine-tuning for production)
-            self.model_name = "roberta-base"
+            self.model_name = ModelConfig.ROBERTA_MODEL_NAME
             self.is_finetuned = False
             print("WARNING: Using base RoBERTa model without NER fine-tuning.")
             print("NER accuracy will be limited until model is trained.")
@@ -62,7 +40,7 @@ class NERModel:
             # Load fine-tuned token classification model
             self.model = AutoModelForTokenClassification.from_pretrained(
                 self.model_name,
-                num_labels=len(self.ENTITY_LABELS)
+                num_labels=len(EntityConfig.ENTITY_LABELS)
             ).to(self.device)
 
             # Load label mapping if available
@@ -124,12 +102,6 @@ class NERModel:
             return self._regex_fallback(text), {}
 
     def _parse_ner_results(self, ner_results: List[Dict], text: str) -> Tuple[Dict[str, str], Dict[str, float]]:
-        """
-        Parse NER results and extract confidence scores.
-
-        Returns:
-            Tuple of (entities dict, confidence scores dict)
-        """
         entities = {
             "name": None,
             "phone": None,

@@ -1,12 +1,12 @@
 import re
 from typing import Union, Dict
-from .string_validator import StringValidator
+from ...config import ValidationConfig
 
 
 class NameValidator:
 
-    MIN_LENGTH = 2
-    MAX_LENGTH = 50
+    MIN_LENGTH = ValidationConfig.NAME_MIN_LENGTH
+    MAX_LENGTH = ValidationConfig.NAME_MAX_LENGTH
 
     # Pre-compiled regex pattern for performance
     # Allows letters (any language), spaces, hyphens, and apostrophes
@@ -20,19 +20,19 @@ class NameValidator:
 
     @staticmethod
     def validate(name: str) -> Union[str, bool]:
-        # Check if not empty
-        if not StringValidator.is_not_empty(name):
+        # Check if name is a string and not empty
+        if not isinstance(name, str) or not name or len(name.strip()) == 0:
             return NameValidator.ERROR_EMPTY
 
         # Trim for length validation
         trimmed_name = name.strip()
 
         # Check minimum length
-        if not StringValidator.has_min_length(trimmed_name, NameValidator.MIN_LENGTH):
+        if len(trimmed_name) < NameValidator.MIN_LENGTH:
             return NameValidator.ERROR_TOO_SHORT
 
         # Check maximum length
-        if not StringValidator.has_max_length(trimmed_name, NameValidator.MAX_LENGTH):
+        if len(trimmed_name) > NameValidator.MAX_LENGTH:
             return NameValidator.ERROR_TOO_LONG
 
         # Format validation: only letters, spaces, hyphens

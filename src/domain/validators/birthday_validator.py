@@ -1,19 +1,18 @@
 import re
 from datetime import datetime
 from typing import Dict, Optional
-from ..validators.string_validator import StringValidator
 
 class BirthdayValidator:
 
-    _pattern = r"\d{2}\.\d{2}\.\d{4}"
+    _pattern = re.compile(r"\d{2}\.\d{2}\.\d{4}")
 
     @staticmethod
     def validate(birthday: str, date_format: str = "%d.%m.%Y") -> bool | str:
-        if not StringValidator.is_string(birthday):
+        if not isinstance(birthday, str):
             return "Birthday must be a string"
-        if not StringValidator.is_not_empty(birthday):
+        if not birthday or len(birthday.strip()) == 0:
             return "Birthday cannot be empty or whitespace"
-        if not StringValidator.exactly_match_pattern(birthday, BirthdayValidator._pattern):
+        if not BirthdayValidator._pattern.fullmatch(birthday):
             return "Birthday contain invalid date format. Use DD.MM.YYYY"
 
         try:
@@ -82,7 +81,6 @@ class BirthdayValidator:
 
     @staticmethod
     def _calculate_age(birth_date: datetime) -> int:
-        """Calculate age from birth date."""
         today = datetime.today()
         age = today.year - birth_date.year - (
             (today.month, today.day) < (birth_date.month, birth_date.day)
@@ -91,7 +89,6 @@ class BirthdayValidator:
 
     @staticmethod
     def _manual_date_parse(date_str: str) -> Optional[str]:
-        """Parse date and return in DD.MM.YYYY format."""
 
         # DD.MM.YYYY or DD/MM/YYYY
         pattern1 = r'(\d{1,2})[./](\d{1,2})[./](\d{4})'

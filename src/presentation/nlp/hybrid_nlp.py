@@ -5,12 +5,10 @@ from .ner_model import NERModel
 from .entity_validator import EntityValidator
 from .template_parser import TemplateParser
 from .post_rules import PostProcessingRules
+from src.config import NLPConfig, IntentConfig, EntityConfig
 
 
 class HybridNLP:
-    # Confidence thresholds
-    INTENT_CONFIDENCE_THRESHOLD = 0.6
-    ENTITY_CONFIDENCE_THRESHOLD = 0.5
 
     def __init__(
         self,
@@ -148,8 +146,8 @@ class HybridNLP:
             return intent, confidence
         else:
             if verbose:
-                print("[Intent] Classifier not available, using 'help'")
-            return "help", 0.3
+                print(f"[Intent] Classifier not available, using '{IntentConfig.DEFAULT_INTENT}'")
+            return IntentConfig.DEFAULT_INTENT, IntentConfig.DEFAULT_INTENT_CONFIDENCE
 
     def _extract_entities_regex(self, text: str, verbose: bool = False) -> Tuple[Dict, list, Dict]:
         if self.span_extractor:
@@ -204,14 +202,9 @@ class HybridNLP:
     ) -> Dict:
         merged = {}
 
-        # Fields where regex is more accurate (structured data)
-        regex_preferred = {'phone', 'email', 'birthday', 'tag', 'id'}
-
-        # Fields where NER is more accurate (unstructured data)
-        ner_preferred = {'name', 'address', 'note_text'}
-
-        # Confidence threshold for overriding preferences
-        CONFIDENCE_OVERRIDE_THRESHOLD = 0.3  # If confidence difference > 0.3, override preference
+        # Get entity field preferences from config
+        regex_preferred = EntityConfig.REGEX_PREFERRED_FIELDS
+        ner_preferred = EntityConfig.NER_PREFERRED_FIELDS
 
         # Get all possible entity keys
         all_keys = set(entities_regex.keys()) | set(entities_ner.keys())
@@ -220,9 +213,15 @@ class HybridNLP:
             regex_value = entities_regex.get(key)
             ner_value = entities_ner.get(key)
 
-            # Get confidence scores (default to 1.0 for regex, 0.5 for NER if not available)
-            regex_conf = regex_confidences.get(key, 1.0 if regex_value else 0.0)
-            ner_conf = ner_confidences.get(key, 0.5 if ner_value else 0.0)
+            # Get confidence scores (use defaults from config)
+            regex_conf = regex_confidences.get(
+                key,
+                EntityConfig.DEFAULT_REGEX_CONFIDENCE if regex_value else EntityConfig.DEFAULT_REGEX_NO_MATCH_CONFIDENCE
+            )
+            ner_conf = ner_confidences.get(
+                key,
+                EntityConfig.DEFAULT_NER_CONFIDENCE if ner_value else EntityConfig.DEFAULT_NER_NO_MATCH_CONFIDENCE
+            )
 
             # If only one source has the entity, use it
             if regex_value and not ner_value:
@@ -241,7 +240,7 @@ class HybridNLP:
             # Both sources have the entity - use confidence-based selection
             confidence_diff = abs(regex_conf - ner_conf)
 
-            if confidence_diff > CONFIDENCE_OVERRIDE_THRESHOLD:
+            if confidence_diff > NLPConfig.CONFIDENCE_OVERRIDE_THRESHOLD:
                 # Significant confidence difference - use higher confidence source
                 if regex_conf > ner_conf:
                     merged[key] = regex_value
@@ -278,7 +277,7 @@ class HybridNLP:
         return merged
 
     def _should_use_template_parser(self, intent: str, intent_confidence: float) -> bool:
-        return intent_confidence < self.INTENT_CONFIDENCE_THRESHOLD
+        return intent_confidence < NLPConfig.INTENT_CONFIDENCE_THRESHOLD
 
     def _use_template_parser(
         self,
@@ -300,7 +299,7 @@ class HybridNLP:
 
             # Handle conflict resolution: trust higher confidence
             if 'intent' in result and intent_hint:
-                if result.get('confidence', 0) < 0.5:
+                if result.get('confidence', 0) < EntityConfig.ENTITY_MERGE_THRESHOLD:
                     # If template parser has low confidence, keep original intent
                     result['intent'] = intent_hint
                     if verbose:
@@ -313,7 +312,7 @@ class HybridNLP:
                 print("[Template Parser] Not available, using primary results")
             return {
                 "intent": intent_hint,
-                "confidence": 0.5,
+                "confidence": EntityConfig.DEFAULT_ENTITY_CONFIDENCE,
                 "entities": entities_hint,
                 "raw": {"spans": [], "probs": {}, "source": "primary"}
             }
@@ -363,35 +362,18 @@ class HybridNLP:
     def get_command_args(self, nlp_result: Dict) -> Tuple[str, list]:
         intent = nlp_result['intent']
         entities = nlp_result['entities']
+        validation = nlp_result.get('validation', {})
 
-        # Map intents to commands
-        # This mapping should match the existing CommandHandler expectations
-        intent_to_command = {
-            'add_contact': 'add',
-            'edit_phone': 'change',
-            'edit_email': 'edit-email',
-            'edit_address': 'edit-address',
-            'delete_contact': 'delete-contact',
-            'list_all_contacts': 'all',
-            'search_contacts': 'search',
-            'add_birthday': 'add-birthday',
-            'list_birthdays': 'birthdays',
-            'add_note': 'add-note',
-            'edit_note': 'edit-note',
-            'delete_note': 'delete-note',
-            'show_notes': 'show-notes',
-            'add_note_tag': 'add-note-tag',
-            'remove_note_tag': 'remove-note-tag',
-            'search_notes_text': 'search-notes-text',
-            'search_notes_by_tag': 'search-notes-by-tag',
-            'hello': 'hello',
-            'help': 'help',
-            'exit': 'exit'
-        }
+        # Get intent to command mapping from config
+        command = IntentConfig.INTENT_TO_COMMAND_MAP.get(intent, IntentConfig.DEFAULT_INTENT)
 
-        command = intent_to_command.get(intent, 'help')
+        # Check if should use pipeline
+        # Pipeline is used when there are optional entities present
+        if validation.get('has_optional', False):
+            # Return special marker to indicate pipeline should be used
+            return 'pipeline', nlp_result
 
-        # Build args list based on intent
+        # Build args list based on intent (for non-pipeline commands)
         args = []
 
         if intent == 'add_contact':
@@ -399,10 +381,6 @@ class HybridNLP:
                 args.append(entities['name'])
             if 'phone' in entities:
                 args.append(entities['phone'])
-            if 'email' in entities:
-                args.append(entities['email'])
-            if 'address' in entities:
-                args.append(entities['address'])
 
         elif intent == 'edit_phone':
             if 'name' in entities:
@@ -431,6 +409,10 @@ class HybridNLP:
         elif intent == 'search_contacts':
             if 'name' in entities:
                 args.append(entities['name'])
+            elif 'phone' in entities:
+                args.append(entities['phone'])
+            elif 'email' in entities:
+                args.append(entities['email'])
 
         elif intent == 'add_birthday':
             if 'name' in entities:

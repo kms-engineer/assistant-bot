@@ -1,18 +1,15 @@
 import re
 from typing import Dict, Optional
 
-from .string_validator import StringValidator
-from ..validators.number_validator import NumberValidator
-
 class PhoneValidator:
 
     @staticmethod
     def validate(phone: str) -> str | bool:
-        if not StringValidator.is_string(phone):
+        if not isinstance(phone, str):
             return "Phone number must be string value"
-        if not StringValidator.has_length(phone, 10):
+        if len(phone) != 10:
             return "Phone number must be exactly 10 digits long"
-        if not NumberValidator.is_number(phone):
+        if not phone.isdigit():
             return "Phone number must contain only digits"
         return True
 

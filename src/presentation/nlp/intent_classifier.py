@@ -6,32 +6,10 @@ from transformers import (
     AutoTokenizer,
     AutoModelForSequenceClassification
 )
+from src.config import IntentConfig, ModelConfig
 
 
 class IntentClassifier:
-
-    INTENT_LABELS = [
-        "add_contact",
-        "edit_phone",
-        "edit_email",
-        "edit_address",
-        "delete_contact",
-        "list_all_contacts",
-        "search_contacts",
-        "add_birthday",
-        "list_birthdays",
-        "add_note",
-        "edit_note",
-        "delete_note",
-        "show_notes",
-        "add_note_tag",
-        "remove_note_tag",
-        "search_notes_text",
-        "search_notes_by_tag",
-        "hello",
-        "help",
-        "exit"
-    ]
 
     def __init__(self, model_path: str = None, use_pretrained: bool = True):
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -42,7 +20,7 @@ class IntentClassifier:
             self.is_finetuned = True
         elif use_pretrained:
             # Use base model (RoBERTa shows better performance than DistilBERT)
-            self.model_name = "roberta-base"
+            self.model_name = ModelConfig.ROBERTA_MODEL_NAME
             self.is_finetuned = False
         else:
             raise ValueError("No model available. Please provide a valid model_path or set use_pretrained=True")
@@ -53,7 +31,7 @@ class IntentClassifier:
         if self.is_finetuned:
             self.model = AutoModelForSequenceClassification.from_pretrained(
                 self.model_name,
-                num_labels=len(self.INTENT_LABELS)
+                num_labels=len(IntentConfig.INTENT_LABELS)
             ).to(self.device)
 
             # Load label mapping if available
@@ -63,12 +41,12 @@ class IntentClassifier:
                     label_map = json.load(f)
                     self.id2label = {int(k): v for k, v in label_map.items()}
             else:
-                self.id2label = {i: label for i, label in enumerate(self.INTENT_LABELS)}
+                self.id2label = {i: label for i, label in enumerate(IntentConfig.INTENT_LABELS)}
         else:
             # Base model - will need to be fine-tuned or use zero-shot
             # For now, create a basic classifier structure
             self.model = None
-            self.id2label = {i: label for i, label in enumerate(self.INTENT_LABELS)}
+            self.id2label = {i: label for i, label in enumerate(IntentConfig.INTENT_LABELS)}
             print("WARNING: Using base model without fine-tuning. Classification accuracy will be limited.")
 
     def predict(self, text: str) -> Tuple[str, float]:
@@ -81,7 +59,7 @@ class IntentClassifier:
             text,
             return_tensors="pt",
             truncation=True,
-            max_length=128,
+            max_length=ModelConfig.TOKENIZER_MAX_LENGTH,
             padding=True
         ).to(self.device)
 
@@ -223,12 +201,15 @@ class IntentClassifier:
         # Return best match
         if scores:
             best_intent = max(scores.items(), key=lambda x: x[1])
-            # Normalize confidence to 0.5-0.7 range (still trigger fallback sometimes)
-            confidence = min(0.7, 0.5 + best_intent[1])
+            # Normalize confidence to keyword confidence range
+            confidence = min(
+                IntentConfig.KEYWORD_CONFIDENCE_MAX,
+                IntentConfig.KEYWORD_CONFIDENCE_MIN + best_intent[1]
+            )
             return best_intent[0], confidence
 
         # Unknown intent
-        return "help", 0.2
+        return IntentConfig.DEFAULT_INTENT, IntentConfig.DEFAULT_INTENT_CONFIDENCE
 
     def get_intent_labels(self) -> list:
-        return self.INTENT_LABELS
+        return IntentConfig.INTENT_LABELS

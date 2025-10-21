@@ -1,6 +1,5 @@
 import re
 from typing import Union, Dict
-from .string_validator import StringValidator
 
 
 class EmailValidator:
@@ -17,8 +16,8 @@ class EmailValidator:
 
     @staticmethod
     def validate(email: str) -> Union[str, bool]:
-        # Check if not empty
-        if not StringValidator.is_not_empty(email):
+        # Check if email is a string and not empty
+        if not isinstance(email, str) or not email or len(email.strip()) == 0:
             return EmailValidator.ERROR_EMPTY
 
         # Trim and convert to lowercase for validation

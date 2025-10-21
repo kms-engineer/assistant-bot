@@ -2,6 +2,7 @@ import re
 from typing import List
 
 from .base import Entity, ExtractionStrategy, is_stop_word
+from src.config import ConfidenceConfig, ModelConfig
 
 try:
     import phonenumbers
@@ -32,7 +33,7 @@ try:
     import spacy
     HAS_SPACY = True
     try:
-        nlp_spacy = spacy.load("en_core_web_sm")
+        nlp_spacy = spacy.load(ModelConfig.SPACY_MODEL_NAME)
     except:
         HAS_SPACY = False
         nlp_spacy = None
