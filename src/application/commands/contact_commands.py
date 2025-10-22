@@ -2,6 +2,7 @@ from typing import List
 
 from ..services.contact_service import ContactService
 from ...presentation.cli.ui_messages import UIMessages
+from ...presentation.cli.confirmation import confirm_action
 
 
 def add_contact(args: List[str], service: ContactService) -> str:
@@ -25,6 +26,12 @@ def delete_contact(args: List[str], service: ContactService) -> str:
         raise ValueError("Delete-contact command requires 1 argument: name")
 
     name = args[0]
+
+    # Ask for confirmation
+    prompt = UIMessages.CONFIRM_DELETE_CONTACT.format(name=name)
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.delete_contact(name)
 
 
@@ -118,6 +125,12 @@ def remove_email(args: List[str], service: ContactService):
         raise ValueError("Remove-email command requires 1 argument: name")
 
     name = args[0]
+
+    # Ask for confirmation
+    prompt = UIMessages.CONFIRM_REMOVE_EMAIL.format(name=name)
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.remove_email(name)
 
 
@@ -143,6 +156,12 @@ def remove_address(args: List[str], service: ContactService):
         raise ValueError("Remove-address command requires 1 argument: name")
 
     name = args[0]
+
+    # Ask for confirmation
+    prompt = UIMessages.CONFIRM_REMOVE_ADDRESS.format(name=name)
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.remove_address(name)
 
 
@@ -192,6 +211,11 @@ def load_contacts(args: List[str], service: ContactService) -> str:
         raise ValueError("Load command requires a filename argument")
 
     filename = args[0]
+
+    # Ask for confirmation (loading overwrites current data)
+    if not confirm_action(UIMessages.CONFIRM_LOAD_FILE, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     count = service.load_address_book(filename, user_provided=True)
     return f"Address book loaded from {service.get_current_filename()}. {count} contact(s) found."
 

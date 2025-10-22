@@ -40,6 +40,15 @@ class UIMessages:
     SAVING = "Saving address book..."
     LOADING = "Loading address book..."
 
+    # Confirmation prompts (friendly but clear)
+    CONFIRM_DELETE_CONTACT = "Delete contact '{name}'? This can't be undone"
+    CONFIRM_REMOVE_EMAIL = "Remove email from '{name}'?"
+    CONFIRM_REMOVE_ADDRESS = "Remove address from '{name}'?"
+    CONFIRM_LOAD_FILE = "Loading will replace your current data. Want to continue?"
+
+    # Cancellation messages
+    ACTION_CANCELLED = "No worries, cancelled that for you."
+
     @staticmethod
     @stylize_success
     def saved_successfully(entity: str, filename: str) -> str:
