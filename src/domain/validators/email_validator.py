@@ -1,14 +1,12 @@
 import re
 from typing import Union, Dict
+from src.config import RegexPatterns
 
 
 class EmailValidator:
 
-    # Pre-compiled regex pattern for email validation
-    # Basic email pattern: localpart@domain.tld
-    _EMAIL_PATTERN = re.compile(
-        r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    )
+    # Pre-compiled regex pattern for email validation from config
+    _EMAIL_PATTERN = re.compile(RegexPatterns.VALIDATION_EMAIL_PATTERN)
 
     # Error message constants
     ERROR_EMPTY = "Email cannot be empty or whitespace"

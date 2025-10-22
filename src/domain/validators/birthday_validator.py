@@ -1,13 +1,16 @@
 import re
 from datetime import datetime
 from typing import Dict, Optional
+from src.config import DateFormatConfig, RegexPatterns
 
 class BirthdayValidator:
 
-    _pattern = re.compile(r"\d{2}\.\d{2}\.\d{4}")
+    _pattern = re.compile(RegexPatterns.BIRTHDAY_STRICT_PATTERN)
 
     @staticmethod
-    def validate(birthday: str, date_format: str = "%d.%m.%Y") -> bool | str:
+    def validate(birthday: str, date_format: str = None) -> bool | str:
+        if date_format is None:
+            date_format = DateFormatConfig.PRIMARY_DATE_FORMAT
         if not isinstance(birthday, str):
             return "Birthday must be a string"
         if not birthday or len(birthday.strip()) == 0:
@@ -16,13 +19,13 @@ class BirthdayValidator:
             return "Birthday contain invalid date format. Use DD.MM.YYYY"
 
         try:
-            birthday_date = datetime.strptime(birthday, "%d.%m.%Y")
+            birthday_date = datetime.strptime(birthday, date_format)
             today = datetime.now()
 
             if birthday_date > today:
                 return "Birthday cannot be in future"
-            if birthday_date.year < 1900:
-                return f"Birthday contain invalid year: {birthday_date.year} (must be from 1900 onwards)"
+            if birthday_date.year < DateFormatConfig.MIN_BIRTHDAY_YEAR:
+                return f"Birthday contain invalid year: {birthday_date.year} (must be from {DateFormatConfig.MIN_BIRTHDAY_YEAR} onwards)"
             if not (1 <= birthday_date.month <= 12):
                 return f"Birthday contain invalid month: {birthday_date:02d}"
             return True

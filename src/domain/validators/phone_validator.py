@@ -1,5 +1,6 @@
 import re
 from typing import Dict, Optional
+from src.config import PhoneConfig, NLPConfig
 
 class PhoneValidator:
 
@@ -7,8 +8,8 @@ class PhoneValidator:
     def validate(phone: str) -> str | bool:
         if not isinstance(phone, str):
             return "Phone number must be string value"
-        if len(phone) != 10:
-            return "Phone number must be exactly 10 digits long"
+        if len(phone) != PhoneConfig.EXACT_PHONE_LENGTH:
+            return f"Phone number must be exactly {PhoneConfig.EXACT_PHONE_LENGTH} digits long"
         if not phone.isdigit():
             return "Phone number must contain only digits"
         return True
@@ -29,7 +30,9 @@ class PhoneValidator:
         return normalized
 
     @staticmethod
-    def normalize_for_nlp(entities: Dict, default_region: str = "US") -> Dict:
+    def normalize_for_nlp(entities: Dict, default_region: str = None) -> Dict:
+        if default_region is None:
+            default_region = NLPConfig.DEFAULT_REGION
         if 'phone' not in entities or not entities['phone']:
             return entities
 

@@ -1,6 +1,6 @@
 import re
 from typing import Dict
-from ...config import ValidationConfig
+from src.config import ValidationConfig, RegexPatterns
 
 
 class TagValidator:
@@ -39,8 +39,8 @@ class TagValidator:
         if not tag_raw.startswith('#'):
             tag_raw = '#' + tag_raw
 
-        # Remove invalid characters (keep only word chars and #)
-        tag_raw = re.sub(r'[^\w#]', '', tag_raw)
+        # Remove invalid characters using pattern from config
+        tag_raw = re.sub(RegexPatterns.TAG_INVALID_CHAR_PATTERN, '', tag_raw)
 
         entities['tag'] = tag_raw
         return entities

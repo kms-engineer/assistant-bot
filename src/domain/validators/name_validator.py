@@ -1,6 +1,6 @@
 import re
 from typing import Union, Dict
-from ...config import ValidationConfig
+from src.config import ValidationConfig, RegexPatterns
 
 
 class NameValidator:
@@ -8,9 +8,8 @@ class NameValidator:
     MIN_LENGTH = ValidationConfig.NAME_MIN_LENGTH
     MAX_LENGTH = ValidationConfig.NAME_MAX_LENGTH
 
-    # Pre-compiled regex pattern for performance
-    # Allows letters (any language), spaces, hyphens, and apostrophes
-    _NAME_PATTERN = re.compile(r'^[a-zA-ZÀ-ÿ\s\-\']+$')
+    # Pre-compiled regex pattern from config
+    _NAME_PATTERN = re.compile(RegexPatterns.VALIDATION_NAME_PATTERN)
 
     # Error message constants
     ERROR_EMPTY = "Name cannot be empty or whitespace"

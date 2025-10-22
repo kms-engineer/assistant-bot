@@ -1,6 +1,6 @@
 import re
 from typing import Union, Dict
-from ...config import ValidationConfig
+from src.config import ValidationConfig, RegexPatterns, EntityConfig
 
 
 class AddressValidator:
@@ -8,8 +8,9 @@ class AddressValidator:
     MIN_LENGTH = ValidationConfig.ADDRESS_MIN_LENGTH
     MAX_LENGTH = ValidationConfig.ADDRESS_MAX_LENGTH
 
-    # Pre-compiled regex patterns for performance
-    _ADDRESS_PATTERN = re.compile(r'^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s.,/\-#]+$')
+    # Pre-compiled regex pattern from config
+    _ADDRESS_PATTERN = re.compile(RegexPatterns.VALIDATION_ADDRESS_PATTERN)
+    _CITY_PATTERN = re.compile(RegexPatterns.ADDRESS_CITY_PATTERN)
 
     # Error message constants
     ERROR_EMPTY = "Address cannot be empty or whitespace"
@@ -54,8 +55,8 @@ class AddressValidator:
 
         address_raw = entities['address'].strip()
 
-        # Try to extract city (capitalized word(s) at the end)
-        city_match = re.search(r',\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)$', address_raw)
+        # Try to extract city using pattern from config
+        city_match = AddressValidator._CITY_PATTERN.search(address_raw)
         if city_match:
             entities['city'] = city_match.group(1)
         else:
@@ -63,8 +64,8 @@ class AddressValidator:
             match = re.search(city_pattern, address_raw)
             if match:
                 potential_city = match.group(1)
-                # Exclude common street suffixes
-                if potential_city.lower() not in ['street', 'road', 'avenue', 'drive', 'lane']:
+                # Exclude common street suffixes from config
+                if potential_city.lower() not in EntityConfig.STREET_SUFFIXES_LOWER:
                     entities['city'] = potential_city
 
         # Normalize whitespace
