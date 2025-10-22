@@ -26,8 +26,14 @@ class IntentValidator:
         # Count how many optional entities are present
         optional_present = [field for field in optional if field in entities and entities[field]]
 
+        # Check for format errors (e.g., invalid phone number format)
+        has_format_errors = entities.get('_phone_format_error', False)
+
+        # Validation is invalid if there are missing fields OR format errors
+        is_valid = len(missing) == 0 and not has_format_errors
+
         return {
-            'valid': len(missing) == 0,
+            'valid': is_valid,
             'missing': missing,
             'required': required,
             'optional': optional,

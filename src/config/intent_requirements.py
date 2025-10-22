@@ -5,7 +5,7 @@ INTENT_REQUIREMENTS = {
         "optional": ["phone", "email", "address", "birthday"]
     },
     "edit_phone": {
-        "required": ["name", "phone"],
+        "required": ["name", "old_phone", "new_phone"],
         "optional": []
     },
     "edit_email": {

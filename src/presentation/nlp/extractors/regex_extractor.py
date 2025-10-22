@@ -13,9 +13,9 @@ class RegexExtractor:
     def _compile_patterns(self):
         # Compile patterns from config
         self.phone_pattern = re.compile(
-            r'\b(?:\+?1[-.]?)?'  # Optional country code
-            r'(?:\(?\d{3}\)?[-.\s]?)?'  # Area code
-            r'\d{3}[-.\s]?\d{4}\b'  # Main number
+            r'(?:\+?1[-.\s]?)?'  # Optional country code
+            r'(?:\(?\d{3}\)?[-.\s]?)'  # Area code (with optional parens)
+            r'\d{3}[-.\s]?\d{4}(?!\d)'  # Main number (negative lookahead to avoid over-matching)
         )
 
         self.email_pattern = re.compile(RegexPatterns.EMAIL_PATTERN)
@@ -33,17 +33,41 @@ class RegexExtractor:
     def extract_all(self, text: str) -> List[Entity]:
         entities = []
 
-        # Phone
-        phone_match = self.phone_pattern.search(text)
-        if phone_match:
-            entities.append(Entity(
-                text=phone_match.group(),
-                start=phone_match.start(),
-                end=phone_match.end(),
-                entity_type='phone',
-                confidence=ConfidenceConfig.REGEX_PHONE_CONFIDENCE,
-                strategy=ExtractionStrategy.REGEX
-            ))
+        # Phone - extract ALL phone numbers (for edit_phone intent with old_phone and new_phone)
+        phone_matches = list(self.phone_pattern.finditer(text))
+        if phone_matches:
+            if len(phone_matches) == 1:
+                # Single phone - use generic 'phone' type
+                match = phone_matches[0]
+                entities.append(Entity(
+                    text=match.group(),
+                    start=match.start(),
+                    end=match.end(),
+                    entity_type='phone',
+                    confidence=ConfidenceConfig.REGEX_PHONE_CONFIDENCE,
+                    strategy=ExtractionStrategy.REGEX
+                ))
+            elif len(phone_matches) >= 2:
+                # Multiple phones - label first as old_phone, second as new_phone
+                old_match = phone_matches[0]
+                entities.append(Entity(
+                    text=old_match.group(),
+                    start=old_match.start(),
+                    end=old_match.end(),
+                    entity_type='old_phone',
+                    confidence=ConfidenceConfig.REGEX_PHONE_CONFIDENCE,
+                    strategy=ExtractionStrategy.REGEX
+                ))
+
+                new_match = phone_matches[1]
+                entities.append(Entity(
+                    text=new_match.group(),
+                    start=new_match.start(),
+                    end=new_match.end(),
+                    entity_type='new_phone',
+                    confidence=ConfidenceConfig.REGEX_PHONE_CONFIDENCE,
+                    strategy=ExtractionStrategy.REGEX
+                ))
 
         # Email
         email_match = self.email_pattern.search(text)

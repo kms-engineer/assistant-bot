@@ -25,6 +25,10 @@ ENTITY_LABELS = [
     "I-NAME",         # Inside name (continuation)
     "B-PHONE",        # Beginning of phone
     "I-PHONE",        # Inside phone
+    "B-OLD_PHONE",    # Beginning of old phone (edit_phone)
+    "I-OLD_PHONE",    # Inside old phone
+    "B-NEW_PHONE",    # Beginning of new phone (edit_phone)
+    "I-NEW_PHONE",    # Inside new phone
     "B-EMAIL",        # Beginning of email
     "I-EMAIL",        # Inside email
     "B-ADDRESS",      # Beginning of address

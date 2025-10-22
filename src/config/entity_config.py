@@ -3,14 +3,15 @@ class EntityConfig:
 
     # Entity labels (IOB2 format)
     ENTITY_LABELS = [
-        "O", "B-NAME", "I-NAME", "B-PHONE", "I-PHONE", "B-EMAIL", "I-EMAIL",
+        "O", "B-NAME", "I-NAME", "B-PHONE", "I-PHONE", "B-OLD_PHONE", "I-OLD_PHONE",
+        "B-NEW_PHONE", "I-NEW_PHONE", "B-EMAIL", "I-EMAIL",
         "B-ADDRESS", "I-ADDRESS", "B-BIRTHDAY", "I-BIRTHDAY", "B-TAG", "I-TAG",
         "B-NOTE_TEXT", "I-NOTE_TEXT", "B-ID", "I-ID", "B-DAYS", "I-DAYS"
     ]
     """Complete list of entity labels in IOB2 format."""
 
     # Entity field preferences (regex vs NER)
-    REGEX_PREFERRED_FIELDS = {'phone', 'email', 'birthday', 'tag', 'id'}
+    REGEX_PREFERRED_FIELDS = {'phone', 'old_phone', 'new_phone', 'email', 'birthday', 'tag', 'id'}
     """Entity types that prefer regex-based extraction over NER."""
 
     NER_PREFERRED_FIELDS = {'name', 'address', 'note_text'}
