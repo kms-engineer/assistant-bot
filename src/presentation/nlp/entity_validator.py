@@ -1,9 +1,13 @@
 from typing import Dict, List
+from src.config import IntentConfig
 
 
 class EntityValidator:
 
-    # Intent-specific requirements
+    # Get intent requirements from config
+    INTENT_REQUIREMENTS_BASE = IntentConfig.INTENT_REQUIREMENTS
+
+    # Extended intent requirements with additional metadata
     INTENT_REQUIREMENTS = {
         "add_contact": {
             "required": ["name", "phone"],
