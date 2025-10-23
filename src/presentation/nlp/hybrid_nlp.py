@@ -18,7 +18,7 @@ class HybridNLP:
         default_region: str = "US"
     ):
         print("Initializing Hybrid NLP System...")
-        print("Architecture: Intent → Regex → Validation → NER → Template Parser\n")
+        print("Architecture: Intent → NER → Validation → Regex (fallback) → Template Parser\n")
 
         # Initialize components
         try:
@@ -82,29 +82,31 @@ class HybridNLP:
         # Step 1: Intent Classification (RoBERTa)
         intent, intent_confidence = self._classify_intent(user_text, verbose)
 
-        # Step 2: Regex Entity Extraction
-        entities_regex, spans, entity_probs = self._extract_entities_regex(user_text, verbose)
+        # Step 2: NER Entity Extraction (primary)
+        entities_ner, ner_confidences = self._extract_entities_ner(user_text, verbose)
 
-        # Step 3: Validation Check
-        validation_result = self._validate_entities(entities_regex, intent, verbose)
+        # Step 3: Validation Check on NER results
+        validation_result = self._validate_entities(entities_ner, intent, verbose)
 
-        # Step 4: Decide on entity source
+        # Step 4: If NER is insufficient, try Regex as fallback
         entities = None
-        source = "regex"
+        source = "ner"
 
         if validation_result['needs_ner']:
-            # Step 4a: Use NER Model
-            entities_ner, ner_confidences = self._extract_entities_ner(user_text, verbose)
-            # Merge: prefer NER for missing fields, keep regex for found fields
+            # NER didn't extract all required/optional fields - use Regex as fallback
+            entities_regex, spans, entity_probs = self._extract_entities_regex(user_text, verbose)
+            # Merge: prefer NER results, use regex to fill missing fields
             entities = self._merge_entities(
                 entities_regex, entities_ner,
                 entity_probs, ner_confidences,
                 validation_result, verbose
             )
-            source = "ner"
+            source = "ner+regex"
         else:
-            # Step 4b: Use regex results
-            entities = entities_regex
+            # NER extracted everything needed
+            entities = entities_ner
+            spans = []
+            entity_probs = {}
 
         # Step 5: Final validation check - use template parser if still invalid
         final_validation = self._validate_entities(entities, intent, verbose=False)
@@ -369,7 +371,9 @@ class HybridNLP:
 
         # Check if should use pipeline
         # Pipeline is used when there are optional entities present
-        if validation.get('has_optional', False):
+        # BUT skip pipeline for simple single-parameter optional intents
+        skip_pipeline_intents = ['list_birthdays']
+        if validation.get('has_optional', False) and intent not in skip_pipeline_intents:
             # Return special marker to indicate pipeline should be used
             return 'pipeline', nlp_result
 
@@ -421,7 +425,9 @@ class HybridNLP:
                 args.append(entities['birthday'])
 
         elif intent == 'list_birthdays':
-            args.append('7')  # Default 7 days
+            # Use days from entities if present, otherwise default to 7
+            days = entities.get('days', '7')
+            args.append(str(days))
 
         elif intent == 'add_note':
             if 'note_text' in entities:
@@ -433,7 +439,7 @@ class HybridNLP:
             if 'note_text' in entities:
                 args.append(entities['note_text'])
 
-        elif intent == 'delete_note':
+        elif intent == 'remove_note':
             if 'id' in entities:
                 args.append(entities['id'])
 
@@ -450,5 +456,33 @@ class HybridNLP:
         elif intent == 'search_notes_by_tag':
             if 'tag' in entities:
                 args.append(entities['tag'])
+
+        elif intent == 'add_email':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'email' in entities:
+                args.append(entities['email'])
+
+        elif intent == 'remove_email':
+            if 'name' in entities:
+                args.append(entities['name'])
+
+        elif intent == 'add_address':
+            if 'name' in entities:
+                args.append(entities['name'])
+            if 'address' in entities:
+                args.append(entities['address'])
+
+        elif intent == 'remove_address':
+            if 'name' in entities:
+                args.append(entities['name'])
+
+        elif intent == 'show_phone':
+            if 'name' in entities:
+                args.append(entities['name'])
+
+        elif intent == 'show_birthday':
+            if 'name' in entities:
+                args.append(entities['name'])
 
         return command, args

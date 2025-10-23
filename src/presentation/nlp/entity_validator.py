@@ -69,11 +69,11 @@ class EntityValidator:
             "optional_min": 0,
             "description": "Edit existing note"
         },
-        "delete_note": {
+        "remove_note": {
             "required": ["id"],
             "optional": [],
             "optional_min": 0,
-            "description": "Delete note by ID"
+            "description": "Remove note by ID"
         },
         "show_notes": {
             "required": [],
@@ -128,7 +128,43 @@ class EntityValidator:
             "optional": [],
             "optional_min": 0,
             "description": "Exit the application"
-        }
+        },
+        "show_phone": {
+            "required": ["name"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Show phone number for contact"
+        },
+        "add_email": {
+            "required": ["name", "email"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Add email to contact"
+        },
+        "remove_email": {
+            "required": ["name"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Remove email from contact"
+        },
+        "add_address": {
+            "required": ["name", "address"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Add address to contact"
+        },
+        "remove_address": {
+            "required": ["name"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Remove address from contact"
+        },
+        "show_birthday": {
+            "required": ["name"],
+            "optional": [],
+            "optional_min": 0,
+            "description": "Show birthday for contact"
+        },
     }
 
     def __init__(self):

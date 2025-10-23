@@ -37,27 +37,27 @@ INTENT_REQUIREMENTS = {
         "optional": ["days"]
     },
     "add_note": {
-        "required": ["name", "note_text"],
-        "optional": []
+        "required": ["note_text"],
+        "optional": ["tag"]
     },
     "edit_note": {
-        "required": ["name", "id", "note_text"],
+        "required": ["id", "note_text"],
         "optional": []
     },
-    "delete_note": {
-        "required": ["name", "id"],
+    "remove_note": {
+        "required": ["id"],
         "optional": []
     },
     "show_notes": {
-        "required": ["name"],
+        "required": [],
         "optional": []
     },
     "add_note_tag": {
-        "required": ["name", "id", "tag"],
+        "required": ["id", "tag"],
         "optional": []
     },
     "remove_note_tag": {
-        "required": ["name", "id", "tag"],
+        "required": ["id", "tag"],
         "optional": []
     },
     "search_notes_text": {
@@ -79,5 +79,29 @@ INTENT_REQUIREMENTS = {
     "exit": {
         "required": [],
         "optional": []
-    }
+    },
+    "show_phone": {
+        "required": ["name"],
+        "optional": []
+    },
+    "add_email": {
+        "required": ["name", "email"],
+        "optional": []
+    },
+    "remove_email": {
+        "required": ["name"],
+        "optional": []
+    },
+    "add_address": {
+        "required": ["name", "address"],
+        "optional": []
+    },
+    "remove_address": {
+        "required": ["name"],
+        "optional": []
+    },
+    "show_birthday": {
+        "required": ["name"],
+        "optional": []
+    },
 }

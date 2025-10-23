@@ -22,6 +22,21 @@ class PostProcessingRules:
     def process(self, entities: Dict[str, str], intent: str) -> Dict[str, any]:
         processed = entities.copy()
 
+        # Special handling for birthdays intents: normalize 'days' field
+        if intent == 'list_birthdays':
+            # If 'days' field exists, extract only the number
+            if 'days' in processed:
+                days_val = str(processed['days'])
+                match = re.search(r'(\d+)', days_val)
+                if match:
+                    processed['days'] = int(match.group(1))
+
+            # Remove 'address' field if it looks like days (contains only number and 'days')
+            if 'address' in processed:
+                address_val = str(processed['address']).lower()
+                if re.match(r'^\d+\s*days?$', address_val):
+                    del processed['address']
+
         # Apply normalizers using domain validators
         processed = PhoneValidator.normalize_for_nlp(processed, self.default_region)
         processed = EmailValidator.normalize_for_nlp(processed)
