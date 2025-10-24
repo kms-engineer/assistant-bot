@@ -27,6 +27,7 @@ class IntentConfig:
         'add_note': 'add-note',
         'edit_note': 'edit-note',
         'remove_note': 'delete-note',
+        'delete_note': 'delete-note',  # Alias for remove_note
         'show_notes': 'show-notes',
         'add_note_tag': 'add-tag',
         'remove_note_tag': 'remove-tag',

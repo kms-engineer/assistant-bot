@@ -19,8 +19,38 @@ class PostProcessingRules:
         self.default_region = default_region or NLPConfig.DEFAULT_REGION
         self._original_text = None  # Store original text for context-aware extraction
 
-    def process(self, entities: Dict[str, str], intent: str) -> Dict[str, any]:
+    def process(self, entities: Dict[str, str], intent: str, original_text: str = None) -> Dict[str, any]:
         processed = entities.copy()
+
+        # Store original text for context-aware extraction
+        if original_text:
+            self._original_text = original_text
+
+        # Special handling for edit_phone: extract old_phone and new_phone
+        if intent == 'edit_phone' and 'phone' in processed:
+            phone_value = str(processed['phone'])
+            # Check if phone field contains both numbers (e.g., "123 to 456" or "123 456")
+            # Try to extract two phone numbers from the original text if available
+            if self._original_text:
+                # Pattern: "from <old> to <new>" or "<old> to <new>"
+                phone_pattern = r'(?:from\s+)?(\d[\d\s\-\.]+?)\s+(?:to|->)\s+(\d[\d\s\-\.]+)'
+                match = re.search(phone_pattern, self._original_text, re.IGNORECASE)
+                if match:
+                    old_phone_raw = re.sub(r'\D', '', match.group(1))
+                    new_phone_raw = re.sub(r'\D', '', match.group(2))
+                    processed['old_phone'] = old_phone_raw
+                    processed['new_phone'] = new_phone_raw
+                    # Remove the combined 'phone' field
+                    if 'phone' in processed:
+                        del processed['phone']
+                else:
+                    # Fallback: try to extract all phone numbers and take first two
+                    all_phones = re.findall(r'\d{10,}', self._original_text)
+                    if len(all_phones) >= 2:
+                        processed['old_phone'] = all_phones[0]
+                        processed['new_phone'] = all_phones[1]
+                        if 'phone' in processed:
+                            del processed['phone']
 
         # Special handling for birthdays intents: normalize 'days' field
         if intent == 'list_birthdays':
@@ -38,7 +68,33 @@ class PostProcessingRules:
                     del processed['address']
 
         # Apply normalizers using domain validators
-        processed = PhoneValidator.normalize_for_nlp(processed, self.default_region)
+        # For edit_phone, normalize old_phone and new_phone separately
+        if intent == 'edit_phone':
+            if 'old_phone' in processed:
+                old_phone_entities = {'phone': processed['old_phone']}
+                old_phone_entities = PhoneValidator.normalize_for_nlp(old_phone_entities, self.default_region)
+                processed['old_phone'] = old_phone_entities.get('phone', processed['old_phone'])
+                if '_phone_valid' in old_phone_entities:
+                    processed['_old_phone_valid'] = old_phone_entities['_phone_valid']
+                if '_validation_errors' in old_phone_entities:
+                    if '_validation_errors' not in processed:
+                        processed['_validation_errors'] = []
+                    processed['_validation_errors'].extend(old_phone_entities['_validation_errors'])
+
+            if 'new_phone' in processed:
+                new_phone_entities = {'phone': processed['new_phone']}
+                new_phone_entities = PhoneValidator.normalize_for_nlp(new_phone_entities, self.default_region)
+                processed['new_phone'] = new_phone_entities.get('phone', processed['new_phone'])
+                if '_phone_valid' in new_phone_entities:
+                    processed['_new_phone_valid'] = new_phone_entities['_phone_valid']
+                if '_validation_errors' in new_phone_entities:
+                    if '_validation_errors' not in processed:
+                        processed['_validation_errors'] = []
+                    processed['_validation_errors'].extend(new_phone_entities['_validation_errors'])
+        else:
+            # Normal phone validation for other intents
+            processed = PhoneValidator.normalize_for_nlp(processed, self.default_region)
+
         processed = EmailValidator.normalize_for_nlp(processed)
         processed = BirthdayValidator.normalize_for_nlp(processed)
         processed = AddressValidator.normalize_for_nlp(processed)

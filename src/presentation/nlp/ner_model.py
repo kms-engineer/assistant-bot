@@ -117,38 +117,34 @@ class NERModel:
         # Track confidence scores for each entity
         confidences = {}
         entity_scores = {}  # Accumulate scores for multi-token entities
+        entity_spans = {}  # Track start/end positions for accurate extraction
 
         # Group entities by type
         for result in ner_results:
             entity_group = result['entity_group']  # e.g., "NAME", "PHONE"
-            word = result['word'].strip()
             score = result.get('score', 1.0)  # Confidence score from model
-
-            # Clean up RoBERTa tokenization artifacts
-            word = word.replace('Ġ', ' ').strip()
+            start = result.get('start', 0)
+            end = result.get('end', 0)
 
             # Map entity group to our entity keys (lowercase)
             entity_key = entity_group.lower()
 
-            # Handle multi-word entities
+            # Handle multi-token entities by tracking spans
             if entity_key in entities:
-                if entities[entity_key] is None:
-                    entities[entity_key] = word
+                if entity_key not in entity_spans:
+                    # First occurrence of this entity
+                    entity_spans[entity_key] = {'start': start, 'end': end}
                     entity_scores[entity_key] = [score]
                 else:
-                    # Append to existing entity
-                    if entity_key in ["phone", "email", "birthday", "id"]:
-                        # No spaces for structured data
-                        entities[entity_key] += word
-                    else:
-                        # Spaces for text fields
-                        entities[entity_key] += " " + word
+                    # Extend the span to include this token
+                    entity_spans[entity_key]['end'] = end
                     entity_scores[entity_key].append(score)
 
-        # Clean up extracted entities and calculate average confidence
-        for key in entities:
-            if entities[key]:
-                entities[key] = entities[key].strip()
+        # Extract entities using spans from original text
+        for key, span in entity_spans.items():
+            if span:
+                # Extract directly from original text using character positions
+                entities[key] = text[span['start']:span['end']].strip()
                 # Average confidence for multi-token entities
                 if key in entity_scores:
                     confidences[key] = sum(entity_scores[key]) / len(entity_scores[key])
@@ -157,36 +153,59 @@ class NERModel:
 
     def _regex_fallback(self, text: str) -> Dict[str, str]:
         import re
+        from src.config import RegexPatterns
 
         entities = {
             "name": None,
             "phone": None,
             "email": None,
             "address": None,
-            "birthday": None
+            "birthday": None,
+            "tag": None,
+            "note_text": None,
+            "id": None,
+            "days": None
         }
 
+        # UUID pattern (for note IDs)
+        uuid_pattern = RegexPatterns.UUID_PATTERN
+        uuid_match = re.search(uuid_pattern, text)
+        if uuid_match:
+            entities["id"] = uuid_match.group(0)
+
         # Phone pattern
-        phone_pattern = r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b'
+        phone_pattern = RegexPatterns.PHONE_PATTERN
         phone_match = re.search(phone_pattern, text)
         if phone_match:
             entities["phone"] = phone_match.group(0)
 
         # Email pattern
-        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        email_pattern = RegexPatterns.EMAIL_PATTERN
         email_match = re.search(email_pattern, text)
         if email_match:
             entities["email"] = email_match.group(0)
 
         # Birthday pattern (simple)
-        birthday_pattern = r'\b\d{1,2}[./]\d{1,2}[./]\d{2,4}\b'
+        birthday_pattern = RegexPatterns.BIRTHDAY_PATTERN
         birthday_match = re.search(birthday_pattern, text)
         if birthday_match:
             entities["birthday"] = birthday_match.group(0)
 
+        # Tag pattern
+        tag_pattern = RegexPatterns.TAG_PATTERN
+        tag_match = re.search(tag_pattern, text)
+        if tag_match:
+            entities["tag"] = tag_match.group(0)
+
+        # Days pattern (for birthday lists)
+        days_pattern = r'\b(\d+)\s*days?\b'
+        days_match = re.search(days_pattern, text, re.IGNORECASE)
+        if days_match:
+            entities["days"] = days_match.group(1)
+
         # Name extraction (very basic - just capitalized words)
         # Look for 2-3 consecutive capitalized words
-        name_pattern = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})\b'
+        name_pattern = RegexPatterns.NAME_FULL_PATTERN
         name_match = re.search(name_pattern, text)
         if name_match:
             entities["name"] = name_match.group(0)

@@ -129,7 +129,7 @@ class HybridNLP:
             }
 
         # Step 6: Post-Processing (normalization, validation, enrichment)
-        result = self._post_process(result, verbose)
+        result = self._post_process(result, user_text, verbose)
 
         if verbose:
             print("=" * 60)
@@ -319,7 +319,7 @@ class HybridNLP:
                 "raw": {"spans": [], "probs": {}, "source": "primary"}
             }
 
-    def _post_process(self, result: Dict, verbose: bool = False) -> Dict:
+    def _post_process(self, result: Dict, original_text: str = None, verbose: bool = False) -> Dict:
         if verbose:
             print("[Post-Processing] Normalizing and validating...")
 
@@ -327,7 +327,8 @@ class HybridNLP:
             # Process entities
             processed_entities = self.post_processor.process(
                 result['entities'],
-                result['intent']
+                result['intent'],
+                original_text
             )
             result['entities'] = processed_entities
 
@@ -389,10 +390,11 @@ class HybridNLP:
         elif intent == 'edit_phone':
             if 'name' in entities:
                 args.append(entities['name'])
-            # Would need old and new phone - this is complex, may need user clarification
-            if 'phone' in entities:
-                args.append(entities.get('old_phone', ''))
-                args.append(entities['phone'])
+            # Add old_phone and new_phone
+            if 'old_phone' in entities:
+                args.append(entities['old_phone'])
+            if 'new_phone' in entities:
+                args.append(entities['new_phone'])
 
         elif intent == 'edit_email':
             if 'name' in entities:
@@ -439,7 +441,7 @@ class HybridNLP:
             if 'note_text' in entities:
                 args.append(entities['note_text'])
 
-        elif intent == 'remove_note':
+        elif intent in ['remove_note', 'delete_note']:
             if 'id' in entities:
                 args.append(entities['id'])
 
