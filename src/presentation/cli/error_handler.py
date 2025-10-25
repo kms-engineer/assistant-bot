@@ -11,7 +11,7 @@ def handle_errors(func: Callable) -> Callable:
         try:
             return stylize_success_message(func(*args, **kwargs))
         except KeyError as e:
-            return stylize_error_message(title='Contact not found', message=str(e))
+            return stylize_error_message(title='Not found', message=str(e))
         except (ValueError, IndexError) as e:
             return stylize_error_message(title='Error', message=str(e))
         except StorageException as e:

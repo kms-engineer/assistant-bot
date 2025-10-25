@@ -31,6 +31,6 @@ def test_validate_with_empty_or_whitespace(empty_value):
     assert TagValidator.validate(empty_value) == "Tag cannot be empty"
 
 def test_validate_with_long_tag():
-    """Tests that a tag longer than 50 characters raises a ValueError."""
+    """Tests that a tag longer than 50 characters returns an error message."""
     long_tag = "a" * 51
-    assert TagValidator.validate(long_tag) == "Tag too long (max 50 characters)"
+    assert TagValidator.validate(long_tag) == "Tag cannot be longer than 50 characters"
