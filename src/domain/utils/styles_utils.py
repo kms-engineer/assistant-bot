@@ -45,3 +45,8 @@ def stylize_warning(func: Callable) -> Callable:
         return stylize_warning_message(message=func(*args, **kwargs))
 
     return wrapper
+
+
+def stylize_tag(tag: str) -> str:
+    """Stylize a tag with magenta color."""
+    return f"{Fore.MAGENTA}{tag}{Style.RESET_ALL}"

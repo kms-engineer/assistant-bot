@@ -25,9 +25,15 @@ class UIMessages:
   find <search_text>               - Find exact matching names/emails/phones
   add-note <text>                  - Add new note
   show-notes                       - Show all notes
+  show-notes --sort-by-tag         - Show all notes grouped by tags
   edit-note <id> <new text>        - Edit note by ID
   delete-note <id>                 - Delete note by ID
-  
+  add-tag <id> <tag>               - Add a tag to a note
+  remove-tag <id> <tag>            - Remove a tag from a note
+  search-notes <query>             - Search notes by text content
+  search-notes-by-tag <tag>        - Search notes by tag
+  list-tags                        - List all tags with usage count
+
   save <filename>                  - Save address book to file
   load <filename>                  - Load address book from file
   
