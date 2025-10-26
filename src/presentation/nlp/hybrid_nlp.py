@@ -1,4 +1,5 @@
 from typing import Dict, Tuple
+from concurrent.futures import ThreadPoolExecutor
 from .intent_classifier import IntentClassifier
 from .span_extractor import SpanExtractor
 from .ner_model import NERModel
@@ -15,10 +16,19 @@ class HybridNLP:
         intent_model_path: str = None,
         ner_model_path: str = None,
         use_pretrained: bool = True,
-        default_region: str = "US"
+        default_region: str = "US",
+        use_parallel: bool = True
     ):
-        print("Initializing Hybrid NLP System...")
-        print("Architecture: Intent → NER → Validation → Regex (fallback) → Template Parser\n")
+        print("Initializing Hybrid NLP System")
+        print("Architecture: Intent → NER → Validation → Regex (fallback) → Template Parser")
+        if use_parallel:
+            print("Parallel processing: ENABLED (Intent + NER)\n")
+        else:
+            print("Parallel processing: DISABLED\n")
+
+        self.use_parallel = use_parallel
+        # Thread pool for parallel execution (2 workers for Intent + NER)
+        self.executor = ThreadPoolExecutor(max_workers=2) if use_parallel else None
 
         # Initialize components
         try:
@@ -26,7 +36,7 @@ class HybridNLP:
                 model_path=intent_model_path,
                 use_pretrained=use_pretrained
             )
-            print("Intent Classifier loaded (RoBERTa)")
+            print("Intent Classifier loaded")
         except Exception as e:
             print(f"Intent Classifier failed: {e}")
             self.intent_classifier = None
@@ -36,7 +46,7 @@ class HybridNLP:
                 model_path=None,  # Regex-based, no model needed
                 use_pretrained=use_pretrained
             )
-            print("Span Extractor loaded (Regex)")
+            print("Span Extractor loaded")
         except Exception as e:
             print(f"Span Extractor failed: {e}")
             self.span_extractor = None
@@ -46,7 +56,7 @@ class HybridNLP:
                 model_path=ner_model_path,
                 use_pretrained=use_pretrained
             )
-            print("NER Model loaded (RoBERTa Token Classification)")
+            print("NER Model loaded")
         except Exception as e:
             print(f"NER Model failed: {e}")
             self.ner_model = None
@@ -60,7 +70,7 @@ class HybridNLP:
 
         try:
             self.template_parser = TemplateParser(verbose=False)
-            print("Template Parser loaded (keyword + regex)")
+            print("Template Parser loaded")
         except Exception as e:
             print(f"Template Parser failed: {e}")
             self.template_parser = None
@@ -74,16 +84,33 @@ class HybridNLP:
 
         print("\nHybrid NLP System ready!\n")
 
+    def __del__(self):
+        if self.executor:
+            self.executor.shutdown(wait=False)
+
+    def shutdown(self):
+        if self.executor:
+            self.executor.shutdown(wait=True)
+            self.executor = None
+
     def process(self, user_text: str, verbose: bool = False) -> Dict:
         if verbose:
             print(f"\nProcessing: '{user_text}'")
             print("=" * 60)
 
-        # Step 1: Intent Classification (RoBERTa)
-        intent, intent_confidence = self._classify_intent(user_text, verbose)
+        # Step 1 & 2: Intent Classification + NER Entity Extraction (parallel if enabled)
+        if self.use_parallel and self.executor:
+            # Submit intent and NER tasks to thread pool
+            intent_future = self.executor.submit(self._classify_intent, user_text, verbose)
+            ner_future = self.executor.submit(self._extract_entities_ner, user_text, verbose)
 
-        # Step 2: NER Entity Extraction (primary)
-        entities_ner, ner_confidences = self._extract_entities_ner(user_text, verbose)
+            # Wait for both to complete
+            intent, intent_confidence = intent_future.result()
+            entities_ner, ner_confidences = ner_future.result()
+        else:
+            # Sequential execution (original behavior)
+            intent, intent_confidence = self._classify_intent(user_text, verbose)
+            entities_ner, ner_confidences = self._extract_entities_ner(user_text, verbose)
 
         # Step 3: Validation Check on NER results
         validation_result = self._validate_entities(entities_ner, intent, verbose)

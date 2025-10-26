@@ -31,7 +31,7 @@ class NLPManager:
         return intent_exists, ner_exists
 
     def download_models(self) -> bool:
-        print("\n📥 Downloading models from Hugging Face...")
+        print("\nDownloading models from Hugging Face...")
         try:
             download_script = self.project_root / "scripts" / "download_models_auto.py"
             if not download_script.exists():
@@ -53,7 +53,11 @@ class NLPManager:
             print(f"Unexpected error during download: {e}\n")
             return False
 
-    def initialize_nlp_processor(self, use_pretrained: bool = True) -> bool:
+    def initialize_nlp_processor(
+        self,
+        use_pretrained: bool = True,
+        use_parallel: bool = True
+    ) -> bool:
         print("\nInitializing NLP mode...")
 
         # Check if models exist
@@ -63,9 +67,9 @@ class NLPManager:
         models_missing = not intent_exists or not ner_exists
         if models_missing:
             if not intent_exists:
-                print(f"⚠️  Intent classifier not found at {self.intent_model_path}")
+                print(f"Intent classifier not found at {self.intent_model_path}")
             if not ner_exists:
-                print(f"⚠️  NER model not found at {self.ner_model_path}")
+                print(f"NER model not found at {self.ner_model_path}")
 
             if not self.download_models():
                 # Download failed, set paths to None
@@ -87,7 +91,8 @@ class NLPManager:
             self.nlp_processor = HybridNLP(
                 intent_model_path=intent_model_path,
                 ner_model_path=ner_model_path,
-                use_pretrained=use_pretrained
+                use_pretrained=use_pretrained,
+                use_parallel=use_parallel
             )
             print("NLP mode ready!\n")
             return True
@@ -116,3 +121,7 @@ class NLPManager:
 
     def is_ready(self) -> bool:
         return self.nlp_processor is not None
+
+    def shutdown(self):
+        if self.nlp_processor and hasattr(self.nlp_processor, 'shutdown'):
+            self.nlp_processor.shutdown()

@@ -67,12 +67,6 @@ class NERModel:
             self.id2label = self.ID2LABEL
 
     def extract_entities(self, text: str, verbose: bool = False) -> Tuple[Dict[str, str], Dict[str, float]]:
-        """
-        Extract entities from text.
-
-        Returns:
-            Tuple of (entities dict, confidence scores dict)
-        """
         if not self.is_finetuned:
             # Model not trained, use fallback regex extraction
             if verbose:
