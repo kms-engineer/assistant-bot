@@ -101,17 +101,43 @@ class SQLiteStorage(Storage):
         self.initialize(db_name=filename)
 
         if isinstance(data, AddressBook):
-            for contact in data.data.values():
-                db_model = ContactMapper.to_dbmodel(contact)
-                self.save_entity(db_model)
+            # Clear existing contacts and save new ones
+            self._clear_and_save(DBContact, data.data.values(), ContactMapper.to_dbmodel)
             return filename
         elif isinstance(data, Notebook):
-            for note in data.data.values():
-                db_model = NoteMapper.to_dbmodel(note)
-                self.save_entity(db_model)
+            # Clear existing notes and save new ones
+            self._clear_and_save(DBNote, data.data.values(), NoteMapper.to_dbmodel)
             return filename
 
         return "Unsupported data type for save operation. Supported: AddressBook, Notebook"
+
+    def _clear_and_save(self, model_class, entities, mapper_func):
+        with self._create_session() as session:
+            try:
+                # Get existing IDs from database
+                existing_ids = {record.id for record in session.query(model_class.id).all()}
+
+                # Get IDs from entities to save
+                entity_ids = set()
+                entities_list = list(entities)
+
+                # Save/update all entities
+                for entity in entities_list:
+                    db_model = mapper_func(entity)
+                    entity_ids.add(db_model.id)
+                    merged_entity = session.merge(db_model)
+                    session.add(merged_entity)
+
+                # Delete records that are no longer in the collection
+                ids_to_delete = existing_ids - entity_ids
+                if ids_to_delete:
+                    session.query(model_class).filter(model_class.id.in_(ids_to_delete)).delete(synchronize_session=False)
+
+                session.commit()
+            except Exception as e:
+                log.error(f"Failed to clear and save: {e}")
+                session.rollback()
+                raise
 
 
     def load(self, filename: str, **kwargs) -> Optional[Any]:
