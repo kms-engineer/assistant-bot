@@ -16,22 +16,32 @@ class NoteService:
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.notes = {}
+        self.raw_storage = raw_storage
         if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
+            self._default_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
         else:
             self._current_filename = DEFAULT_NOTES_FILE
+            self._default_filename = DEFAULT_NOTES_FILE
 
     def get_ids(self) -> Set[str]:
         return set(self.notes.keys())
 
-    def load_notes(self, filename: str = DEFAULT_NOTES_FILE) -> int:
+    def load_notes(self, filename: str = None) -> int:
+        # Use the appropriate default based on storage type
+        if filename is None:
+            filename = self._default_filename
         loaded_notes, normalized_filename = self.storage.load_notes(
             filename,
             default=[]
         )
 
         self.notes = loaded_notes
-        self._current_filename = normalized_filename
+        # For SQLite, keep the original database filename
+        if self.raw_storage.storage_type == StorageType.SQLITE:
+            self._current_filename = self._default_filename
+        else:
+            self._current_filename = normalized_filename
 
         return len(self.notes)
 

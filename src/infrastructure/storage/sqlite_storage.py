@@ -8,8 +8,11 @@ from .storage_type import StorageType
 from ..persistence.data_path_resolver import DataPathResolver
 from ..storage.storage import Storage
 from ...domain.address_book import AddressBook
+from ...domain.notebook import Notebook
 from ...domain.mappers.contact_mapper import ContactMapper
+from ...domain.mappers.note_mapper import NoteMapper
 from ...domain.models.dbcontact import DBContact
+from ...domain.models.dbnote import DBNote
 
 T = TypeVar("T")
 
@@ -102,6 +105,11 @@ class SQLiteStorage(Storage):
                 db_model = ContactMapper.to_dbmodel(contact)
                 self.save_entity(db_model)
             return filename
+        elif isinstance(data, Notebook):
+            for note in data.data.values():
+                db_model = NoteMapper.to_dbmodel(note)
+                self.save_entity(db_model)
+            return filename
 
         return "Unsupported data type for save operation. Supported: AddressBook, Notebook"
 
@@ -117,5 +125,19 @@ class SQLiteStorage(Storage):
                 address_book.add_record(contact)
             return address_book
         except Exception as e:
-            log.error(f"Failed to load data: {e}")
+            log.error(f"Failed to load address book: {e}")
+            return None
+
+    def load_notes(self, filename: str, **kwargs) -> Optional[Notebook]:
+        if not self._is_initialized:
+            self.initialize(db_name=filename)
+        try:
+            db_notes = self.get_all(DBNote)
+            notebook = Notebook()
+            for db_note in db_notes:
+                note = NoteMapper.from_dbmodel(db_note)
+                notebook[note.id] = note
+            return notebook
+        except Exception as e:
+            log.error(f"Failed to load notebook: {e}")
             return None

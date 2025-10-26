@@ -113,9 +113,16 @@ class CommandPipeline:
         return "Pipeline:\n" + "\n".join(steps)
 
     def extract_note_id_from_result(self, result: str) -> str:
-        # Example: "Note added with ID: 1"
+        # Example: "Note added with ID: 45f9ae2b-93b6-4e5d-bf62-dbe8af1e0f11"
+        # Result may contain ANSI color codes, so we need to strip them first
         import re
-        match = re.search(r'ID:\s*(\d+)', result)
+
+        # Remove ANSI color codes
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        clean_result = ansi_escape.sub('', result)
+
+        # Match UUID format (8-4-4-4-12 hex characters) or simple numeric ID
+        match = re.search(r'ID:\s*([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}|\d+)', clean_result)
         if match:
             return match.group(1)
         return None

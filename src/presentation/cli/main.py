@@ -23,11 +23,16 @@ from .regex_gate import RegexCommandGate
 from .input_processor import process_classic_input, process_nlp_input
 
 
-def save_and_exit(contact_service: ContactService, note_service: NoteService = None) -> None:
+def save_and_exit(contact_service: ContactService, note_service: NoteService = None, storage_type: StorageType = None) -> None:
     print(UIMessages.SAVING)
+
+    # Save contacts
     try:
         filename = contact_service.save_address_book()
-        print(UIMessages.saved_successfully("Address book", filename))
+        if storage_type == StorageType.SQLITE:
+            print(UIMessages.saved_successfully("Data", filename))
+        else:
+            print(UIMessages.saved_successfully("Address book", filename))
     except Exception as e:
         print(stylize_error_message(message=f"Failed to save address book: {e}"))
 
@@ -35,9 +40,12 @@ def save_and_exit(contact_service: ContactService, note_service: NoteService = N
     if note_service:
         try:
             note_filename = note_service.save_notes()
-            print(UIMessages.saved_successfully("Notes", note_filename))
+            # For SQLite, both are in the same file, so don't print duplicate message
+            if storage_type != StorageType.SQLITE:
+                print(UIMessages.saved_successfully("Notes", note_filename))
         except Exception as e:
             print(stylize_error_message(message=f"Failed to save notes: {e}"))
+
     print(UIMessages.GOODBYE)
 
 
@@ -117,7 +125,7 @@ def main() -> None:
                 continue
 
             if result == "exit":
-                save_and_exit(contact_service, note_service)
+                save_and_exit(contact_service, note_service, storage_type)
                 break
 
             if result == "clear":
@@ -127,7 +135,7 @@ def main() -> None:
 
         except KeyboardInterrupt:
             print()
-            save_and_exit(contact_service, note_service)
+            save_and_exit(contact_service, note_service, storage_type)
             break
 
 
