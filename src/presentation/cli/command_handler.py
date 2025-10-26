@@ -1,3 +1,4 @@
+import os
 from typing import Dict, Callable, List, Any
 from difflib import get_close_matches
 from ...config import UIConfig
@@ -44,13 +45,15 @@ class CommandHandler:
             "add-tag": self._wrap_note(note_commands.add_tag),
             "remove-tag": self._wrap_note(note_commands.remove_tag),
             "search-notes": self._wrap_note(note_commands.search_notes),
-            "search-by-tag": self._wrap_note(note_commands.search_by_tag),
+            "search-notes-by-tag": self._wrap_note(note_commands.search_notes_by_tag),
+            "list-tags": self._wrap_note(note_commands.list_tags)
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.contact_service)
+
         return wrapper
 
     def _wrap_help(self, command_func: Callable) -> Callable:
@@ -63,6 +66,7 @@ class CommandHandler:
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.note_service)
+
         return wrapper
 
     def handle(self, command: str, args: Any) -> str:

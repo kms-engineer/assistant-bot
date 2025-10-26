@@ -7,7 +7,6 @@ from src.domain.validators.tag_validator import TagValidator
     "a" * 50, # Test boundary condition for max length
 ])
 def test_validate_with_valid_tag(valid_tag):
-    """Tests that a valid tag passes validation."""
     assert TagValidator.validate(valid_tag) is True
 
 @pytest.mark.parametrize("invalid_input, expected_message", [
@@ -18,7 +17,6 @@ def test_validate_with_valid_tag(valid_tag):
     (True, "Tag must be a string"),
 ])
 def test_validate_with_non_string(invalid_input, expected_message):
-    """Tests that a non-string input returns an error message."""
     assert TagValidator.validate(invalid_input) == expected_message
 
 @pytest.mark.parametrize("empty_value", [
@@ -27,10 +25,8 @@ def test_validate_with_non_string(invalid_input, expected_message):
     "\t\n",
 ])
 def test_validate_with_empty_or_whitespace(empty_value):
-    """Tests that an empty or whitespace string returns an error message."""
     assert TagValidator.validate(empty_value) == "Tag cannot be empty"
 
 def test_validate_with_long_tag():
-    """Tests that a tag longer than 50 characters raises a ValueError."""
     long_tag = "a" * 51
-    assert TagValidator.validate(long_tag) == "Tag too long (max 50 characters)"
+    assert TagValidator.validate(long_tag) == "Tag cannot be longer than 50 characters"

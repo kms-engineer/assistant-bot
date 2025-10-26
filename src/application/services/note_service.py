@@ -93,5 +93,30 @@ class NoteService:
             if any(tag_lower == t.value.lower() for t in note.tags)
         ]
 
+    def list_tags(self) -> dict[str, int]:
+        tag_counts = {}
+        for note in self.notes.values():
+            for tag in note.tags:
+                tag_value = tag.value
+                tag_counts[tag_value] = tag_counts.get(tag_value, 0) + 1
+
+        return dict(sorted(tag_counts.items()))
+
+    def get_notes_sorted_by_tag(self) -> dict[str, list[Note]]:
+        tag_groups = {}
+        for note in self.notes.values():
+            if not note.tags:
+                if "untagged" not in tag_groups:
+                    tag_groups["untagged"] = []
+                tag_groups["untagged"].append(note)
+            else:
+                for tag in note.tags:
+                    tag_value = tag.value
+                    if tag_value not in tag_groups:
+                        tag_groups[tag_value] = []
+                    tag_groups[tag_value].append(note)
+
+        return dict(sorted(tag_groups.items()))
+
     def get_current_filename(self) -> str:
         return self._current_filename

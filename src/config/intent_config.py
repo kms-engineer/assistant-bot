@@ -32,7 +32,7 @@ class IntentConfig:
         'add_note_tag': 'add-tag',
         'remove_note_tag': 'remove-tag',
         'search_notes_text': 'search-notes',
-        'search_notes_by_tag': 'search-by-tag',
+        'search_notes_by_tag': 'search-notes-by-tag',
         'hello': 'hello',
         'help': 'help',
         'exit': 'exit',
