@@ -10,16 +10,9 @@ from .extractors import (
 
 class SpanExtractor:
 
-    def __init__(self, model_path: str = None, use_pretrained: bool = True, verbose: bool = False):
+    def __init__(self, verbose: bool = False):
         self.verbose = verbose
         self.regex_extractor = RegexExtractor()
-
-        # Log available libraries
-        if self.verbose:
-            print("\n[SpanExtractor] Initializing multi-strategy extraction...")
-            libraries = LibraryExtractor.get_available_libraries()
-            for lib_name, available in libraries.items():
-                print(f"  - {lib_name}: {'✓' if available else '✗'}")
 
     def extract(self, text: str) -> Tuple[Dict[str, str], List[Dict], Dict[str, float]]:
         if self.verbose:
@@ -66,7 +59,8 @@ class SpanExtractor:
 
         return entities, raw_spans, probabilities
 
-    def _resolve_conflicts(self, entities: List[Entity]) -> List[Entity]:
+    @staticmethod
+    def _resolve_conflicts(entities: List[Entity]) -> List[Entity]:
         if not entities:
             return []
 

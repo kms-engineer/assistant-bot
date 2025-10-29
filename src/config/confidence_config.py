@@ -58,3 +58,12 @@ class ConfidenceConfig:
 
     TEMPLATE_HIGH_CONFIDENCE = 0.70
     """High confidence score for template-based parsing."""
+
+    TEMPLATE_HELLO_CONFIDENCE = 0.90
+    """Confidence score for hello/greeting intents."""
+
+    TEMPLATE_EXIT_CONFIDENCE = 0.90
+    """Confidence score for exit/goodbye intents."""
+
+    TEMPLATE_HELP_CONFIDENCE = 0.80
+    """Confidence score for help intent."""

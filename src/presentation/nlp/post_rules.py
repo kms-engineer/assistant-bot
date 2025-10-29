@@ -1,7 +1,6 @@
 import re
-from typing import Dict
+from typing import Dict, Any
 
-# Import validators from domain layer
 from ...domain.validators.phone_validator import PhoneValidator
 from ...domain.validators.email_validator import EmailValidator
 from ...domain.validators.birthday_validator import BirthdayValidator
@@ -10,7 +9,7 @@ from ...domain.validators.name_validator import NameValidator
 from ...domain.validators.tag_validator import TagValidator
 from ...domain.validators.note_text_validator import NoteTextValidator
 from ...domain.validators.intent_validator import IntentValidator
-from ...config import NLPConfig
+from ...config import NLPConfig, RegexPatterns
 
 
 class PostProcessingRules:
@@ -19,8 +18,8 @@ class PostProcessingRules:
         self.default_region = default_region or NLPConfig.DEFAULT_REGION
         self._original_text = None  # Store original text for context-aware extraction
 
-    def process(self, entities: Dict[str, str], intent: str, original_text: str = None) -> Dict[str, any]:
-        processed = entities.copy()
+    def process(self, entities: Dict[str, str], intent: str, original_text: str = None) -> Dict[str, Any]:
+        processed: Dict[str, Any] = entities.copy()
 
         # Store original text for context-aware extraction
         if original_text:
@@ -33,8 +32,7 @@ class PostProcessingRules:
             # Try to extract two phone numbers from the original text if available
             if self._original_text:
                 # Pattern: "from <old> to <new>" or "<old> to <new>"
-                phone_pattern = r'(?:from\s+)?(\d[\d\s\-\.]+?)\s+(?:to|->)\s+(\d[\d\s\-\.]+)'
-                match = re.search(phone_pattern, self._original_text, re.IGNORECASE)
+                match = re.search(RegexPatterns.POST_PHONE_FROM_TO_PATTERN, self._original_text, re.IGNORECASE)
                 if match:
                     old_phone_raw = re.sub(r'\D', '', match.group(1))
                     new_phone_raw = re.sub(r'\D', '', match.group(2))
@@ -45,7 +43,7 @@ class PostProcessingRules:
                         del processed['phone']
                 else:
                     # Fallback: try to extract all phone numbers and take first two
-                    all_phones = re.findall(r'\d{10,}', self._original_text)
+                    all_phones = re.findall(RegexPatterns.POST_PHONE_ALL_PATTERN, self._original_text)
                     if len(all_phones) >= 2:
                         processed['old_phone'] = all_phones[0]
                         processed['new_phone'] = all_phones[1]
@@ -57,14 +55,14 @@ class PostProcessingRules:
             # If 'days' field exists, extract only the number
             if 'days' in processed:
                 days_val = str(processed['days'])
-                match = re.search(r'(\d+)', days_val)
+                match = re.search(RegexPatterns.POST_DAYS_NUMBER_PATTERN, days_val)
                 if match:
                     processed['days'] = int(match.group(1))
 
             # Remove 'address' field if it looks like days (contains only number and 'days')
             if 'address' in processed:
                 address_val = str(processed['address']).lower()
-                if re.match(r'^\d+\s*days?$', address_val):
+                if re.match(RegexPatterns.POST_DAYS_IN_ADDRESS_PATTERN, address_val):
                     del processed['address']
 
         # Apply normalizers using domain validators
@@ -104,5 +102,6 @@ class PostProcessingRules:
 
         return processed
 
-    def validate_entities_for_intent(self, entities: Dict, intent: str) -> Dict:
+    @staticmethod
+    def validate_entities_for_intent(entities: Dict, intent: str) -> Dict:
         return IntentValidator.validate_for_intent(entities, intent)

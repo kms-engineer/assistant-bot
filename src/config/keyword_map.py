@@ -87,3 +87,11 @@ KEYWORD_MAP = {
         "exit", "quit", "close", "bye", "goodbye", "stop"
     ],
 }
+
+# Extended greeting keywords (not included in KEYWORD_MAP to avoid conflicts)
+GREETING_KEYWORDS = [
+    'hello', 'hi', 'hey', 'greetings', 'good morning', 'good afternoon',
+    'good evening', 'howdy', "what's up", "how's it going", 'how are you',
+    'sup', 'yo', 'hiya', 'g\'day', 'aloha', 'salutations', 'good day'
+]
+"""Extended greeting keywords for hello intent (higher confidence than KEYWORD_MAP)."""

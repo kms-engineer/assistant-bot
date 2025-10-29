@@ -1,4 +1,5 @@
 import re
+
 from typing import List
 
 from .base import Entity, ExtractionStrategy
@@ -12,21 +13,9 @@ class RegexExtractor:
 
     def _compile_patterns(self):
         # Compile patterns from config
-        self.phone_pattern = re.compile(
-            r'(?:\+?1[-.\s]?)?'  # Optional country code
-            r'(?:\(?\d{3}\)?[-.\s]?)'  # Area code (with optional parens)
-            r'\d{3}[-.\s]?\d{4}(?!\d)'  # Main number (negative lookahead to avoid over-matching)
-        )
-
+        self.phone_pattern = re.compile(RegexPatterns.PHONE_PATTERN_ADVANCED)
         self.email_pattern = re.compile(RegexPatterns.EMAIL_PATTERN)
-        self.birthday_pattern = re.compile(
-            r'\b(?:'
-            r'\d{1,2}[./-]\d{1,2}[./-]\d{2,4}|'  # DD.MM.YYYY, DD/MM/YYYY, etc.
-            r'\d{4}[./-]\d{1,2}[./-]\d{1,2}|'  # YYYY-MM-DD
-            r'(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4}|'  # Month DD, YYYY
-            r'\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}'  # DD Month YYYY
-            r')\b'
-        )
+        self.birthday_pattern = re.compile(RegexPatterns.BIRTHDAY_PATTERN_COMBINED)
         self.tag_pattern = re.compile(RegexPatterns.TAG_PATTERN)
         self.uuid_pattern = re.compile(RegexPatterns.UUID_PATTERN, re.IGNORECASE)
 
@@ -117,7 +106,7 @@ class RegexExtractor:
             ))
 
         # Note text extraction
-        note_text = self._extract_note_text(text)
+        note_text = RegexExtractor._extract_note_text(text)
         if note_text:
             start = text.find(note_text)
             entities.append(Entity(
@@ -131,15 +120,10 @@ class RegexExtractor:
 
         return entities
 
-    def _extract_note_text(self, text: str) -> str:
+    @staticmethod
+    def _extract_note_text(text: str) -> str | None:
         # Check for quoted text first (highest priority)
-        quoted_patterns = [
-            r'["\']([^"\']{2,})["\']',  # Standard quotes
-            r'[\u2018\u2019]([^\u2018\u2019]{2,})[\u2018\u2019]',  # Smart single quotes
-            r'[\u201C\u201D]([^\u201C\u201D]{2,})[\u201C\u201D]',  # Smart double quotes
-        ]
-
-        for pattern in quoted_patterns:
+        for pattern in RegexPatterns.QUOTED_PATTERNS_EXTENDED:
             quoted_match = re.search(pattern, text)
             if quoted_match:
                 return quoted_match.group(1).strip()
@@ -148,32 +132,19 @@ class RegexExtractor:
         cleaned = text
 
         # Step 1: Remove command phrases at the beginning
-        command_patterns = [
-            r'^\s*add\s+a?\s*note\s+',
-            r'^\s*create\s+a?\s*note\s+',
-            r'^\s*new\s+note\s+',
-            r'^\s*make\s+a?\s*note\s+',
-            r'^\s*write\s+a?\s*note\s+',
-            r'^\s*note\s*:\s*',
-            r'^\s*note\s+about\s+',
-            r'^\s*note\s+that\s+',
-            r'^\s*note\s+',
-        ]
-
-        for pattern in command_patterns:
+        for pattern in RegexPatterns.NOTE_COMMAND_PATTERNS:
             cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
             if cleaned != text:  # If something was removed, stop
                 break
 
         # Step 2: Remove hashtags
-        tag_pattern = r'#\w+'
-        cleaned = re.sub(tag_pattern, '', cleaned)
+        cleaned = re.sub(RegexPatterns.TAG_PATTERN, '', cleaned)
 
         # Step 3: Clean up
         cleaned = cleaned.strip()
-        cleaned = re.sub(r'\s+', ' ', cleaned)  # Normalize whitespace
-        cleaned = re.sub(r'^\s*[:;,.\\-]\s*', '', cleaned)  # Remove leading punctuation
-        cleaned = re.sub(r'\s*[:;,.\\-]\s*$', '', cleaned)  # Remove trailing punctuation
+        cleaned = re.sub(RegexPatterns.WHITESPACE_NORMALIZE_PATTERN, ' ', cleaned)
+        cleaned = re.sub(RegexPatterns.LEADING_PUNCTUATION_PATTERN, '', cleaned)
+        cleaned = re.sub(RegexPatterns.TRAILING_PUNCTUATION_PATTERN, '', cleaned)
 
         # Remove any remaining quotes
         cleaned = cleaned.strip('\'"''')

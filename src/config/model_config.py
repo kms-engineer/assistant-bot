@@ -1,9 +1,14 @@
+import os
+
 
 class ModelConfig:
 
-    # NLP model names
-    ROBERTA_MODEL_NAME = "roberta-base"
-    """Model name for RoBERTa-based models (intent classifier and NER)."""
+    PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    INTENT_MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "assistant-bot-intent-classifier")
+    """Path to trained intent classifier model."""
+
+    NER_MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "assistant-bot-ner-model")
+    """Path to trained NER model."""
 
     SPACY_MODEL_NAME = "en_core_web_sm"
     """Spacy model name for entity extraction."""

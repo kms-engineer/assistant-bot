@@ -71,3 +71,31 @@ class EntityConfig:
 
     NOTE_MIN_LENGTH_OR_WORDS = 3
     """Minimum cleaned text length, or 1 word minimum."""
+
+    # Excluded words for name extraction (command words that should not be treated as names)
+    NAME_EXCLUDED_WORDS = {
+        'Add', 'Edit', 'Delete', 'Remove', 'Show', 'List', 'Create', 'New', 'Update',
+        'Change', 'Find', 'Search', 'Contact', 'Note', 'Birthday', 'Tag', 'Email',
+        'Phone', 'Address', 'Help', 'Exit', 'From', 'To', 'With', 'For', 'And'
+    }
+    """Command words that should be excluded from name extraction."""
+
+    # Heuristic stop words for name extraction (comprehensive list)
+    HEURISTIC_STOP_WORDS = {
+        # Commands
+        'Add', 'Create', 'Save', 'Update', 'Change', 'Edit', 'Delete', 'Remove',
+        'Set', 'Get', 'Show', 'List', 'Search', 'Find', 'Display', 'New',
+        # Entities
+        'Person', 'Contact', 'Entry', 'Record', 'User', 'Client', 'Member',
+        'Phone', 'Email', 'Address', 'Birthday', 'Note', 'Tag', 'Info',
+        # Months
+        'January', 'February', 'March', 'April', 'May', 'June', 'July',
+        'August', 'September', 'October', 'November', 'December',
+        # Days of week
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
+        # Modal/polite words
+        'Please', 'Can', 'Could', 'Would', 'Should', 'Will', 'May', 'Might',
+        # Address components
+        'Suite', 'Apt', 'Apartment', 'Unit', 'Building', 'Floor', 'Room'
+    }
+    """Comprehensive stop words for heuristic name extraction."""

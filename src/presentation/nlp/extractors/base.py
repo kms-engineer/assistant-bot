@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from src.config import EntityConfig
 
 
 class ExtractionStrategy(Enum):
@@ -19,18 +20,5 @@ class Entity:
     strategy: ExtractionStrategy = ExtractionStrategy.REGEX
 
 
-STOP_WORDS = {
-    'Add', 'Create', 'Save', 'Update', 'Change', 'Edit', 'Delete', 'Remove',
-    'Set', 'Get', 'Show', 'List', 'Search', 'Find', 'Display', 'New',
-    'Person', 'Contact', 'Entry', 'Record', 'User', 'Client', 'Member',
-    'Phone', 'Email', 'Address', 'Birthday', 'Note', 'Tag', 'Info',
-    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-    'August', 'September', 'October', 'November', 'December',
-    'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday',
-    'Please', 'Can', 'Could', 'Would', 'Should', 'Will', 'May', 'Might',
-    'Suite', 'Apt', 'Apartment', 'Unit', 'Building', 'Floor', 'Room'
-}
-
-
 def is_stop_word(word: str) -> bool:
-    return word in STOP_WORDS
+    return word in EntityConfig.HEURISTIC_STOP_WORDS

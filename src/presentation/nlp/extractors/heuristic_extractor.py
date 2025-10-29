@@ -50,11 +50,14 @@ class HeuristicExtractor:
     @staticmethod
     def _extract_addresses(text: str) -> List[Entity]:
         entities = []
-        state_pattern = '|'.join(EntityConfig.US_STATES)
 
-        # Pattern 1: City, State ZIP
-        pattern1 = rf'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*),\s*({state_pattern})\s+(\d{{5}}(?:-\d{{4}})?)\b'
-        for match in re.finditer(pattern1, text):
+        # Build dynamic patterns from config
+        state_pattern = '|'.join(EntityConfig.US_STATES)
+        street_suffixes = '|'.join(EntityConfig.STREET_SUFFIXES)
+
+        # Pattern 1: City, State ZIP (fill placeholder)
+        city_state_pattern = RegexPatterns.ADDRESS_CITY_STATE_ZIP_PATTERN.format(state_pattern=state_pattern)
+        for match in re.finditer(city_state_pattern, text):
             entities.append(Entity(
                 text=match.group(),
                 start=match.start(),
@@ -64,9 +67,8 @@ class HeuristicExtractor:
                 strategy=ExtractionStrategy.HEURISTIC
             ))
 
-        # Pattern 2: Street address patterns
-        street_suffixes = '|'.join(EntityConfig.STREET_SUFFIXES)
-        street_pattern = rf'\b\d+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+(?:{street_suffixes})\b'
+        # Pattern 2: Street address patterns (fill placeholder)
+        street_pattern = RegexPatterns.ADDRESS_STREET_PATTERN.format(street_suffixes=street_suffixes)
         for match in re.finditer(street_pattern, text, re.IGNORECASE):
             entities.append(Entity(
                 text=match.group(),

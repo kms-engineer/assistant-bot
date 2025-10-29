@@ -100,7 +100,7 @@ def main() -> None:
     if is_nlp_mode:
         from .nlp_manager import NLPManager
         nlp_manager = NLPManager()
-        nlp_manager.initialize_nlp_processor(use_pretrained=True)
+        nlp_manager.initialize_nlp_processor()
 
     # Create handler with nlp_mode flag
     handler = CommandHandler(contact_service, note_service, nlp_mode=is_nlp_mode)

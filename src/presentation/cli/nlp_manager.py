@@ -32,8 +32,9 @@ class NLPManager:
 
     def download_models(self) -> bool:
         print("\nDownloading models from Hugging Face...")
+        download_script = self.project_root / "scripts" / "download_models_auto.py"
+
         try:
-            download_script = self.project_root / "scripts" / "download_models_auto.py"
             if not download_script.exists():
                 print(f"Download script not found at {download_script}")
                 return False
@@ -55,7 +56,6 @@ class NLPManager:
 
     def initialize_nlp_processor(
         self,
-        use_pretrained: bool = True,
         use_parallel: bool = True
     ) -> bool:
         print("\nInitializing NLP mode...")
@@ -72,26 +72,16 @@ class NLPManager:
                 print(f"NER model not found at {self.ner_model_path}")
 
             if not self.download_models():
-                # Download failed, set paths to None
-                intent_model_path = None
-                ner_model_path = None
-            else:
-                # Download succeeded, use the paths
-                intent_model_path = str(self.intent_model_path)
-                ner_model_path = str(self.ner_model_path)
-        else:
-            # Models exist, use the paths
-            intent_model_path = str(self.intent_model_path)
-            ner_model_path = str(self.ner_model_path)
+                print("ERROR: Models are required but download failed.")
+                return False
 
-        # Initialize HybridNLP
+        # Initialize HybridNLP with model paths
         try:
             from ..nlp.hybrid_nlp import HybridNLP
 
             self.nlp_processor = HybridNLP(
-                intent_model_path=intent_model_path,
-                ner_model_path=ner_model_path,
-                use_pretrained=use_pretrained,
+                intent_model_path=str(self.intent_model_path),
+                ner_model_path=str(self.ner_model_path),
                 use_parallel=use_parallel
             )
             print("NLP mode ready!\n")
@@ -113,7 +103,7 @@ class NLPManager:
             print(f"NLP processing error: {e}")
             return None
 
-    def get_command_args(self, nlp_result: dict) -> tuple[str, list]:
+    def get_command_args(self, nlp_result: dict) -> tuple[str, list] | tuple[str, dict]:
         if self.nlp_processor is None:
             return "help", []
 

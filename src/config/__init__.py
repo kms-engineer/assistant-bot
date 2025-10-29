@@ -9,6 +9,7 @@ from .confidence_config import ConfidenceConfig
 from .regex_patterns import RegexPatterns
 from .date_format_config import DateFormatConfig
 from .phone_config import PhoneConfig
+from .command_args_config import CommandArgsConfig
 
 __all__ = [
     'NLPConfig',
@@ -22,4 +23,5 @@ __all__ = [
     'RegexPatterns',
     'DateFormatConfig',
     'PhoneConfig',
+    'CommandArgsConfig',
 ]
