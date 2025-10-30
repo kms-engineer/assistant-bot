@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 @dataclass
 class NLPContext:
     user_text: str
-    verbose: bool = False
 
     intent: str = None
     intent_confidence: float = 0.0

@@ -15,8 +15,6 @@ class RegexFallbackStage(PipelineStage):
 
     def execute(self, context: NLPContext) -> NLPContext:
         entities_regex, spans, probs = self.span_extractor.extract(context.user_text)
-        if context.verbose:
-            print(f"[Regex] Extracted: {entities_regex}")
 
         merged = EntityMerger.merge(entities_regex, context.entities, probs, context.entity_confidences)
         context.entities = merged

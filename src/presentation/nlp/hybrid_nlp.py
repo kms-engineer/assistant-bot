@@ -29,7 +29,7 @@ class HybridNLP:
         intent_classifier = IntentClassifier(model_path=intent_model_path)
         ner_model = NERModel(model_path=ner_model_path)
         span_extractor = SpanExtractor()
-        template_parser = TemplateParser(verbose=False)
+        template_parser = TemplateParser()
         post_processor = PostProcessingRules(default_region=default_region)
         validator = ValidationAdapter()
 
@@ -43,16 +43,8 @@ class HybridNLP:
 
         self.pipeline = NLPPipeline(stages)
 
-    def process(self, user_text: str, verbose: bool = False) -> Dict:
-        result = self.pipeline.execute(user_text, verbose)
-
-        if verbose:
-            print("=" * 60)
-            print(f"Result: {result['intent']} (conf: {result['confidence']:.2f})")
-            print(f"Entities: {result['entities']}")
-            print(f"Valid: {result['validation']['valid']}")
-
-        return result
+    def process(self, user_text: str) -> Dict:
+        return self.pipeline.execute(user_text)
 
     def shutdown(self):
         self.pipeline.shutdown()

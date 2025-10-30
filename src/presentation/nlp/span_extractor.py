@@ -10,30 +10,17 @@ from .extractors import (
 
 class SpanExtractor:
 
-    def __init__(self, verbose: bool = False):
-        self.verbose = verbose
+    def __init__(self):
         self.regex_extractor = RegexExtractor()
 
     def extract(self, text: str) -> Tuple[Dict[str, str], List[Dict], Dict[str, float]]:
-        if self.verbose:
-            print(f"\n[SpanExtractor] Extracting from: '{text}'")
-
-        # Extract all entities using multi-strategy approach
         all_entities = []
-
-        # Strategy 1: Library-based extraction (highest confidence)
         all_entities.extend(LibraryExtractor.extract_all(text))
-
-        # Strategy 2: Regex-based extraction
         all_entities.extend(self.regex_extractor.extract_all(text))
-
-        # Strategy 3: Heuristic-based extraction (for names and addresses)
         all_entities.extend(HeuristicExtractor.extract_all(text))
 
-        # Resolve conflicts: prefer higher confidence entities
         resolved_entities = self._resolve_conflicts(all_entities)
 
-        # Convert to output format
         entities = {}
         raw_spans = []
         probabilities = {}
@@ -49,13 +36,6 @@ class SpanExtractor:
                 'confidence': entity.confidence,
                 'strategy': entity.strategy.value
             })
-
-        if self.verbose:
-            print(f"[SpanExtractor] Extracted {len(entities)} entities: {list(entities.keys())}")
-            for entity_type, entity_value in entities.items():
-                strategy = next((e.strategy.value for e in resolved_entities if e.entity_type == entity_type), 'unknown')
-                conf = probabilities.get(entity_type, 0.0)
-                print(f"  - {entity_type}: '{entity_value}' (confidence: {conf:.2f}, strategy: {strategy})")
 
         return entities, raw_spans, probabilities
 

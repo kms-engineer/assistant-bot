@@ -25,3 +25,43 @@ class ValidationConfig:
 
     PHONE_MAX_DIGITS = 15
     """Maximum number of digits in a phone number."""
+
+    # Error messages - Name
+    NAME_ERROR_EMPTY = "Name cannot be empty or whitespace"
+    NAME_ERROR_TOO_SHORT = f"Name must be at least {NAME_MIN_LENGTH} characters long"
+    NAME_ERROR_TOO_LONG = f"Name must be at most {NAME_MAX_LENGTH} characters long"
+    NAME_ERROR_INVALID_CHARS = "Name can only contain letters, spaces, and hyphens"
+
+    # Error messages - Email
+    EMAIL_ERROR_EMPTY = "Email cannot be empty or whitespace"
+    EMAIL_ERROR_INVALID_FORMAT = "Email must be a valid email address (e.g., user@example.com)"
+
+    # Error messages - Phone
+    PHONE_ERROR_NOT_STRING = "Phone number must be string value"
+    PHONE_ERROR_INVALID_LENGTH = "Phone number must be exactly 10 digits long"
+    PHONE_ERROR_NOT_DIGITS = "Phone number must contain only digits"
+
+    # Error messages - Birthday
+    BIRTHDAY_ERROR_NOT_STRING = "Birthday must be a string"
+    BIRTHDAY_ERROR_EMPTY = "Birthday cannot be empty or whitespace"
+    BIRTHDAY_ERROR_INVALID_FORMAT = "Birthday contain invalid date format. Use DD.MM.YYYY"
+    BIRTHDAY_ERROR_FUTURE_DATE = "Birthday cannot be in future"
+    BIRTHDAY_ERROR_INVALID_YEAR = "Birthday contain invalid year"
+    BIRTHDAY_ERROR_INVALID_MONTH = "Birthday contain invalid month"
+    BIRTHDAY_ERROR_INVALID_DATE = "Birthday contain invalid date"
+
+    # Error messages - Tag
+    TAG_ERROR_NOT_STRING = "Tag must be a string"
+    TAG_ERROR_EMPTY = "Tag cannot be empty"
+    TAG_ERROR_TOO_LONG = f"Tag too long (max {TAG_MAX_LENGTH} characters)"
+
+    # Error messages - Address
+    ADDRESS_ERROR_EMPTY = "Address cannot be empty or whitespace"
+    ADDRESS_ERROR_TOO_SHORT = f"Address must be at least {ADDRESS_MIN_LENGTH} characters long"
+    ADDRESS_ERROR_TOO_LONG = f"Address must be at most {ADDRESS_MAX_LENGTH} characters long"
+    ADDRESS_ERROR_INVALID_FORMAT = "Address must contain valid characters"
+
+    # Error messages - Note Text
+    NOTE_ERROR_NOT_STRING = "Note text must be a string"
+    NOTE_ERROR_EMPTY = "Note text cannot be empty or whitespace"
+    NOTE_ERROR_TOO_SHORT = "Note text must be at least 2 characters long"

@@ -6,14 +6,12 @@ class NLPPipeline:
     def __init__(self, stages: List[PipelineStage]):
         self.stages = stages
 
-    def execute(self, user_text: str, verbose: bool = False) -> dict:
-        context = NLPContext(user_text=user_text, verbose=verbose)
+    def execute(self, user_text: str) -> dict:
+        context = NLPContext(user_text=user_text)
 
         for stage in self.stages:
             if not stage.should_skip(context):
                 context = stage.execute(context)
-            elif verbose:
-                print(f"[{stage.name}] Skipped")
 
         return {
             'intent': context.intent,

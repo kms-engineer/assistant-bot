@@ -1,49 +1,19 @@
-import os
-import json
 from typing import Tuple
 import torch
-from transformers import (
-    AutoTokenizer,
-    AutoModelForSequenceClassification
-)
+from transformers import AutoModelForSequenceClassification
 from src.config import IntentConfig, ModelConfig
+from .base_model import BaseModel
 
 
-class IntentClassifier:
+class IntentClassifier(BaseModel):
 
     def __init__(self, model_path: str = None):
-        # Select best available device: CUDA (NVIDIA) > MPS (Apple Silicon) > CPU
-        if torch.cuda.is_available():
-            self.device = "cuda"
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-            self.device = "mps"
-        else:
-            self.device = "cpu"
+        super().__init__(model_path, ModelConfig.INTENT_MODEL_PATH)
 
-        print(f"Using device: {self.device}")
-
-        # Use default path if not provided
-        if model_path is None:
-            model_path = ModelConfig.INTENT_MODEL_PATH
-
-        # Validate model path exists
-        if not os.path.exists(model_path):
-            raise ValueError(f"Model not found at {model_path}.")
-
-        self.model_path = model_path
-
-        # Load tokenizer and model
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModelForSequenceClassification.from_pretrained(
-            model_path,
+            self.model_path,
             num_labels=len(IntentConfig.INTENT_LABELS)
         ).to(self.device)
-
-        # Load label mapping
-        label_map_path = os.path.join(model_path, "label_map.json")
-        with open(label_map_path, 'r') as f:
-            label_map = json.load(f)
-            self.id2label = {int(k): v for k, v in label_map.items()}
 
     def predict(self, text: str) -> Tuple[str, float]:
         inputs = self.tokenizer(

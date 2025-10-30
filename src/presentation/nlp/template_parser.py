@@ -4,11 +4,8 @@ from src.config.keyword_map import GREETING_KEYWORDS
 
 class TemplateParser:
 
-    def __init__(self, verbose: bool = False):
-        self.verbose = verbose
-
-        if verbose:
-            print("Template Parser initialized (keyword + regex)")
+    def __init__(self):
+        pass
 
     def parse(
         self,

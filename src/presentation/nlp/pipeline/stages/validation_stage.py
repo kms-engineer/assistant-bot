@@ -9,6 +9,4 @@ class ValidationStage(PipelineStage):
 
     def execute(self, context: NLPContext) -> NLPContext:
         context.validation = self.validator.validate(context.entities, context.intent)
-        if context.verbose:
-            print(f"[Validation] Valid: {context.validation['valid']}, Missing: {context.validation['missing']}")
         return context

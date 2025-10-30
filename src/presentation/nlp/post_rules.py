@@ -1,13 +1,18 @@
 import re
 from typing import Dict, Any
 
-from ...domain.validators.phone_validator import PhoneValidator
-from ...domain.validators.email_validator import EmailValidator
-from ...domain.validators.birthday_validator import BirthdayValidator
-from ...domain.validators.address_validator import AddressValidator
-from ...domain.validators.name_validator import NameValidator
-from ...domain.validators.tag_validator import TagValidator
-from ...domain.validators.note_text_validator import NoteTextValidator
+# Import normalizers
+from .normalizers import (
+    PhoneNormalizer,
+    EmailNormalizer,
+    NameNormalizer,
+    BirthdayNormalizer,
+    AddressNormalizer,
+    TagNormalizer,
+    NoteTextNormalizer
+)
+
+# Import validators (only for validation)
 from ...domain.validators.intent_validator import IntentValidator
 from ...config import NLPConfig, RegexPatterns
 
@@ -65,12 +70,12 @@ class PostProcessingRules:
                 if re.match(RegexPatterns.POST_DAYS_IN_ADDRESS_PATTERN, address_val):
                     del processed['address']
 
-        # Apply normalizers using domain validators
+        # Apply normalizers
         # For edit_phone, normalize old_phone and new_phone separately
         if intent == 'edit_phone':
             if 'old_phone' in processed:
                 old_phone_entities = {'phone': processed['old_phone']}
-                old_phone_entities = PhoneValidator.normalize_for_nlp(old_phone_entities, self.default_region)
+                old_phone_entities = PhoneNormalizer.normalize(old_phone_entities, self.default_region)
                 processed['old_phone'] = old_phone_entities.get('phone', processed['old_phone'])
                 if '_phone_valid' in old_phone_entities:
                     processed['_old_phone_valid'] = old_phone_entities['_phone_valid']
@@ -81,7 +86,7 @@ class PostProcessingRules:
 
             if 'new_phone' in processed:
                 new_phone_entities = {'phone': processed['new_phone']}
-                new_phone_entities = PhoneValidator.normalize_for_nlp(new_phone_entities, self.default_region)
+                new_phone_entities = PhoneNormalizer.normalize(new_phone_entities, self.default_region)
                 processed['new_phone'] = new_phone_entities.get('phone', processed['new_phone'])
                 if '_phone_valid' in new_phone_entities:
                     processed['_new_phone_valid'] = new_phone_entities['_phone_valid']
@@ -90,15 +95,15 @@ class PostProcessingRules:
                         processed['_validation_errors'] = []
                     processed['_validation_errors'].extend(new_phone_entities['_validation_errors'])
         else:
-            # Normal phone validation for other intents
-            processed = PhoneValidator.normalize_for_nlp(processed, self.default_region)
+            # Normal phone normalization for other intents
+            processed = PhoneNormalizer.normalize(processed, self.default_region)
 
-        processed = EmailValidator.normalize_for_nlp(processed)
-        processed = BirthdayValidator.normalize_for_nlp(processed)
-        processed = AddressValidator.normalize_for_nlp(processed)
-        processed = TagValidator.normalize_for_nlp(processed)
-        processed = NameValidator.normalize_for_nlp(processed)
-        processed = NoteTextValidator.normalize_for_nlp(processed)
+        processed = EmailNormalizer.normalize(processed)
+        processed = BirthdayNormalizer.normalize(processed)
+        processed = AddressNormalizer.normalize(processed)
+        processed = TagNormalizer.normalize(processed)
+        processed = NameNormalizer.normalize(processed)
+        processed = NoteTextNormalizer.normalize(processed)
 
         return processed
 

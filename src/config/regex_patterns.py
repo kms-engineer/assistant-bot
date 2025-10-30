@@ -16,6 +16,16 @@ class RegexPatterns:
     BIRTHDAY_STRICT_PATTERN = r'\d{2}\.\d{2}\.\d{4}'
     """Strict regex pattern for DD.MM.YYYY format."""
 
+    # Date parsing patterns for normalizers
+    BIRTHDAY_PARSE_DD_MM_YYYY = r'(\d{1,2})[./](\d{1,2})[./](\d{4})'
+    """Pattern for DD.MM.YYYY or DD/MM/YYYY format."""
+
+    BIRTHDAY_PARSE_YYYY_MM_DD = r'(\d{4})-(\d{1,2})-(\d{1,2})'
+    """Pattern for YYYY-MM-DD format."""
+
+    BIRTHDAY_PARSE_MM_DD_YYYY = r'(\d{1,2})/(\d{1,2})/(\d{4})'
+    """Pattern for MM/DD/YYYY (US) format."""
+
     # Date patterns for library extractor (more formats)
     DATE_PATTERN_SLASH_DOT = r'\b\d{1,2}[./-]\d{1,2}[./-]\d{2,4}\b'
     """Date pattern with slashes or dots (MM/DD/YYYY, DD-MM-YYYY, etc)."""

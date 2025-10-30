@@ -14,9 +14,6 @@ class TemplateFallbackStage(PipelineStage):
         return is_valid or high_conf
 
     def execute(self, context: NLPContext) -> NLPContext:
-        if context.verbose:
-            print("[Template] Using template parser")
-
         result = self.parser.generate_structured_output(
             context.user_text,
             intent_hint=context.intent,

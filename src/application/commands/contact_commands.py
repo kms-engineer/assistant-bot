@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from ..services.contact_service import ContactService
@@ -236,3 +237,7 @@ def hello(args: List[str], service: ContactService) -> str:
 
 def help(args: List[str], service: ContactService, nlp_mode: bool = False) -> str:
     return UIMessages.get_command_list(nlp_mode)
+
+def clear(args: List[str], service: ContactService) -> str:
+    os.system('clear' if os.name == 'posix' else 'cls')
+    return ""

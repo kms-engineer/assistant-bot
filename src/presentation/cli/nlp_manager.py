@@ -93,12 +93,12 @@ class NLPManager:
             self.nlp_processor = None
             return False
 
-    def process_input(self, user_input: str, verbose: bool = False) -> Optional[dict]:
+    def process_input(self, user_input: str) -> Optional[dict]:
         if self.nlp_processor is None:
             return None
 
         try:
-            return self.nlp_processor.process(user_input, verbose=verbose)
+            return self.nlp_processor.process(user_input)
         except Exception as e:
             print(f"NLP processing error: {e}")
             return None

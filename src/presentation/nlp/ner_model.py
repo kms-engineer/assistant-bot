@@ -1,81 +1,33 @@
-import os
-import json
 from typing import Dict, List, Tuple, Optional
-import torch
-from transformers import (
-    AutoTokenizer,
-    AutoModelForTokenClassification,
-    pipeline
-)
+from transformers import AutoModelForTokenClassification, pipeline
 from src.config import EntityConfig, ModelConfig
+from .base_model import BaseModel
 
-class NERModel:
 
-    # Mapping from label to ID (generated from config)
+class NERModel(BaseModel):
+
     LABEL2ID = {label: idx for idx, label in enumerate(EntityConfig.ENTITY_LABELS)}
     ID2LABEL = {idx: label for label, idx in LABEL2ID.items()}
 
     def __init__(self, model_path: str = None):
-        # Select best available device: CUDA (NVIDIA) > MPS (Apple Silicon) > CPU
-        if torch.cuda.is_available():
-            self.device = "cuda"
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
-            self.device = "mps"
-        else:
-            self.device = "cpu"
+        super().__init__(model_path, ModelConfig.NER_MODEL_PATH)
 
-        print(f"Using device: {self.device}")
-
-        # Use default path if not provided
-        if model_path is None:
-            model_path = ModelConfig.NER_MODEL_PATH
-
-        # Validate model path exists
-        if not os.path.exists(model_path):
-            raise ValueError(f"Model not found at {model_path}.")
-
-        self.model_path = model_path
-        # Load tokenizer and model
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
         self.model = AutoModelForTokenClassification.from_pretrained(
-            model_path,
+            self.model_path,
             num_labels=len(EntityConfig.ENTITY_LABELS)
         ).to(self.device)
-
-        # Load label mapping
-        label_map_path = os.path.join(model_path, "label_map.json")
-        with open(label_map_path, 'r') as f:
-            label_map = json.load(f)
-            self.id2label = {int(k): v for k, v in label_map.items()}
-
-        # Create NER pipeline for easier inference
-        # Note: pipeline device parameter: 0 for cuda, -1 for cpu, or torch.device for mps
-        if self.device == "cuda":
-            pipeline_device = 0
-        elif self.device == "mps":
-            pipeline_device = torch.device("mps")
-        else:
-            pipeline_device = -1
 
         self.ner_pipeline = pipeline(
             "token-classification",
             model=self.model,
             tokenizer=self.tokenizer,
-            aggregation_strategy="simple",  # Merge B-/I- tokens
-            device=pipeline_device
+            aggregation_strategy="simple",
+            device=self._get_pipeline_device()
         )
 
-    def extract_entities(self, text: str, verbose: bool = False) -> Tuple[Dict[str, Optional[str]], Dict[str, float]]:
-        # Use NER pipeline to extract entities
+    def extract_entities(self, text: str) -> Tuple[Dict[str, Optional[str]], Dict[str, float]]:
         ner_results = self.ner_pipeline(text)
-
-        # Parse results into structured format with confidence scores
         entities, confidences = self._parse_ner_results(ner_results, text)
-
-        if verbose:
-            print(f"[NER] Extracted entities: {entities}")
-            print(f"[NER] Confidence scores: {confidences}")
-
         return entities, confidences
 
     @staticmethod

@@ -8,9 +8,6 @@ class PostProcessStage(PipelineStage):
         self.processor = post_processor
 
     def execute(self, context: NLPContext) -> NLPContext:
-        if context.verbose:
-            print("[PostProcess] Normalizing entities")
-
         processed = self.processor.process(context.entities, context.intent, context.user_text)
         validation = self.processor.validate_entities_for_intent(processed, context.intent)
 

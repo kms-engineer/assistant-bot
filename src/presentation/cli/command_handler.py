@@ -20,6 +20,7 @@ class CommandHandler:
         self.commands: Dict[str, Callable] = {
             "hello": self._wrap(contact_commands.hello),
             "help": self._wrap_help(contact_commands.help),
+            "clear": self._wrap(contact_commands.clear),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
             "delete-contact": self._wrap(contact_commands.delete_contact),
@@ -146,6 +147,7 @@ class CommandHandler:
     def get_available_commands(self) -> List[str]:
         return [*self.commands.keys(), "close", "exit"]
 
+    @staticmethod
     def get_nlp_command_examples(self) -> List[str]:
         return [
             # Contact management

@@ -47,7 +47,7 @@ class UIMessages:
     # NLP mode command list (natural language format)
     NLP_COMMAND_LIST = """You can talk to me naturally! Here are some things you can say:
 
-📇 CONTACT MANAGEMENT:
+CONTACT MANAGEMENT:
   • "Add <name> to my contacts with phone <phone>" (name and phone required)
   • "Add <name> with phone <phone> and birthday <DD.MM.YYYY>"
   • "Add <name> with phone <phone> and email <email>"
@@ -57,13 +57,13 @@ class UIMessages:
   • "Show phone for <name>"
   • "Show all contacts"
 
-🎂 BIRTHDAYS:
+BIRTHDAYS:
   • "Add birthday <DD.MM.YYYY> for <name>"
   • "Show birthday for <name>"
   • "Show upcoming birthdays" (for next 7 days)
   • "Show birthdays for next <days> days" (max 365 days)
 
-📧 EMAIL & ADDRESS:
+EMAIL & ADDRESS:
   • "Add email <email> for <name>"
   • "Edit email for <name> to <new email>"
   • "Remove email from <name>"
@@ -71,11 +71,11 @@ class UIMessages:
   • "Edit address for <name> to <new address>"
   • "Remove address from <name>"
 
-🔍 SEARCH:
+SEARCH:
   • "Search for <text>" (partial match in names, emails, phones)
   • "Find exact <text>" (exact match only)
 
-📝 NOTES:
+NOTES:
   • "Add note: <text>"
   • "Show all notes"
   • "Edit note <id> with text: <new text>"
@@ -85,15 +85,15 @@ class UIMessages:
   • "Search notes for <query>"
   • "Find notes with tag <tag>"
 
-💾 FILE OPERATIONS:
+FILE OPERATIONS:
   • "Save contacts to <filename>"
   • "Load contacts from <filename>"
 
-❓ HELP & EXIT:
+HELP & EXIT:
   • "Help" or "Show commands"
   • "Exit" or "Goodbye" or "Close"
 
-💡 TIP: You can use natural language! For example:
+TIP: You can use natural language! For example:
    Instead of: "add John 1234567890"
    Just say: "Add John to my contacts with phone 1234567890"
 """
@@ -113,7 +113,6 @@ class UIMessages:
 
     @staticmethod
     def get_command_list(nlp_mode: bool = False) -> str:
-        """Get command list based on mode."""
         return UIMessages.NLP_COMMAND_LIST if nlp_mode else UIMessages.COMMAND_LIST
 
     @staticmethod

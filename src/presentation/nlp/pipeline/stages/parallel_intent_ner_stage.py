@@ -14,16 +14,14 @@ class ParallelIntentNERStage(PipelineStage):
     def execute(self, context: NLPContext) -> NLPContext:
         if self.executor:
             intent_future = self.executor.submit(self.intent_classifier.predict, context.user_text)
-            ner_future = self.executor.submit(self.ner_model.extract_entities, context.user_text, context.verbose)
+            ner_future = self.executor.submit(self.ner_model.extract_entities, context.user_text)
             context.intent, context.intent_confidence = intent_future.result()
             context.entities, context.entity_confidences = ner_future.result()
         else:
             context.intent, context.intent_confidence = self.intent_classifier.predict(context.user_text)
-            context.entities, context.entity_confidences = self.ner_model.extract_entities(context.user_text, context.verbose)
+            context.entities, context.entity_confidences = self.ner_model.extract_entities(context.user_text)
 
         context.source = "ner"
-        if context.verbose:
-            print(f"[Intent+NER] {context.intent} (conf: {context.intent_confidence:.2f}), entities: {context.entities}")
         return context
 
     def shutdown(self):

@@ -19,8 +19,7 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
     # If regex fails, try NLP processing
     if nlp_manager and nlp_manager.is_ready():
         try:
-            verbose = False
-            nlp_result = nlp_manager.process_input(user_input, verbose=verbose)
+            nlp_result = nlp_manager.process_input(user_input)
 
             if nlp_result is None:
                 # NLP processor not available - suggest similar commands
