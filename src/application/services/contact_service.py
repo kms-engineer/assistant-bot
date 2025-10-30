@@ -48,10 +48,18 @@ class ContactService:
 
     def add_contact(self, name: Name, phone: Phone) -> str:
         try:
+            # Try to find existing contact
             contact = self.address_book.find(name.value)
-            contact.add_phone(phone)
-            return "Contact updated."
+            try:
+                contact.add_phone(phone)
+                return f"Phone number {phone.value} added to existing contact {name.value}."
+            except ValueError as e:
+                # Phone already exists for this contact
+                if "already exists" in str(e):
+                    return f"Phone number {phone.value} already exists for {name.value}."
+                raise  # Re-raise if it's a different ValueError
         except KeyError:
+            # Contact doesn't exist, create new one
             contact = Contact.create(
                 name,
                 lambda: IDGenerator.generate_unique_id(
@@ -60,7 +68,7 @@ class ContactService:
             )
             contact.add_phone(phone)
             self.address_book.add_record(contact)
-            return "Contact added."
+            return f"Contact {name.value} added with phone {phone.value}."
 
     def change_phone(self, name: str, old_phone: Phone, new_phone: Phone) -> str:
         contact = self.address_book.find(name)

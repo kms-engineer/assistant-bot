@@ -3,7 +3,7 @@ class IntentConfig:
 
     # All supported intent labels (32 unique intents)
     INTENT_LABELS = [
-        "add_contact", "add_phone", "edit_phone", "edit_email", "edit_address", "delete_contact",
+        "add_contact", "edit_phone", "edit_email", "edit_address", "delete_contact",
         "list_all_contacts", "search_contacts", "add_birthday", "list_birthdays",
         "add_note", "edit_note", "remove_note", "show_notes", "add_note_tag",
         "remove_note_tag", "search_notes_text", "search_notes_by_tag",
@@ -17,7 +17,6 @@ class IntentConfig:
     # Intent to command mapping
     INTENT_TO_COMMAND_MAP = {
         'add_contact': 'add',
-        'add_phone': 'add-phone',
         'edit_phone': 'change',
         'edit_email': 'edit-email',
         'edit_address': 'edit-address',
