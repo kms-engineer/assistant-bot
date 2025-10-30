@@ -1,8 +1,8 @@
 
 INTENT_REQUIREMENTS = {
     "add_contact": {
-        "required": ["name"],
-        "optional": ["phone", "email", "address", "birthday"]
+        "required": ["name", "phone"],
+        "optional": ["email", "address", "birthday"]
     },
     "add_phone": {
         "required": ["name", "phone"],
@@ -29,8 +29,8 @@ INTENT_REQUIREMENTS = {
         "optional": []
     },
     "search_contacts": {
-        "required": ["name"],
-        "optional": []
+        "required": [],
+        "optional": ["name", "phone", "email"]
     },
     "add_birthday": {
         "required": ["name", "birthday"],
