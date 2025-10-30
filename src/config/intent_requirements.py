@@ -4,6 +4,10 @@ INTENT_REQUIREMENTS = {
         "required": ["name"],
         "optional": ["phone", "email", "address", "birthday"]
     },
+    "add_phone": {
+        "required": ["name", "phone"],
+        "optional": []
+    },
     "edit_phone": {
         "required": ["name", "old_phone", "new_phone"],
         "optional": []
@@ -102,6 +106,26 @@ INTENT_REQUIREMENTS = {
     },
     "show_birthday": {
         "required": ["name"],
+        "optional": []
+    },
+    "clear": {
+        "required": [],
+        "optional": []
+    },
+    "save": {
+        "required": ["filename"],
+        "optional": []
+    },
+    "load": {
+        "required": ["filename"],
+        "optional": []
+    },
+    "find_contacts": {
+        "required": ["search_text"],
+        "optional": []
+    },
+    "list_note_tags": {
+        "required": [],
         "optional": []
     },
 }

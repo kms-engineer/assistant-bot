@@ -20,7 +20,7 @@ class ValidationConfig:
     """Maximum length for note tags."""
 
     # Phone validation
-    PHONE_MIN_DIGITS = 10
+    PHONE_MIN_DIGITS = 8
     """Minimum number of digits in a phone number."""
 
     PHONE_MAX_DIGITS = 15
@@ -38,8 +38,8 @@ class ValidationConfig:
 
     # Error messages - Phone
     PHONE_ERROR_NOT_STRING = "Phone number must be string value"
-    PHONE_ERROR_INVALID_LENGTH = "Phone number must be exactly 10 digits long"
-    PHONE_ERROR_NOT_DIGITS = "Phone number must contain only digits"
+    PHONE_ERROR_INVALID_LENGTH = f"Phone number must contain between {PHONE_MIN_DIGITS} and {PHONE_MAX_DIGITS} digits"
+    PHONE_ERROR_INVALID_FORMAT = "Phone number must start with + or a digit and contain only digits"
 
     # Error messages - Birthday
     BIRTHDAY_ERROR_NOT_STRING = "Birthday must be a string"

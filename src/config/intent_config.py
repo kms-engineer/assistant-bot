@@ -1,21 +1,23 @@
 
 class IntentConfig:
 
-    # All supported intent labels (26 unique intents)
+    # All supported intent labels (32 unique intents)
     INTENT_LABELS = [
-        "add_contact", "edit_phone", "edit_email", "edit_address", "delete_contact",
+        "add_contact", "add_phone", "edit_phone", "edit_email", "edit_address", "delete_contact",
         "list_all_contacts", "search_contacts", "add_birthday", "list_birthdays",
         "add_note", "edit_note", "remove_note", "show_notes", "add_note_tag",
         "remove_note_tag", "search_notes_text", "search_notes_by_tag",
         "help", "exit", "hello",
         "show_phone", "add_email", "remove_email", "add_address", "remove_address",
-        "show_birthday"
+        "show_birthday", "clear", "save", "load", "find_contacts",
+        "list_note_tags"
     ]
     """Complete list of all supported intent labels."""
 
     # Intent to command mapping
     INTENT_TO_COMMAND_MAP = {
         'add_contact': 'add',
+        'add_phone': 'add-phone',
         'edit_phone': 'change',
         'edit_email': 'edit-email',
         'edit_address': 'edit-address',
@@ -41,7 +43,12 @@ class IntentConfig:
         'remove_email': 'remove-email',
         'add_address': 'add-address',
         'remove_address': 'remove-address',
-        'show_birthday': 'show-birthday'
+        'show_birthday': 'show-birthday',
+        'clear': 'clear',
+        'save': 'save',
+        'load': 'load',
+        'find_contacts': 'find',
+        'list_note_tags': 'list-tags'
     }
     """Maps intent labels to corresponding command names."""
 

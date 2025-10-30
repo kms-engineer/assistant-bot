@@ -1,6 +1,6 @@
 import re
 from typing import Union
-from src.config import ValidationConfig, PhoneConfig
+from src.config import ValidationConfig
 from .base_validator import BaseValidator
 
 
@@ -10,10 +10,21 @@ class PhoneValidator(BaseValidator):
     def validate(phone: str) -> Union[str, bool]:
         if not isinstance(phone, str):
             return ValidationConfig.PHONE_ERROR_NOT_STRING
-        if len(phone) != PhoneConfig.EXACT_PHONE_LENGTH:
+
+        # Phone can start with + or a digit
+        if not phone:
+            return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
+
+        if not (phone[0] == '+' or phone[0].isdigit()):
+            return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
+
+        # Extract digits only (skip the + if present)
+        digits = ''.join(c for c in phone if c.isdigit())
+
+        # Check length is between 8 and 15 digits
+        if len(digits) < ValidationConfig.PHONE_MIN_DIGITS or len(digits) > ValidationConfig.PHONE_MAX_DIGITS:
             return ValidationConfig.PHONE_ERROR_INVALID_LENGTH
-        if not phone.isdigit():
-            return ValidationConfig.PHONE_ERROR_NOT_DIGITS
+
         return True
 
     @staticmethod
