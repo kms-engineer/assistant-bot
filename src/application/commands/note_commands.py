@@ -67,30 +67,33 @@ def delete_note(args: List[str], service: NoteService) -> str:
     return service.delete_note(note_id)
 
 def add_tag(args: List[str], service: NoteService) -> str:
+    """Add a tag to a note."""
     if len(args) < 2:
         raise ValueError("Add-tag command requires 2 arguments: note ID and tag")
 
     note_id = args[0]
-    tag_vo = Tag(args[1])
-    return service.add_tag(note_id, tag_vo)
+    tag = " ".join(args[1:])
+    return service.add_tag(note_id, tag)
 
 def remove_tag(args: List[str], service: NoteService) -> str:
+    """Remove a tag from a note."""
     if len(args) < 2:
         raise ValueError("Remove-tag command requires 2 arguments: note ID and tag")
 
     note_id = args[0]
-    tag_vo = Tag(args[1])
-    return service.remove_tag(note_id, tag_vo)
+    tag = " ".join(args[1:])
+    return service.remove_tag(note_id, tag)
 
 def search_notes(args: List[str], service: NoteService) -> str:
+    """Search notes by text content."""
     if not args:
-        raise ValueError("Search-notes command requires search query argument")
+        raise ValueError("Search-notes command requires a search query")
 
     query = " ".join(args)
     notes = service.search_notes(query)
 
     if not notes:
-        return f"No notes found matching: {query}"
+        return f"No notes found matching '{query}'."
 
     lines = [f"Found {len(notes)} note(s) matching '{query}':"]
     for note in notes:
@@ -104,10 +107,11 @@ def search_notes(args: List[str], service: NoteService) -> str:
     return "\n".join(lines)
 
 def search_notes_by_tag(args: List[str], service: NoteService) -> str:
+    """Search notes by tag."""
     if not args:
         raise ValueError("Search-notes-by-tag command requires a tag")
 
-    tag = args[0]
+    tag = " ".join(args)
     notes = service.search_by_tag(tag)
 
     if not notes:
