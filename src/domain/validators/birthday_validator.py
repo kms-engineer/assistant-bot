@@ -1,29 +1,41 @@
+import re
 from datetime import datetime
-from ..validators.string_validator import StringValidator
+from typing import Union
+from src.config import DateFormatConfig, RegexPatterns, ValidationConfig
+from .base_validator import BaseValidator
 
-class BirthdayValidator:
 
-    _pattern = r"\d{2}\.\d{2}\.\d{4}"
+class BirthdayValidator(BaseValidator):
+
+    _pattern = re.compile(RegexPatterns.BIRTHDAY_STRICT_PATTERN)
 
     @staticmethod
-    def validate(birthday: str, date_format: str = "%d.%m.%Y") -> bool | str:
-        if not StringValidator.is_string(birthday):
-            return "Birthday must be a string"
-        if not StringValidator.is_not_empty(birthday):
-            return "Birthday cannot be empty or whitespace"
-        if not StringValidator.exactly_match_pattern(birthday, BirthdayValidator._pattern):
-            return "Birthday contain invalid date format. Use DD.MM.YYYY"
+    def validate(birthday: str, date_format: str = None) -> Union[str, bool]:
+        if date_format is None:
+            date_format = DateFormatConfig.PRIMARY_DATE_FORMAT
+
+        if not isinstance(birthday, str):
+            return ValidationConfig.BIRTHDAY_ERROR_NOT_STRING
+
+        if not birthday or len(birthday.strip()) == 0:
+            return ValidationConfig.BIRTHDAY_ERROR_EMPTY
+
+        if not BirthdayValidator._pattern.fullmatch(birthday):
+            return ValidationConfig.BIRTHDAY_ERROR_INVALID_FORMAT
 
         try:
-            birthday_date = datetime.strptime(birthday, "%d.%m.%Y")
+            birthday_date = datetime.strptime(birthday, date_format)
             today = datetime.now()
 
             if birthday_date > today:
-                return "Birthday cannot be in future"
-            if birthday_date.year < 1900:
-                return f"Birthday contain invalid year: {birthday_date.year} (must be from 1900 onwards)"
+                return ValidationConfig.BIRTHDAY_ERROR_FUTURE_DATE
+
+            if birthday_date.year < DateFormatConfig.MIN_BIRTHDAY_YEAR:
+                return f"{ValidationConfig.BIRTHDAY_ERROR_INVALID_YEAR}: {birthday_date.year} (must be from {DateFormatConfig.MIN_BIRTHDAY_YEAR} onwards)"
+
             if not (1 <= birthday_date.month <= 12):
-                return f"Birthday contain invalid month: {birthday_date:02d}"
+                return f"{ValidationConfig.BIRTHDAY_ERROR_INVALID_MONTH}: {birthday_date.month:02d}"
+
             return True
         except ValueError:
-            return f"Birthday contain invalid date: {birthday}"
+            return f"{ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE}: {birthday}"

@@ -23,17 +23,15 @@ class Note(Entity):
         note_id = id_generator()
         return cls(text, note_id)
 
-    def add_tag(self, tag: str) -> None:
-        tag_obj = Tag(tag)
-        if tag_obj in self.tags:
+    def add_tag(self, tag: Tag) -> None:
+        if tag in self.tags:
             raise ValueError("Tag already exists")
-        self.tags.append(tag_obj)
+        self.tags.append(tag)
 
-    def remove_tag(self, tag: str) -> None:
-        tag_obj = Tag(tag)
-        if tag_obj not in self.tags:
+    def remove_tag(self, tag: Tag) -> None:
+        if tag not in self.tags:
             raise ValueError("Tag not found")
-        self.tags.remove(tag_obj)
+        self.tags.remove(tag)
 
     def edit_text(self, new_text: str) -> None:
         if not new_text or not new_text.strip():

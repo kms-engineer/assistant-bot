@@ -1,24 +1,38 @@
+import argparse
 from src.domain.utils.styles_utils import stylize_text, stylize_error_message
 from src.infrastructure.storage.storage_factory import StorageFactory
 from src.infrastructure.storage.storage_type import StorageType
-from .command_handler import CommandHandler
-from .command_parser import CommandParser
-from .ui_messages import UIMessages
 from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService  # Import NoteService
-from ...infrastructure.persistence.data_path_resolver import *
-from ...infrastructure.persistence.data_path_resolver import HOME_DATA_DIR, DEFAULT_DATA_DIR
-from ...infrastructure.persistence.migrator import migrate_files
-from ...infrastructure.storage.json_storage import JsonStorage
+from ...application.services.note_service import NoteService
 from ...infrastructure.storage.pickle_storage import PickleStorage
+from ...infrastructure.storage.json_storage import JsonStorage
+from ...infrastructure.persistence.migrator import migrate_files
+from ...infrastructure.persistence.data_path_resolver import (
+    HOME_DATA_DIR,
+    DEFAULT_DATA_DIR,
+    DEFAULT_ADDRESS_BOOK_DATABASE_NAME,
+    DEFAULT_JSON_FILE,
+    DEFAULT_CONTACTS_FILE
+)
 from ...infrastructure.storage.sqlite_storage import SQLiteStorage
+from .command_parser import CommandParser
+from .command_handler import CommandHandler
+from .ui_messages import UIMessages
+from .mode_decider import CLIMode
+from .regex_gate import RegexCommandGate
+from .input_processor import process_classic_input, process_nlp_input
 
 
-def save_and_exit(service: ContactService, note_service: NoteService = None) -> None:
+def save_and_exit(contact_service: ContactService, note_service: NoteService = None, storage_type: StorageType = None) -> None:
     print(UIMessages.SAVING)
+
+    # Save contacts
     try:
         filename = contact_service.save_address_book()
-        print(UIMessages.saved_successfully("Address book", filename))
+        if storage_type == StorageType.SQLITE:
+            print(UIMessages.saved_successfully("Data", filename))
+        else:
+            print(UIMessages.saved_successfully("Address book", filename))
     except Exception as e:
         print(stylize_error_message(message=f"Failed to save address book: {e}"))
 
@@ -26,25 +40,36 @@ def save_and_exit(service: ContactService, note_service: NoteService = None) -> 
     if note_service:
         try:
             note_filename = note_service.save_notes()
-            print(UIMessages.saved_successfully("Notes", note_filename))
+            # For SQLite, both are in the same file, so don't print duplicate message
+            if storage_type != StorageType.SQLITE:
+                print(UIMessages.saved_successfully("Notes", note_filename))
         except Exception as e:
             print(stylize_error_message(message=f"Failed to save notes: {e}"))
-        print(UIMessages.GOODBYE)
+
+    print(UIMessages.GOODBYE)
+
+
+def parse_cli_mode() -> CLIMode:
+    arg_parser = argparse.ArgumentParser(description="Assistant Bot CLI")
+    arg_parser.add_argument(
+        "--mode",
+        type=str,
+        choices=["classic", "nlp"],
+        default="classic",
+        help="CLI mode: classic or nlp (default: classic)"
+    )
+    cli_args = arg_parser.parse_args()
+    return CLIMode.from_string(cli_args.mode)
 
 
 def main() -> None:
-    # storage = PickleStorage()
-    storage = JsonStorage()
-    note_service = NoteService(storage)  # Initialize NoteService
+    mode = parse_cli_mode()
+
     migrate_files(DEFAULT_DATA_DIR, HOME_DATA_DIR)
     storage_type = StorageType.SQLITE
     storage = StorageFactory.create_storage(storage_type)
     contact_service = ContactService(storage)
-    # if storage_type == StorageType.SQLITE:
-    #     note_service = NoteService(storage)
-    # else:
-    #     json_storage = JsonStorage()
-    #     note_service = NoteService(json_storage)
+    note_service = NoteService(storage)
 
     print(UIMessages.LOADING)
     try:
@@ -58,6 +83,7 @@ def main() -> None:
         print(UIMessages.loaded_successfully("Address book", count))
     except Exception as e:
         print(stylize_error_message(message=f"Failed to load address book: {e}. Starting with an empty book."))
+
     # Load notes
     try:
         note_count = note_service.load_notes()
@@ -66,9 +92,21 @@ def main() -> None:
         print(stylize_error_message(message=f"Failed to load notes: {e}. Starting with empty notes."))
 
     parser = CommandParser()
-    handler = CommandHandler(contact_service, note_service)
+    regex_gate = RegexCommandGate()
 
-    print(UIMessages.WELCOME + '\n\n' + UIMessages.COMMAND_LIST)
+    # Initialize NLP manager for NLP mode
+    nlp_manager = None
+    is_nlp_mode = mode == CLIMode.NLP
+    if is_nlp_mode:
+        from .nlp_manager import NLPManager
+        nlp_manager = NLPManager()
+        nlp_manager.initialize_nlp_processor()
+
+    # Create handler with nlp_mode flag
+    handler = CommandHandler(contact_service, note_service, nlp_mode=is_nlp_mode)
+
+    # Show mode-appropriate help
+    print(UIMessages.WELCOME + '\n\n' + UIMessages.get_command_list(is_nlp_mode))
 
     while True:
         try:
@@ -76,11 +114,18 @@ def main() -> None:
             if not user_input:
                 continue
 
-            command, args = parser.parse(user_input)
-            result = handler.handle(command, args)
+            if mode == CLIMode.CLASSIC:
+                result = process_classic_input(user_input, parser, handler)
+            elif mode == CLIMode.NLP:
+                result = process_nlp_input(user_input, regex_gate, handler, nlp_manager)
+                if not result:
+                    print("Could not understand the command. Please try rephrasing or type 'help' for available commands.")
+                    continue
+            else:
+                continue
 
             if result == "exit":
-                save_and_exit(contact_service, note_service)
+                save_and_exit(contact_service, note_service, storage_type)
                 break
 
             if result == "clear":
@@ -90,7 +135,7 @@ def main() -> None:
 
         except KeyboardInterrupt:
             print()
-            save_and_exit(contact_service, note_service)
+            save_and_exit(contact_service, note_service, storage_type)
             break
 
 

@@ -1,6 +1,12 @@
 from typing import Any
 from ...domain.entities.contact import Contact
 from ...domain.entities.note import Note
+from ...domain.value_objects.name import Name
+from ...domain.value_objects.phone import Phone
+from ...domain.value_objects.email import Email
+from ...domain.value_objects.address import Address
+from ...domain.value_objects.birthday import Birthday
+from ...domain.value_objects.tag import Tag
 
 
 class JsonSerializer:
@@ -18,19 +24,24 @@ class JsonSerializer:
 
     @staticmethod
     def dict_to_contact(data: dict[str, Any]) -> Contact:
-        contact = Contact(data["name"], contact_id=data["id"])
+        name_vo = Name(data["name"])
+        contact = Contact(name_vo, contact_id=data["id"])
 
-        for phone in data.get("phones", []):
-            contact.add_phone(phone)
+        for phone_str in data.get("phones", []):
+            phone_vo = Phone(phone_str)
+            contact.add_phone(phone_vo)
 
         if data.get("birthday"):
-            contact.add_birthday(data["birthday"])
+            birthday_vo = Birthday(data["birthday"])
+            contact.add_birthday(birthday_vo)
 
         if data.get("email"):
-            contact.add_email(data["email"])
+            email_vo = Email(data["email"])
+            contact.add_email(email_vo)
 
         if data.get("address"):
-            contact.add_address(data["address"])
+            address_vo = Address(data["address"])
+            contact.add_address(address_vo)
 
         return contact
 
@@ -46,7 +57,8 @@ class JsonSerializer:
     def dict_to_note(data: dict[str, Any]) -> Note:
         note = Note(data["text"], note_id=data["id"])
 
-        for tag in data.get("tags", []):
-            note.add_tag(tag)
+        for tag_str in data.get("tags", []):
+            tag_vo = Tag(tag_str)
+            note.add_tag(tag_vo)
 
         return note

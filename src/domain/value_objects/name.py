@@ -7,7 +7,5 @@ from .field import Field
 class Name(Field):
 
     def __init__(self, value: str):
-        validation_result = NameValidator.validate(value)
-        if validation_result is not True:
-            raise ValueError(str(validation_result))
+        NameValidator.validate_and_raise(value)
         super().__init__(value.strip())
