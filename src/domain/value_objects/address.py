@@ -7,7 +7,5 @@ from ..validators.address_validator import AddressValidator
 class Address(Field):
 
     def __init__(self, address: str):
-        validation_result = AddressValidator.validate(address)
-        if validation_result is not True:
-            raise ValueError(str(validation_result))
+        AddressValidator.validate_and_raise(address)
         super().__init__(address.strip())

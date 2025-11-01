@@ -1,5 +1,6 @@
 from typing import List
 from ..services.note_service import NoteService
+from ...domain.value_objects.tag import Tag
 from ...domain.utils.styles_utils import stylize_tag
 
 def add_note(args: List[str], service: NoteService) -> str:
@@ -69,9 +70,8 @@ def add_tag(args: List[str], service: NoteService) -> str:
     """Add a tag to a note."""
     if len(args) < 2:
         raise ValueError("Add-tag command requires 2 arguments: note ID and tag")
-
     note_id = args[0]
-    tag = " ".join(args[1:])
+    tag = Tag(args[1])
     return service.add_tag(note_id, tag)
 
 def remove_tag(args: List[str], service: NoteService) -> str:
@@ -80,7 +80,7 @@ def remove_tag(args: List[str], service: NoteService) -> str:
         raise ValueError("Remove-tag command requires 2 arguments: note ID and tag")
 
     note_id = args[0]
-    tag = " ".join(args[1:])
+    tag = Tag(args[1])
     return service.remove_tag(note_id, tag)
 
 def search_notes(args: List[str], service: NoteService) -> str:

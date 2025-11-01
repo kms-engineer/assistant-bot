@@ -22,7 +22,7 @@ def test_name_creation_with_empty_or_whitespace_name(invalid_input):
     """
     with pytest.raises(ValueError) as excinfo:
         Name(invalid_input)
-    assert str(excinfo.value) == "Name cannot be empty or whitespace."
+    assert str(excinfo.value) == "Name cannot be empty or whitespace"
 
 @pytest.mark.parametrize("non_string_input", [
     123,

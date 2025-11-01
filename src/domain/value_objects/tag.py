@@ -7,7 +7,5 @@ from .field import Field
 class Tag(Field):
 
     def __init__(self, value: str):
-        validation_result = TagValidator.validate(value)
-        if validation_result is not True:
-            raise ValueError(str(validation_result))
+        TagValidator.validate_and_raise(value)
         super().__init__(value.strip())

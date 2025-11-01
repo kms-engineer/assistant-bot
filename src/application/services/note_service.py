@@ -1,5 +1,6 @@
 from typing import Optional, Set
 from ...domain.entities.note import Note
+from ...domain.value_objects.tag import Tag
 from ...infrastructure.storage.storage import Storage
 from ...domain.utils.id_generator import IDGenerator
 from ...infrastructure.storage.json_storage import JsonStorage
@@ -15,22 +16,32 @@ class NoteService:
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.notes = {}
-        if storage.storage_type == StorageType.SQLITE:
+        self.raw_storage = raw_storage
+        if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
+            self._default_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
         else:
             self._current_filename = DEFAULT_NOTES_FILE
+            self._default_filename = DEFAULT_NOTES_FILE
 
     def get_ids(self) -> Set[str]:
         return set(self.notes.keys())
 
-    def load_notes(self, filename: str = DEFAULT_NOTES_FILE) -> int:
+    def load_notes(self, filename: str = None) -> int:
+        # Use the appropriate default based on storage type
+        if filename is None:
+            filename = self._default_filename
         loaded_notes, normalized_filename = self.storage.load_notes(
             filename,
             default=[]
         )
 
         self.notes = loaded_notes
-        self._current_filename = normalized_filename
+        # For SQLite, keep the original database filename
+        if self.raw_storage.storage_type == StorageType.SQLITE:
+            self._current_filename = self._default_filename
+        else:
+            self._current_filename = normalized_filename
 
         return len(self.notes)
 
@@ -66,13 +77,13 @@ class NoteService:
         del self.notes[note_id]
         return "Note deleted."
 
-    def add_tag(self, note_id: str, tag: str) -> str:
+    def add_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].add_tag(tag)
         return "Tag added."
 
-    def remove_tag(self, note_id: str, tag: str) -> str:
+    def remove_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].remove_tag(tag)
@@ -93,12 +104,6 @@ class NoteService:
         ]
 
     def list_tags(self) -> dict[str, int]:
-        """
-        Get all unique tags with their usage count.
-
-        Returns:
-            Dictionary with tag names as keys and counts as values, sorted by tag name
-        """
         tag_counts = {}
         for note in self.notes.values():
             for tag in note.tags:
@@ -108,12 +113,6 @@ class NoteService:
         return dict(sorted(tag_counts.items()))
 
     def get_notes_sorted_by_tag(self) -> dict[str, list[Note]]:
-        """
-        Get notes grouped by tags.
-
-        Returns:
-            Dictionary with tag names as keys and lists of notes as values, sorted by tag name
-        """
         tag_groups = {}
         for note in self.notes.values():
             if not note.tags:

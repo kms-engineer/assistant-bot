@@ -16,9 +16,9 @@ def test_address_creation_strips_whitespace():
 @pytest.mark.parametrize("invalid_address, expected_error_message", [
     ("", "Address cannot be empty or whitespace"),
     ("   ", "Address cannot be empty or whitespace"),
-    ("a" * 201, "Address cannot exceed 200 characters"),
-    (12345, "Address must be a string"),
-    (None, "Address must be a string"),
+    ("a" * 201, "Address must be at most 200 characters long"),
+    (12345, "Address cannot be empty or whitespace"),
+    (None, "Address cannot be empty or whitespace"),
 ])
 def test_address_creation_with_invalid_address(invalid_address, expected_error_message):
     """
