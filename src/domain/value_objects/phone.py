@@ -9,4 +9,5 @@ class Phone(Field):
     def __init__(self, raw: str):
         digits = PhoneValidator.normalize(raw)
         PhoneValidator.validate_and_raise(digits)
+
         super().__init__(digits)

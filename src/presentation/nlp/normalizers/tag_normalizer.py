@@ -19,5 +19,6 @@ class TagNormalizer:
         # Remove invalid characters using pattern from config
         tag_raw = re.sub(RegexPatterns.TAG_INVALID_CHAR_PATTERN, '', tag_raw)
 
+
         entities['tag'] = tag_raw
         return entities

@@ -1,12 +1,11 @@
-import uuid
 from typing import Optional, Callable
 
 from .entity import Entity
-from ..value_objects.name import Name
-from ..value_objects.phone import Phone
 from ..value_objects.address import Address
 from ..value_objects.birthday import Birthday
 from ..value_objects.email import Email
+from ..value_objects.name import Name
+from ..value_objects.phone import Phone
 
 
 class Contact(Entity):

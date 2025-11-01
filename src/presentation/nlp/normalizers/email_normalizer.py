@@ -21,7 +21,7 @@ class EmailNormalizer:
         if EMAIL_VALIDATOR_AVAILABLE:
             try:
                 validated = validate_email(email_raw, check_deliverability=False)
-                entities['email'] = validated.normalized
+                entities['email'] = validated.normalized.lower()
                 entities['_email_valid'] = True
             except Exception as e:
                 entities['_email_valid'] = False

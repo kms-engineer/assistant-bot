@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import Mock
 from src.application.commands import note_commands
 from src.domain.entities.note import Note
+from src.domain.value_objects import Tag
 
 
 @pytest.fixture
@@ -26,16 +27,16 @@ class TestAddTag:
 
         result = note_commands.add_tag(["test-id", "python"], mock_service)
 
-        mock_service.add_tag.assert_called_once_with("test-id", "python")
+        mock_service.add_tag.assert_called_once_with("test-id", Tag("python"))
         assert result == "Tag added."
 
     def test_add_tag_with_multi_word_tag(self, mock_service):
         """Test adding a multi-word tag."""
         mock_service.add_tag.return_value = "Tag added."
 
-        result = note_commands.add_tag(["test-id", "machine", "learning"], mock_service)
+        result = note_commands.add_tag(["test-id", "machine learning"], mock_service)
 
-        mock_service.add_tag.assert_called_once_with("test-id", "machine learning")
+        mock_service.add_tag.assert_called_once_with("test-id", Tag("machine learning"))
         assert result == "Tag added."
 
     def test_add_tag_missing_arguments(self, mock_service):
@@ -63,16 +64,16 @@ class TestRemoveTag:
 
         result = note_commands.remove_tag(["test-id", "python"], mock_service)
 
-        mock_service.remove_tag.assert_called_once_with("test-id", "python")
+        mock_service.remove_tag.assert_called_once_with("test-id", Tag("python"))
         assert result == "Tag removed."
 
     def test_remove_tag_with_multi_word_tag(self, mock_service):
         """Test removing a multi-word tag."""
         mock_service.remove_tag.return_value = "Tag removed."
 
-        result = note_commands.remove_tag(["test-id", "machine", "learning"], mock_service)
+        result = note_commands.remove_tag(["test-id", "machine learning"], mock_service)
 
-        mock_service.remove_tag.assert_called_once_with("test-id", "machine learning")
+        mock_service.remove_tag.assert_called_once_with("test-id", Tag("machine learning"))
         assert result == "Tag removed."
 
     def test_remove_tag_missing_arguments(self, mock_service):

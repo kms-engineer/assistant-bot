@@ -15,6 +15,9 @@ class EmailValidator(BaseValidator):
 
         trimmed_email = email.strip().lower()
 
+        if len(trimmed_email) > ValidationConfig.EMAIL_MAX_LENGTH:
+            return ValidationConfig.EMAIL_ERROR_TOO_LONG
+
         if not EmailValidator._EMAIL_PATTERN.fullmatch(trimmed_email):
             return ValidationConfig.EMAIL_ERROR_INVALID_FORMAT
 

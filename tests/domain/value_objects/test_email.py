@@ -15,21 +15,21 @@ def test_email_creation_with_valid_email(valid_email):
 
 @pytest.mark.parametrize("invalid_input, expected_error_message", [
     # Type and presence checks
-    (None, "Email must be a string"),
-    (12345, "Email must be a string"),
+    (None, "Email cannot be empty or whitespace"),
+    (12345, "Email cannot be empty or whitespace"),
     ("", "Email cannot be empty or whitespace"),
     ("   ", "Email cannot be empty or whitespace"),
 
     # Length check
-    ("a" * 90 + "@domain.com", "Email cannot exceed 100 characters. Current length: 101"),
+    ("a" * 90 + "@domain.com", "Email must be at most 100 characters long"),
 
     # Format checks from the validator pattern
-    ("plainaddress", "Email format is invalid. Current value: plainaddress"),
-    ("@domain.com", "Email format is invalid. Current value: @domain.com"),
-    ("user@", "Email format is invalid. Current value: user@"),
-    ("user@.com", "Email format is invalid. Current value: user@.com"),
-    ("user@domain..com", "Email format is invalid. Current value: user@domain..com"),
-    ("user@domain.c", "Email format is invalid. Current value: user@domain.c"),
+    ("plainaddress", "Email must be a valid email address (e.g., user@example.com)"),
+    ("@domain.com", "Email must be a valid email address (e.g., user@example.com)"),
+    ("user@", "Email must be a valid email address (e.g., user@example.com)"),
+    ("user@.com", "Email must be a valid email address (e.g., user@example.com)"),
+    ("user@domain..com", "Email must be a valid email address (e.g., user@example.com)"),
+    ("user@domain.c", "Email must be a valid email address (e.g., user@example.com)"),
 ])
 def test_email_creation_with_invalid_input(invalid_input, expected_error_message):
     """
