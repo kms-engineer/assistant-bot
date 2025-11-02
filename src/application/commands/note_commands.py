@@ -1,5 +1,6 @@
 from typing import List
 from ..services.note_service import NoteService
+from ...domain.value_objects.tag import Tag
 from ...domain.utils.styles_utils import stylize_tag
 
 def add_note(args: List[str], service: NoteService) -> str:

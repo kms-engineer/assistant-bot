@@ -1,30 +1,19 @@
-class TagValidator:
-    """Utility class for tag validation operations."""
+from typing import Union
+from src.config import ValidationConfig
+from .base_validator import BaseValidator
+
+
+class TagValidator(BaseValidator):
 
     @staticmethod
-    def validate(value: str) -> bool | str:
-        """
-        Validates a tag value.
-
-        Requirements:
-        - Non-empty after trimming
-        - Length <= 50 characters
-
-        Args:
-            value: The tag string to validate
-
-        Returns:
-            True if valid, error message string if invalid
-        """
+    def validate(value: str) -> Union[str, bool]:
         if not isinstance(value, str):
-            return "Tag must be a string"
+            return ValidationConfig.TAG_ERROR_NOT_STRING
 
-        trimmed = value.strip()
+        if not value or len(value.strip()) == 0:
+            return ValidationConfig.TAG_ERROR_EMPTY
 
-        if not trimmed:
-            return "Tag cannot be empty"
-
-        if len(trimmed) > 50:
-            return "Tag cannot be longer than 50 characters"
+        if len(value) > ValidationConfig.TAG_MAX_LENGTH:
+            return ValidationConfig.TAG_ERROR_TOO_LONG
 
         return True

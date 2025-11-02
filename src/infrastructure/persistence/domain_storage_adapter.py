@@ -23,6 +23,10 @@ class DomainStorageAdapter:
         if not self.resolver:
             return filename
 
+        # For SQLite, don't change the filename extension
+        if self.storage.storage_type == StorageType.SQLITE:
+            return filename
+
         if self.storage.file_extension == '.json':
             return self.resolver.ensure_json_suffix(filename)
         elif self.storage.file_extension == '.pkl':
@@ -78,9 +82,12 @@ class DomainStorageAdapter:
                 self.serializer.note_to_dict(note)
                 for note in notes.values()
             ]
-
         elif self.storage.storage_type == StorageType.SQLITE:
-            raise StorageException("Not implemented type for saving notes")
+            # Convert notes dict to Notebook for SQLite storage
+            notebook = Notebook()
+            for note_id, note in notes.items():
+                notebook[note_id] = note
+            data = notebook
         else:
             raise StorageException("Unsupported storage type for saving notes")
 
@@ -88,12 +95,20 @@ class DomainStorageAdapter:
         return self.ensure_suffix(saved_filename)
 
     def load_notes(self, filename: str, **kwargs):
-        loaded = self.storage.load(filename, **kwargs)
+        # For SQLite, use load_notes method if available
+        if self.storage.storage_type == StorageType.SQLITE and hasattr(self.storage, 'load_notes'):
+            loaded = self.storage.load_notes(filename, **kwargs)
+        else:
+            loaded = self.storage.load(filename, **kwargs)
+
         normalized_filename = self.ensure_suffix(filename)
         notes_dict = {}
 
         if isinstance(loaded, dict):
             notes_dict = loaded
+        elif isinstance(loaded, Notebook):
+            # Convert Notebook to dict
+            notes_dict = dict(loaded.data)
         elif isinstance(loaded, list):
             for note_dict in loaded:
                 note = self.serializer.dict_to_note(note_dict)

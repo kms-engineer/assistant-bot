@@ -1,25 +1,36 @@
 import re
+from typing import Union
+from src.config import ValidationConfig
+from .base_validator import BaseValidator
 
-from .string_validator import StringValidator
-from ..validators.number_validator import NumberValidator
 
-class PhoneValidator:
+class PhoneValidator(BaseValidator):
 
     @staticmethod
-    def validate(phone: str) -> str | bool:
-        if not StringValidator.is_string(phone):
-            return "Phone number must be string value"
-        if not StringValidator.has_length(phone, 10):
-            return "Phone number must be exactly 10 digits long"
-        if not NumberValidator.is_number(phone):
-            return "Phone number must contain only digits"
+    def validate(phone: str) -> Union[str, bool]:
+        if not isinstance(phone, str):
+            return ValidationConfig.PHONE_ERROR_NOT_STRING
+
+        # Phone can start with + or a digit
+        if not phone:
+            return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
+
+        if not (phone[0] == '+' or phone[0].isdigit()):
+            return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
+
+        # Extract digits only (skip the + if present)
+        digits = ''.join(c for c in phone if c.isdigit())
+
+        # Check length is between 8 and 15 digits
+        if len(digits) < ValidationConfig.PHONE_MIN_DIGITS or len(digits) > ValidationConfig.PHONE_MAX_DIGITS:
+            return ValidationConfig.PHONE_ERROR_INVALID_LENGTH
+
         return True
 
     @staticmethod
     def normalize(raw: str) -> str:
-        if not raw: return ""
+        if not raw:
+            return ""
         if raw.startswith('+'):
-            normalized = re.sub(r"\D+", '', raw[1:])
-        else:
-            normalized = re.sub(r"\D+", '', raw)
-        return normalized
+            return re.sub(r"\D+", '', raw[1:])
+        return re.sub(r"\D+", '', raw)

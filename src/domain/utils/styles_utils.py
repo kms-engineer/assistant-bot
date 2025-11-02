@@ -1,6 +1,5 @@
 from functools import wraps
 from typing import Callable
-
 from colorama import Fore, Style
 
 
@@ -48,5 +47,4 @@ def stylize_warning(func: Callable) -> Callable:
 
 
 def stylize_tag(tag: str) -> str:
-    """Stylize a tag with magenta color."""
     return f"{Fore.MAGENTA}{tag}{Style.RESET_ALL}"
