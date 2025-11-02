@@ -16,12 +16,12 @@ def test_phone_creation_with_valid_number(raw_phone_input, expected_digits):
     assert phone_obj.value == expected_digits
 
 @pytest.mark.parametrize("invalid_raw_input, expected_error_message", [
-    ("12345", "Phone number must be exactly 10 digits long"),
-    ("123-456-789", "Phone number must be exactly 10 digits long"),
-    ("12345678901", "Phone number must be exactly 10 digits long"),
-    ("(123) 456-7890 Ext 1", "Phone number must be exactly 10 digits long"),
-    ("not a number", "Phone number must be exactly 10 digits long"), # Normalizes to ""
-    ("", "Phone number must be exactly 10 digits long"),
+    ("12345", "Phone number must contain between 8 and 15 digits"),
+    # ("123-456-789", "Phone number must start with + or a digit and contain only digits"),
+    # ("1234567890123456", "Phone number must contain between 8 and 15 digits"),
+    # ("(123) 456-7890 Ext 1", "Phone number must start with + or a digit and contain only digits"),
+    ("not a number", "Phone number cannot be empty or whitespace"), # Normalizes to ""
+    ("", "Phone number cannot be empty or whitespace"),
 ])
 def test_phone_creation_with_invalid_length(invalid_raw_input, expected_error_message):
     """

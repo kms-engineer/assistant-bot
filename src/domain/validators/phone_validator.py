@@ -12,10 +12,12 @@ class PhoneValidator(BaseValidator):
             return ValidationConfig.PHONE_ERROR_NOT_STRING
 
         # Phone can start with + or a digit
-        if not phone:
-            return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
+        if not phone or len(phone) == 0:
+            return ValidationConfig.PHONE_ERROR_EMPTY
 
-        if not (phone[0] == '+' or phone[0].isdigit()):
+        if phone[0] == '+':
+            phone = phone[1:]
+        if not (all(c.isdigit() for c in phone)):
             return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
 
         # Extract digits only (skip the + if present)

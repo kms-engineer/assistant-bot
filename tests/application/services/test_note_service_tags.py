@@ -2,6 +2,7 @@ import pytest
 from unittest.mock import Mock
 from src.application.services.note_service import NoteService
 from src.domain.entities.note import Note
+from src.domain.value_objects import Tag
 
 
 @pytest.fixture
@@ -25,17 +26,16 @@ def sample_notes(note_service):
     """Create sample notes for testing."""
     # Add notes with tags
     id1 = note_service.add_note("Python programming basics")
-    note_service.add_tag(id1, "python")
-    note_service.add_tag(id1, "programming")
+    note_service.add_tag(id1, Tag("python"))
+    note_service.add_tag(id1, Tag("programming"))
 
     id2 = note_service.add_note("JavaScript async patterns")
-    note_service.add_tag(id2, "javascript")
-    note_service.add_tag(id2, "async")
+    note_service.add_tag(id2, Tag("javascript"))
+    note_service.add_tag(id2, Tag("async"))
 
     id3 = note_service.add_note("Python testing with pytest")
-    note_service.add_tag(id3, "python")
-    note_service.add_tag(id3, "testing")
-
+    note_service.add_tag(id3, Tag("python"))
+    note_service.add_tag(id3, Tag("testing"))
     id4 = note_service.add_note("Untagged note")
 
     return {"ids": [id1, id2, id3, id4], "service": note_service}
@@ -47,64 +47,64 @@ class TestAddTag:
     def test_add_tag_success(self, note_service):
         """Test adding a tag to a note."""
         note_id = note_service.add_note("Test note")
-        result = note_service.add_tag(note_id, "test-tag")
+        result = note_service.add_tag(note_id, Tag("test-tag"))
 
         assert result == "Tag added."
         note = note_service.notes[note_id]
         assert len(note.tags) == 1
-        assert note.tags[0].value == "test-tag"
+        assert note.tags[0] == Tag("test-tag")
 
     def test_add_tag_with_trim(self, note_service):
         """Test that tags are trimmed before adding."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "  spaced  ")
+        note_service.add_tag(note_id, Tag("  spaced  "))
 
         note = note_service.notes[note_id]
-        assert note.tags[0].value == "spaced"
+        assert note.tags[0] == Tag("spaced")
 
     def test_add_tag_duplicate_raises_error(self, note_service):
         """Test that adding duplicate tag raises error."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "duplicate")
+        note_service.add_tag(note_id, Tag("duplicate"))
 
         with pytest.raises(ValueError, match="Tag already exists"):
-            note_service.add_tag(note_id, "duplicate")
+            note_service.add_tag(note_id, Tag("duplicate"))
 
     def test_add_tag_duplicate_case_insensitive(self, note_service):
         """Test that duplicate detection is case-sensitive (tags preserve case)."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "Python")
+        note_service.add_tag(note_id, Tag("Python"))
 
         # Case-sensitive duplicate should raise error (same tag)
         with pytest.raises(ValueError, match="Tag already exists"):
-            note_service.add_tag(note_id, "Python")
+            note_service.add_tag(note_id, Tag("Python"))
 
     def test_add_tag_note_not_found(self, note_service):
         """Test that adding tag to non-existent note raises error."""
         with pytest.raises(KeyError, match="Note not found"):
-            note_service.add_tag("nonexistent-id", "tag")
+            note_service.add_tag("nonexistent-id", Tag("tag"))
 
     def test_add_tag_empty_raises_error(self, note_service):
         """Test that empty tag raises error."""
         note_id = note_service.add_note("Test note")
 
         with pytest.raises(ValueError):
-            note_service.add_tag(note_id, "")
+            note_service.add_tag(note_id, Tag(""))
 
     def test_add_tag_too_long_raises_error(self, note_service):
         """Test that tag longer than 50 chars raises error."""
         note_id = note_service.add_note("Test note")
         long_tag = "a" * 51
 
-        with pytest.raises(ValueError, match="cannot be longer than 50 characters"):
-            note_service.add_tag(note_id, long_tag)
+        with pytest.raises(ValueError, match="Tag too long"):
+            note_service.add_tag(note_id, Tag(long_tag))
 
     def test_add_multiple_tags(self, note_service):
         """Test adding multiple tags to a note."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "tag1")
-        note_service.add_tag(note_id, "tag2")
-        note_service.add_tag(note_id, "tag3")
+        note_service.add_tag(note_id, Tag("tag1"))
+        note_service.add_tag(note_id, Tag("tag2"))
+        note_service.add_tag(note_id, Tag("tag3"))
 
         note = note_service.notes[note_id]
         assert len(note.tags) == 3
@@ -120,8 +120,8 @@ class TestRemoveTag:
     def test_remove_tag_success(self, note_service):
         """Test removing a tag from a note."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "remove-me")
-        result = note_service.remove_tag(note_id, "remove-me")
+        note_service.add_tag(note_id, Tag("remove-me"))
+        result = note_service.remove_tag(note_id, Tag("remove-me"))
 
         assert result == "Tag removed."
         note = note_service.notes[note_id]
@@ -132,28 +132,28 @@ class TestRemoveTag:
         note_id = note_service.add_note("Test note")
 
         with pytest.raises(ValueError, match="Tag not found"):
-            note_service.remove_tag(note_id, "nonexistent")
+            note_service.remove_tag(note_id, Tag("nonexistent"))
 
     def test_remove_tag_note_not_found(self, note_service):
         """Test that removing tag from non-existent note raises error."""
         with pytest.raises(KeyError, match="Note not found"):
-            note_service.remove_tag("nonexistent-id", "tag")
+            note_service.remove_tag("nonexistent-id", Tag("tag"))
 
     def test_remove_one_of_many_tags(self, note_service):
         """Test removing one tag when note has multiple tags."""
         note_id = note_service.add_note("Test note")
-        note_service.add_tag(note_id, "tag1")
-        note_service.add_tag(note_id, "tag2")
-        note_service.add_tag(note_id, "tag3")
+        note_service.add_tag(note_id, Tag("tag1"))
+        note_service.add_tag(note_id, Tag("tag2"))
+        note_service.add_tag(note_id, Tag("tag3"))
 
-        note_service.remove_tag(note_id, "tag2")
+        note_service.remove_tag(note_id, Tag("tag2"))
 
         note = note_service.notes[note_id]
         assert len(note.tags) == 2
-        tag_values = [tag.value for tag in note.tags]
-        assert "tag1" in tag_values
-        assert "tag3" in tag_values
-        assert "tag2" not in tag_values
+
+        assert Tag("tag1") in note.tags
+        assert Tag("tag3") in note.tags
+        assert Tag("tag2") not in note.tags
 
 
 class TestSearchByTag:

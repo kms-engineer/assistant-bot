@@ -1,8 +1,6 @@
-import uuid
-from typing import Optional
+from typing import Callable
 
 from .entity import Entity
-from typing import Callable
 from ..value_objects.tag import Tag
 
 

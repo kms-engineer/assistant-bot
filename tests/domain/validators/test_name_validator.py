@@ -1,37 +1,53 @@
 import pytest
 from src.domain.validators.name_validator import NameValidator
+from src.config import ValidationConfig
 
-@pytest.mark.parametrize("valid_name", [
-    "John Doe",
-    "Jane",
-    "a" * 25,  # Test boundary condition for max length
-    "A name with spaces",
-])
-def test_validate_with_valid_name(valid_name):
-    """Tests that a valid name passes validation."""
-    assert NameValidator.validate(valid_name) is True
 
-@pytest.mark.parametrize("invalid_input, expected_message", [
-    (123, "Name must be a string"),
-    (None, "Name must be a string"),
-    (True, "Name must be a string"),
-    (["John"], "Name must be a string"),
-    ({"name": "John"}, "Name must be a string"),
-])
-def test_validate_with_non_string_input(invalid_input, expected_message):
-    """Tests that non-string inputs return the correct error message."""
-    assert NameValidator.validate(invalid_input) == expected_message
+class TestNameValidator:
+    """Test suite for the NameValidator."""
 
-@pytest.mark.parametrize("empty_name", [
-    "",
-    "   ",
-    "\t\n"
-])
-def test_validate_with_empty_or_whitespace_name(empty_name):
-    """Tests that an empty or whitespace-only name returns an error."""
-    assert NameValidator.validate(empty_name) == "Name cannot be empty or whitespace"
+    @pytest.mark.parametrize(
+        "name",
+        [
+            "John",
+            "John-Doe",
+            "O'Malley",
+            "J" * ValidationConfig.NAME_MIN_LENGTH,
+            "J" * ValidationConfig.NAME_MAX_LENGTH,
+        ],
+        ids=[
+            "simple_name",
+            "hyphenated_name",
+            "name_with_apostrophe",
+            "min_length",
+            "max_length",
+        ]
+    )
+    def test_validate_success(self, name):
+        """Scenario: A valid name string is provided."""
+        assert NameValidator.validate(name) is True
 
-def test_validate_with_long_name():
-    """Tests that a name exceeding the max length returns an error."""
-    long_name = "a" * 26
-    assert NameValidator.validate(long_name) == "Name cannot exceed 25 characters"
+    @pytest.mark.parametrize(
+        "name, expected_error",
+        [
+            ("", ValidationConfig.NAME_ERROR_EMPTY),
+            ("  ", ValidationConfig.NAME_ERROR_EMPTY),
+            (None, ValidationConfig.NAME_ERROR_EMPTY),
+            ("J", ValidationConfig.NAME_ERROR_TOO_SHORT),
+            ("J" * (ValidationConfig.NAME_MAX_LENGTH + 1), ValidationConfig.NAME_ERROR_TOO_LONG),
+            ("John123", ValidationConfig.NAME_ERROR_INVALID_CHARS),
+            ("John!", ValidationConfig.NAME_ERROR_INVALID_CHARS),
+        ],
+        ids=[
+            "empty_string",
+            "whitespace_only",
+            "none_value",
+            "too_short",
+            "too_long",
+            "with_digits",
+            "with_symbols",
+        ]
+    )
+    def test_validate_failure(self, name, expected_error):
+        """Scenario: An invalid name string is provided."""
+        assert NameValidator.validate(name) == expected_error

@@ -8,6 +8,9 @@ class ValidationConfig:
     NAME_MAX_LENGTH = 50
     """Maximum length for contact names."""
 
+    # Email validation
+    EMAIL_MAX_LENGTH = 100
+
     # Address validation
     ADDRESS_MIN_LENGTH = 5
     """Minimum length for addresses."""
@@ -35,9 +38,11 @@ class ValidationConfig:
     # Error messages - Email
     EMAIL_ERROR_EMPTY = "Email cannot be empty or whitespace"
     EMAIL_ERROR_INVALID_FORMAT = "Email must be a valid email address (e.g., user@example.com)"
+    EMAIL_ERROR_TOO_LONG = f"Email must be at most {EMAIL_MAX_LENGTH} characters long"
 
     # Error messages - Phone
     PHONE_ERROR_NOT_STRING = "Phone number must be string value"
+    PHONE_ERROR_EMPTY = "Phone number cannot be empty or whitespace"
     PHONE_ERROR_INVALID_LENGTH = f"Phone number must contain between {PHONE_MIN_DIGITS} and {PHONE_MAX_DIGITS} digits"
     PHONE_ERROR_INVALID_FORMAT = "Phone number must start with + or a digit and contain only digits"
 

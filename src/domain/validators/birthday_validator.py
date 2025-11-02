@@ -20,8 +20,9 @@ class BirthdayValidator(BaseValidator):
         if not birthday or len(birthday.strip()) == 0:
             return ValidationConfig.BIRTHDAY_ERROR_EMPTY
 
-        if not BirthdayValidator._pattern.fullmatch(birthday):
-            return ValidationConfig.BIRTHDAY_ERROR_INVALID_FORMAT
+        if date_format == DateFormatConfig.PRIMARY_DATE_FORMAT:
+            if not BirthdayValidator._pattern.fullmatch(birthday):
+                return ValidationConfig.BIRTHDAY_ERROR_INVALID_FORMAT
 
         try:
             birthday_date = datetime.strptime(birthday, date_format)

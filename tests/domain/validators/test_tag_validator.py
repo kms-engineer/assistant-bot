@@ -1,32 +1,39 @@
 import pytest
 from src.domain.validators.tag_validator import TagValidator
+from src.config import ValidationConfig
 
-@pytest.mark.parametrize("valid_tag", [
-    "python",
-    "pytest",
-    "a" * 50, # Test boundary condition for max length
-])
-def test_validate_with_valid_tag(valid_tag):
-    assert TagValidator.validate(valid_tag) is True
 
-@pytest.mark.parametrize("invalid_input, expected_message", [
-    (123, "Tag must be a string"),
-    (None, "Tag must be a string"),
-    ([], "Tag must be a string"),
-    ({}, "Tag must be a string"),
-    (True, "Tag must be a string"),
-])
-def test_validate_with_non_string(invalid_input, expected_message):
-    assert TagValidator.validate(invalid_input) == expected_message
+class TestTagValidator:
+    """Test suite for the TagValidator."""
 
-@pytest.mark.parametrize("empty_value", [
-    "",
-    "   ",
-    "\t\n",
-])
-def test_validate_with_empty_or_whitespace(empty_value):
-    assert TagValidator.validate(empty_value) == "Tag cannot be empty"
+    @pytest.mark.parametrize(
+        "tag",
+        [
+            "python",
+            "a",
+            "a" * ValidationConfig.TAG_MAX_LENGTH,
+        ],
+        ids=[
+            "simple_tag",
+            "min_length_implied",
+            "max_length",
+        ]
+    )
+    def test_validate_success(self, tag):
+        """Scenario: A valid tag string is provided."""
+        assert TagValidator.validate(tag) is True
 
-def test_validate_with_long_tag():
-    long_tag = "a" * 51
-    assert TagValidator.validate(long_tag) == "Tag cannot be longer than 50 characters"
+    @pytest.mark.parametrize(
+        "tag, expected_error",
+        [
+            (None, ValidationConfig.TAG_ERROR_NOT_STRING),
+            (123, ValidationConfig.TAG_ERROR_NOT_STRING),
+            ("", ValidationConfig.TAG_ERROR_EMPTY),
+            ("  ", ValidationConfig.TAG_ERROR_EMPTY),
+            ("a" * (ValidationConfig.TAG_MAX_LENGTH + 1), ValidationConfig.TAG_ERROR_TOO_LONG),
+        ],
+        ids=["none_value", "not_a_string", "empty_string", "whitespace_only", "too_long"]
+    )
+    def test_validate_failure(self, tag, expected_error):
+        """Scenario: An invalid tag is provided."""
+        assert TagValidator.validate(tag) == expected_error

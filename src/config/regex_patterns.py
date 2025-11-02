@@ -56,7 +56,7 @@ class RegexPatterns:
     """Regex pattern for extracting city from address."""
 
     # Validation patterns
-    VALIDATION_EMAIL_PATTERN = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    VALIDATION_EMAIL_PATTERN = r'^([A-Za-z0-9]+[.+-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+$'
     """Strict email validation pattern."""
 
     VALIDATION_NAME_PATTERN = r'^[a-zA-ZÀ-ÿ\s\-\']+$'
