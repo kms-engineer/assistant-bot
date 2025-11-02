@@ -1,7 +1,8 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Any
+
+from src.config import IntentConfig
 from ...application.services.contact_service import ContactService
 from ...application.services.note_service import NoteService
-from src.config import IntentConfig
 
 
 class CommandPipeline:
@@ -26,7 +27,7 @@ class CommandPipeline:
 
         return False
 
-    def build_pipeline(self, intent: str, entities: Dict) -> List[Tuple[str, List[str]]]:
+    def build_pipeline(self, intent: str, entities: Dict) -> list[tuple[Any, list[str], str] | tuple[Any, list[str], str, dict[str, Any]]]:
         if intent not in self.PIPELINE_DEFINITIONS:
             return []
 
@@ -35,7 +36,7 @@ class CommandPipeline:
 
         # Add primary command
         primary_command = pipeline_def['primary_command']
-        primary_args = self._build_args_for_intent(intent, entities, pipeline_def['primary_required'])
+        primary_args = self._build_args_for_intent(entities, pipeline_def['primary_required'])
         commands.append((primary_command, primary_args, 'primary'))
 
         # Add pipeline steps
@@ -63,7 +64,8 @@ class CommandPipeline:
 
         return commands
 
-    def _build_args_for_intent(self, intent: str, entities: Dict, required_entities: List[str]) -> List[str]:
+    @staticmethod
+    def _build_args_for_intent(entities: Dict, required_entities: List[str]) -> List[str]:
         args = []
 
         # For primary commands, use required entities in order
@@ -73,13 +75,8 @@ class CommandPipeline:
 
         return args
 
-    def _build_args_for_pipeline_step(
-        self,
-        command: str,
-        entities: Dict,
-        step_entities: List[str],
-        primary_args: List[str]
-    ) -> List[str]:
+    @staticmethod
+    def _build_args_for_pipeline_step(command: str, entities: Dict, step_entities: List[str], primary_args: List[str]) -> List[str]:
         args = []
 
         # Most pipeline commands need the contact name first
@@ -95,7 +92,7 @@ class CommandPipeline:
 
         return args
 
-    def get_pipeline_summary(self, intent: str, entities: Dict) -> str:
+    def get_pipeline_summary(self, intent: str, entities: Dict) -> str | None:
         pipeline = self.build_pipeline(intent, entities)
 
         if len(pipeline) <= 1:
@@ -108,11 +105,12 @@ class CommandPipeline:
                 if step_type == 'primary':
                     steps.append(f"1. {command} {' '.join(args)}")
                 else:
-                    steps.append(f"{i+1}. {command} {' '.join(args)}")
+                    steps.append(f"{i + 1}. {command} {' '.join(args)}")
 
         return "Pipeline:\n" + "\n".join(steps)
 
-    def extract_note_id_from_result(self, result: str) -> str:
+    @staticmethod
+    def extract_note_id_from_result(result: str) -> str | None:
         # Example: "Note added with ID: 45f9ae2b-93b6-4e5d-bf62-dbe8af1e0f11"
         # Result may contain ANSI color codes, so we need to strip them first
         import re
@@ -122,7 +120,7 @@ class CommandPipeline:
         clean_result = ansi_escape.sub('', result)
 
         # Match UUID format (8-4-4-4-12 hex characters) or simple numeric ID
-        match = re.search(r'ID:\s*([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}|\d+)', clean_result)
+        match = re.search(r'ID:\s*([a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}|\d+)', clean_result)
         if match:
             return match.group(1)
         return None

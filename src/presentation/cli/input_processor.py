@@ -1,7 +1,10 @@
 from difflib import get_close_matches
-from .command_parser import CommandParser
+
 from .command_handler import CommandHandler
+from .command_parser import CommandParser
 from .regex_gate import RegexCommandGate
+
+LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
 
 
 def process_classic_input(user_input: str, parser: CommandParser, handler: CommandHandler) -> str:
@@ -27,7 +30,6 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
 
             # Check confidence - if very low, suggest commands
             confidence = nlp_result.get('confidence', 0.0)
-            LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
 
             if confidence < LOW_CONFIDENCE_THRESHOLD:
                 # Low confidence result - might be wrong, suggest alternatives

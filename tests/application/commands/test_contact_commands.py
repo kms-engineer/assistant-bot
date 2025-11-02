@@ -122,7 +122,7 @@ class TestShowAll:
     def test_show_all_with_contacts(self, mock_service, sample_contact):
         """Test showing all contacts when contacts exist."""
         mock_service.get_all_contacts.return_value = [sample_contact]
-        result = contact_commands.show_all([], mock_service)
+        result = contact_commands.show_all(mock_service)
         mock_service.get_all_contacts.assert_called_once()
         assert "All contacts:" in result
         assert str(sample_contact) in result
@@ -130,7 +130,7 @@ class TestShowAll:
     def test_show_all_no_contacts(self, mock_service):
         """Test showing all contacts when no contacts exist."""
         mock_service.get_all_contacts.return_value = []
-        result = contact_commands.show_all([], mock_service)
+        result = contact_commands.show_all(mock_service)
         assert result == "No contacts found."
 
 

@@ -1,12 +1,16 @@
 import argparse
+
 from src.domain.utils.styles_utils import stylize_text, stylize_error_message
 from src.infrastructure.storage.storage_factory import StorageFactory
 from src.infrastructure.storage.storage_type import StorageType
+from .command_handler import CommandHandler
+from .command_parser import CommandParser
+from .input_processor import process_classic_input, process_nlp_input
+from .mode_decider import CLIMode
+from .regex_gate import RegexCommandGate
+from .ui_messages import UIMessages
 from ...application.services.contact_service import ContactService
 from ...application.services.note_service import NoteService
-from ...infrastructure.storage.pickle_storage import PickleStorage
-from ...infrastructure.storage.json_storage import JsonStorage
-from ...infrastructure.persistence.migrator import migrate_files
 from ...infrastructure.persistence.data_path_resolver import (
     HOME_DATA_DIR,
     DEFAULT_DATA_DIR,
@@ -14,16 +18,14 @@ from ...infrastructure.persistence.data_path_resolver import (
     DEFAULT_JSON_FILE,
     DEFAULT_CONTACTS_FILE
 )
+from ...infrastructure.persistence.migrator import migrate_files
+from ...infrastructure.storage.json_storage import JsonStorage
+from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.storage.sqlite_storage import SQLiteStorage
-from .command_parser import CommandParser
-from .command_handler import CommandHandler
-from .ui_messages import UIMessages
-from .mode_decider import CLIMode
-from .regex_gate import RegexCommandGate
-from .input_processor import process_classic_input, process_nlp_input
 
 
-def save_and_exit(contact_service: ContactService, note_service: NoteService = None, storage_type: StorageType = None) -> None:
+def save_and_exit(contact_service: ContactService, note_service: NoteService = None,
+                  storage_type: StorageType = None) -> None:
     print(UIMessages.SAVING)
 
     # Save contacts
@@ -119,7 +121,8 @@ def main() -> None:
             elif mode == CLIMode.NLP:
                 result = process_nlp_input(user_input, regex_gate, handler, nlp_manager)
                 if not result:
-                    print("Could not understand the command. Please try rephrasing or type 'help' for available commands.")
+                    print("Could not understand the command. "
+                          "Please try rephrasing or type 'help' for available commands.")
                     continue
             else:
                 continue
