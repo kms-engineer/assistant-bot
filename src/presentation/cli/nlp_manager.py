@@ -39,7 +39,7 @@ class NLPManager:
                 print(f"Download script not found at {download_script}")
                 return False
 
-            result = subprocess.run(
+            subprocess.run(
                 [sys.executable, str(download_script)],
                 check=True,
                 capture_output=False

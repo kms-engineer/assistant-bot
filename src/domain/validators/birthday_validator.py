@@ -1,6 +1,7 @@
 import re
 from datetime import datetime
 from typing import Union
+
 from src.config import DateFormatConfig, RegexPatterns, ValidationConfig
 from .base_validator import BaseValidator
 

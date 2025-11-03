@@ -14,3 +14,7 @@ class BaseValidator(ABC):
         result = cls.validate(value)
         if result is not True:
             raise ValueError(result)
+
+    @staticmethod
+    def is_empty_string(string):
+        return not isinstance(string, str) or not string or len(string.strip()) == 0

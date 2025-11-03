@@ -1,11 +1,11 @@
 import re
 from typing import Union
+
 from src.config import RegexPatterns, ValidationConfig
 from .base_validator import BaseValidator
 
 
 class EmailValidator(BaseValidator):
-
     _EMAIL_PATTERN = re.compile(RegexPatterns.VALIDATION_EMAIL_PATTERN)
 
     @staticmethod

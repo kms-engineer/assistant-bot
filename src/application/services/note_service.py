@@ -1,12 +1,13 @@
 from typing import Optional, Set
+
 from ...domain.entities.note import Note
-from ...domain.value_objects.tag import Tag
-from ...infrastructure.storage.storage import Storage
 from ...domain.utils.id_generator import IDGenerator
-from ...infrastructure.storage.json_storage import JsonStorage
-from ...infrastructure.serialization.json_serializer import JsonSerializer
+from ...domain.value_objects.tag import Tag
 from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE, DEFAULT_ADDRESS_BOOK_DATABASE_NAME
 from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
+from ...infrastructure.serialization.json_serializer import JsonSerializer
+from ...infrastructure.storage.json_storage import JsonStorage
+from ...infrastructure.storage.storage import Storage
 from ...infrastructure.storage.storage_type import StorageType
 
 

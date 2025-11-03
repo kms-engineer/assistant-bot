@@ -1,17 +1,17 @@
 import re
 from typing import Union
+
 from src.config import ValidationConfig, RegexPatterns
 from .base_validator import BaseValidator
 
 
 class AddressValidator(BaseValidator):
-
     _ADDRESS_PATTERN = re.compile(RegexPatterns.VALIDATION_ADDRESS_PATTERN)
     _CITY_PATTERN = re.compile(RegexPatterns.ADDRESS_CITY_PATTERN)
 
     @staticmethod
     def validate(address: str) -> Union[str, bool]:
-        if not isinstance(address, str) or not address or len(address.strip()) == 0:
+        if BaseValidator.is_empty_string(address):
             return ValidationConfig.ADDRESS_ERROR_EMPTY
 
         trimmed_address = address.strip()

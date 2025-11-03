@@ -2,13 +2,14 @@ import os
 from typing import List
 
 from ..services.contact_service import ContactService
-from ...presentation.cli.ui_messages import UIMessages
-from ...domain.value_objects.name import Name
-from ...domain.value_objects.phone import Phone
-from ...domain.value_objects.email import Email
 from ...domain.value_objects.address import Address
 from ...domain.value_objects.birthday import Birthday
+from ...domain.value_objects.email import Email
+from ...domain.value_objects.name import Name
+from ...domain.value_objects.phone import Phone
 from ...presentation.cli.confirmation import confirm_action
+from ...presentation.cli.ui_messages import UIMessages
+
 
 def add_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
@@ -57,7 +58,7 @@ def show_phone(args: List[str], service: ContactService) -> str:
     return f"{name}: {phones_str}"
 
 
-def show_all(args: List[str], service: ContactService) -> str:
+def show_all(service: ContactService) -> str:
     contacts = service.get_all_contacts()
 
     if not contacts:
@@ -124,7 +125,7 @@ def add_email(args: List[str], service: ContactService) -> str:
 
 def edit_email(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Edit-email command requires 2 arguments: name and new email adress")
+        raise ValueError("Edit-email command requires 2 arguments: name and new email address")
 
     name = args[0]
     email_vo = Email(args[1])
@@ -156,7 +157,7 @@ def add_address(args: List[str], service: ContactService) -> str:
 
 def edit_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Edit-address command requires 2 arguments: name and new adress")
+        raise ValueError("Edit-address command requires 2 arguments: name and new address")
 
     name = args[0]
     address_vo = Address(" ".join(args[1:]))
@@ -232,12 +233,14 @@ def load_contacts(args: List[str], service: ContactService) -> str:
     return f"Address book loaded from {service.get_current_filename()}. {count} contact(s) found."
 
 
-def hello(args: List[str], service: ContactService) -> str:
+def hello() -> str:
     return "How can I help you?"
 
-def help(args: List[str], service: ContactService, nlp_mode: bool = False) -> str:
+
+def help(nlp_mode: bool = False) -> str:
     return UIMessages.get_command_list(nlp_mode)
 
-def clear(args: List[str], service: ContactService) -> str:
+
+def clear() -> str:
     os.system('clear' if os.name == 'posix' else 'cls')
     return ""

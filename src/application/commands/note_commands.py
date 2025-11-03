@@ -1,7 +1,12 @@
 from typing import List
+
+from colorama import Style
+
 from ..services.note_service import NoteService
-from ...domain.value_objects.tag import Tag
+from ...domain.entities import Note
 from ...domain.utils.styles_utils import stylize_tag
+from ...domain.value_objects.tag import Tag
+
 
 def add_note(args: List[str], service: NoteService) -> str:
     if not args:
@@ -10,6 +15,17 @@ def add_note(args: List[str], service: NoteService) -> str:
     text = " ".join(args)
     note_id = service.add_note(text)
     return f"Note added with ID: {note_id}"
+
+
+def append_notes(lines: List[str], notes: List[Note]):
+    for note in notes:
+        lines.append(f"ID: {note.id}")
+        lines.append(f"Text: {note.text}")
+        if note.tags:
+            tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
+            lines.append(f"Tags: {tags_str}")
+        lines.append("")
+
 
 def show_notes(args: List[str], service: NoteService) -> str:
     # Check if --sort-by-tag flag is present
@@ -39,16 +55,11 @@ def show_notes(args: List[str], service: NoteService) -> str:
         if not notes:
             return "No notes found."
 
-        lines = ["All notes:"]
-        for note in notes:
-            lines.append(f"ID: {note.id}")
-            lines.append(f"Text: {note.text}")
-            if note.tags:
-                tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
-                lines.append(f"Tags: {tags_str}")
-            lines.append("")
+        lines = [f"All notes:{Style.RESET_ALL}"]
+        append_notes(lines, notes)
 
     return "\n".join(lines)
+
 
 def edit_note(args: List[str], service: NoteService) -> str:
     if len(args) < 2:
@@ -59,12 +70,14 @@ def edit_note(args: List[str], service: NoteService) -> str:
 
     return service.edit_note(note_id, new_text)
 
+
 def delete_note(args: List[str], service: NoteService) -> str:
     if not args:
         raise ValueError("Delete-note command requires ID argument")
 
     note_id = args[0]
     return service.delete_note(note_id)
+
 
 def add_tag(args: List[str], service: NoteService) -> str:
     """Add a tag to a note."""
@@ -74,6 +87,7 @@ def add_tag(args: List[str], service: NoteService) -> str:
     tag = Tag(args[1])
     return service.add_tag(note_id, tag)
 
+
 def remove_tag(args: List[str], service: NoteService) -> str:
     """Remove a tag from a note."""
     if len(args) < 2:
@@ -82,6 +96,7 @@ def remove_tag(args: List[str], service: NoteService) -> str:
     note_id = args[0]
     tag = Tag(args[1])
     return service.remove_tag(note_id, tag)
+
 
 def search_notes(args: List[str], service: NoteService) -> str:
     """Search notes by text content."""
@@ -94,16 +109,11 @@ def search_notes(args: List[str], service: NoteService) -> str:
     if not notes:
         return f"No notes found matching '{query}'."
 
-    lines = [f"Found {len(notes)} note(s) matching '{query}':"]
-    for note in notes:
-        lines.append(f"ID: {note.id}")
-        lines.append(f"Text: {note.text}")
-        if note.tags:
-            tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
-            lines.append(f"Tags: {tags_str}")
-        lines.append("")
+    lines = [f"Found {len(notes)} note(s) matching '{query}':{Style.RESET_ALL}"]
+    append_notes(lines, notes)
 
     return "\n".join(lines)
+
 
 def search_notes_by_tag(args: List[str], service: NoteService) -> str:
     """Search notes by tag."""
@@ -117,17 +127,12 @@ def search_notes_by_tag(args: List[str], service: NoteService) -> str:
         return f"No notes found with tag '{tag}'."
 
     lines = [f"Found {len(notes)} note(s) with tag {stylize_tag(tag)}:"]
-    for note in notes:
-        lines.append(f"ID: {note.id}")
-        lines.append(f"Text: {note.text}")
-        if note.tags:
-            tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
-            lines.append(f"Tags: {tags_str}")
-        lines.append("")
+    append_notes(lines, notes)
 
     return "\n".join(lines)
 
-def list_tags(args: List[str], service: NoteService) -> str:
+
+def list_tags(service: NoteService) -> str:
     """List all unique tags with their usage count."""
     tag_counts = service.list_tags()
 

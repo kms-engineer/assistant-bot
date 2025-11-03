@@ -1,13 +1,13 @@
-import os
-from typing import Dict, Callable, List, Any
 from difflib import get_close_matches
-from ...config import UIConfig
-from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService
-from ...application.commands import contact_commands, note_commands
+from typing import Dict, Callable, List, Any
+
+from .command_pipeline import CommandPipeline
 from .error_handler import handle_errors
 from .ui_messages import UIMessages
-from .command_pipeline import CommandPipeline
+from ...application.commands import contact_commands, note_commands
+from ...application.services.contact_service import ContactService
+from ...application.services.note_service import NoteService
+from ...config import UIConfig
 
 
 class CommandHandler:
@@ -18,14 +18,14 @@ class CommandHandler:
         self.nlp_mode = nlp_mode
         self.pipeline = CommandPipeline(contact_service, note_service)
         self.commands: Dict[str, Callable] = {
-            "hello": self._wrap(contact_commands.hello),
+            "hello": self._wrap_no_params(contact_commands.hello),
             "help": self._wrap_help(contact_commands.help),
-            "clear": self._wrap(contact_commands.clear),
+            "clear": self._wrap_no_params(contact_commands.clear),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
             "delete-contact": self._wrap(contact_commands.delete_contact),
             "phone": self._wrap(contact_commands.show_phone),
-            "all": self._wrap(contact_commands.show_all),
+            "all": self._wrap_no_args(contact_commands.show_all),
             "add-birthday": self._wrap(contact_commands.add_birthday),
             "show-birthday": self._wrap(contact_commands.show_birthday),
             "birthdays": self._wrap(contact_commands.birthdays),
@@ -47,7 +47,7 @@ class CommandHandler:
             "remove-tag": self._wrap_note(note_commands.remove_tag),
             "search-notes": self._wrap_note(note_commands.search_notes),
             "search-notes-by-tag": self._wrap_note(note_commands.search_notes_by_tag),
-            "list-tags": self._wrap_note(note_commands.list_tags)
+            "list-tags": self._wrap_note_no_args(note_commands.list_tags)
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
@@ -60,13 +60,36 @@ class CommandHandler:
     def _wrap_help(self, command_func: Callable) -> Callable:
         @handle_errors
         def wrapper(args: List[str]) -> str:
-            return command_func(args, self.contact_service, self.nlp_mode)
+            return command_func(self.nlp_mode)
+
+        return wrapper
+
+    def _wrap_no_args(self, command_func: Callable) -> Callable:
+        @handle_errors
+        def wrapper(args: List[str]) -> str:
+            return command_func(self.contact_service)
+
+        return wrapper
+
+    @staticmethod
+    def _wrap_no_params(command_func: Callable) -> Callable:
+        @handle_errors
+        def wrapper(args: List[str]) -> str:
+            return command_func()
+
         return wrapper
 
     def _wrap_note(self, command_func: Callable) -> Callable:
         @handle_errors
         def wrapper(args: List[str]) -> str:
             return command_func(args, self.note_service)
+
+        return wrapper
+
+    def _wrap_note_no_args(self, command_func: Callable) -> Callable:
+        @handle_errors
+        def wrapper(args: List[str]) -> str:
+            return command_func(self.note_service)
 
         return wrapper
 
@@ -104,7 +127,6 @@ class CommandHandler:
 
         # Execute pipeline
         results = []
-        last_result = None
         note_id_for_tags = None
 
         for i, pipeline_item in enumerate(pipeline_commands):
@@ -121,16 +143,15 @@ class CommandHandler:
             # Execute command
             try:
                 result = self.commands[command](args)
-                results.append(f"{i+1}. {result}")
+                results.append(f"{i + 1}. {result}")
 
                 # Extract note ID if this was a note creation
                 if command == 'add-note' and step_type == 'primary':
                     note_id_for_tags = self.pipeline.extract_note_id_from_result(result)
 
-                last_result = result
             except Exception as e:
                 # If a pipeline step fails, return the error but show what succeeded
-                error_msg = f"Step {i+1} failed: {str(e)}"
+                error_msg = f"Step {i + 1} failed: {str(e)}"
                 if results:
                     return "\n".join(results) + f"\n\n{error_msg}"
                 else:
@@ -148,7 +169,7 @@ class CommandHandler:
         return [*self.commands.keys(), "close", "exit"]
 
     @staticmethod
-    def get_nlp_command_examples(self) -> List[str]:
+    def get_nlp_command_examples() -> List[str]:
         return [
             # Contact management
             "add a contact",

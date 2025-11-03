@@ -42,7 +42,7 @@ class DataPathResolver:
             (len(filename) > 100, "Filename too long (max 100 characters)"),
             (filename.startswith('.'), "Filename must not start with '.'"),
             ('..' in filename, "Filename must not contain '..'"),
-            (not re.fullmatch(r'[A-Za-z0-9_.-]+', filename), "Invalid characters in filename"),
+            (not re.fullmatch(r'[A-Za-z\d_.-]+', filename), "Invalid characters in filename"),
             ('.' in filename and not any(filename.endswith(ext) for ext in allowed_extensions),
              f"Only {', '.join(allowed_extensions)} files are allowed"),
         ]

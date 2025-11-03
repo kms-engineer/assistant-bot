@@ -1,7 +1,5 @@
-import json
-from typing import Any, Optional
-from ..storage.storage import Storage
 from ..serialization.json_serializer import JsonSerializer
+from ..storage.storage import Storage
 from ..storage.storage_type import StorageType
 from ...application.exceptions.base import StorageException
 from ...domain.entities.note import Note
@@ -116,5 +114,3 @@ class DomainStorageAdapter:
                     notes_dict[note.id] = note
 
         return notes_dict, normalized_filename
-
-
