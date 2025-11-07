@@ -99,3 +99,17 @@ class EntityConfig:
         'Suite', 'Apt', 'Apartment', 'Unit', 'Building', 'Floor', 'Room'
     }
     """Comprehensive stop words for heuristic name extraction."""
+
+    # Command words to filter from name extraction (lowercase for case-insensitive matching)
+    COMMAND_WORDS = {
+        # Action verbs
+        'show', 'display', 'get', 'view', 'find', 'search', 'lookup', 'locate',
+        'add', 'create', 'new', 'edit', 'update', 'change', 'modify',
+        'delete', 'remove', 'erase', 'list', 'all',
+        # Entity types
+        'contact', 'person', 'note', 'birthday', 'phone', 'email', 'address',
+        'tag', 'info', 'information', 'details',
+        # Common words
+        'the', 'a', 'an', 'for', 'from', 'to', 'with', 'about', 'of'
+    }
+    """Command words that should not be part of extracted entity values (lowercase)."""

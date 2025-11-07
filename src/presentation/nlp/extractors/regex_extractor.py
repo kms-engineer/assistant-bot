@@ -18,6 +18,7 @@ class RegexExtractor:
         self.birthday_pattern = re.compile(RegexPatterns.BIRTHDAY_PATTERN_COMBINED)
         self.tag_pattern = re.compile(RegexPatterns.TAG_PATTERN)
         self.uuid_pattern = re.compile(RegexPatterns.UUID_PATTERN, re.IGNORECASE)
+        self.days_pattern = re.compile(RegexPatterns.DAYS_PATTERN, re.IGNORECASE)
 
     def extract_all(self, text: str) -> List[Entity]:
         entities = []
@@ -102,6 +103,18 @@ class RegexExtractor:
                 end=uuid_match.end(),
                 entity_type='id',
                 confidence=ConfidenceConfig.REGEX_ID_CONFIDENCE,
+                strategy=ExtractionStrategy.REGEX
+            ))
+
+        # Days (for birthday/birthdays commands)
+        days_match = self.days_pattern.search(text)
+        if days_match:
+            entities.append(Entity(
+                text=days_match.group(1),  # Extract just the number
+                start=days_match.start(1),
+                end=days_match.end(1),
+                entity_type='days',
+                confidence=ConfidenceConfig.REGEX_DAYS_CONFIDENCE,
                 strategy=ExtractionStrategy.REGEX
             ))
 

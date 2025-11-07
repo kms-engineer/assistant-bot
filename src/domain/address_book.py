@@ -25,6 +25,11 @@ class AddressBook(UserDict):
                 return contact
         raise KeyError("Contact not found")
 
+    def find_all(self, contact_name: str) -> list[Contact]:
+        matches = [contact for contact in self.data.values()
+                   if contact.name.value == contact_name]
+        return matches
+
     def find_by_id(self, contact_id: str) -> Optional[Contact]:
         return self.data.get(contact_id)
 

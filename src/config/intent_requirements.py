@@ -12,6 +12,10 @@ INTENT_REQUIREMENTS = {
         "required": ["name", "old_phone", "new_phone"],
         "optional": []
     },
+    "remove_phone": {
+        "required": ["name", "phone"],
+        "optional": []
+    },
     "edit_email": {
         "required": ["name", "email"],
         "optional": []
@@ -54,6 +58,10 @@ INTENT_REQUIREMENTS = {
     },
     "show_notes": {
         "required": [],
+        "optional": []
+    },
+    "show_note": {
+        "required": ["id"],
         "optional": []
     },
     "add_note_tag": {
@@ -118,10 +126,6 @@ INTENT_REQUIREMENTS = {
     },
     "load": {
         "required": ["filename"],
-        "optional": []
-    },
-    "find_contacts": {
-        "required": ["search_text"],
         "optional": []
     },
     "list_note_tags": {

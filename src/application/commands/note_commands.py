@@ -6,6 +6,8 @@ from ..services.note_service import NoteService
 from ...domain.entities import Note
 from ...domain.utils.styles_utils import stylize_tag
 from ...domain.value_objects.tag import Tag
+from ...presentation.cli.confirmation import confirm_action
+from ...presentation.cli.ui_messages import UIMessages
 
 
 def add_note(args: List[str], service: NoteService) -> str:
@@ -61,12 +63,42 @@ def show_notes(args: List[str], service: NoteService) -> str:
     return "\n".join(lines)
 
 
+def show_note(args: List[str], service: NoteService) -> str:
+    """Show a single note by ID."""
+    if not args:
+        raise ValueError("Show-note command requires note ID argument")
+
+    note_id = args[0]
+    note = service.get_note_by_id(note_id)
+
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    lines = [f"Note ID: {note.id}"]
+    lines.append(f"Text: {note.text}")
+    if note.tags:
+        tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
+        lines.append(f"Tags: {tags_str}")
+
+    return "\n".join(lines)
+
+
 def edit_note(args: List[str], service: NoteService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-note command requires 2 arguments: ID and new text")
 
     note_id = args[0]
     new_text = " ".join(args[1:])
+
+    # Get current note to show in confirmation
+    note = service.get_note_by_id(note_id)
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    # Ask for confirmation
+    prompt = f"Edit note '{note.id}'? Old text: '{note.text[:50]}...'" if len(note.text) > 50 else f"Edit note '{note.id}'? Old text: '{note.text}'"
+    if not confirm_action(prompt, default=True):
+        return UIMessages.ACTION_CANCELLED
 
     return service.edit_note(note_id, new_text)
 
@@ -76,6 +108,18 @@ def delete_note(args: List[str], service: NoteService) -> str:
         raise ValueError("Delete-note command requires ID argument")
 
     note_id = args[0]
+
+    # Get note to show in confirmation
+    note = service.get_note_by_id(note_id)
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    # Ask for confirmation
+    text_preview = note.text[:50] + "..." if len(note.text) > 50 else note.text
+    prompt = f"Delete note '{note_id}'? Text: '{text_preview}'. This can't be undone"
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.delete_note(note_id)
 
 
@@ -95,6 +139,12 @@ def remove_tag(args: List[str], service: NoteService) -> str:
 
     note_id = args[0]
     tag = Tag(args[1])
+
+    # Ask for confirmation
+    prompt = f"Remove tag '{tag.value}' from note '{note_id}'?"
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.remove_tag(note_id, tag)
 
 

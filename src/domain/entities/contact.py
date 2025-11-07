@@ -31,7 +31,6 @@ class Contact(Entity):
         self.phones.append(phone)
 
     def find_phone(self, phone: Phone) -> Phone:
-        """Find phone by Phone VO."""
         for p in self.phones:
             if p.value == phone.value:
                 return p
@@ -67,12 +66,16 @@ class Contact(Entity):
 
     def is_matching(self, search_text: str, exact: bool) -> bool:
         if exact:
-            return search_text == str(self.name) or search_text == str(self.email) or any(
-                search_text == str(phone) for phone in self.phones)
+            return (search_text == str(self.name) or
+                    (self.email and search_text == str(self.email)) or
+                    (self.address and search_text == str(self.address)) or
+                    any(search_text == str(phone) for phone in self.phones))
         else:
-            return search_text.casefold() in str(self.name).casefold() or \
-                   search_text.casefold() in str(self.email).casefold() or \
-                   any(search_text.casefold() in str(phone).casefold() for phone in self.phones)
+            search_lower = search_text.casefold()
+            return (search_lower in str(self.name).casefold() or
+                    (self.email and search_lower in str(self.email).casefold()) or
+                    (self.address and search_lower in str(self.address).casefold()) or
+                    any(search_lower in str(phone).casefold() for phone in self.phones))
 
     def __str__(self) -> str:
         phones_str = "; ".join(p.value for p in self.phones) or "—"

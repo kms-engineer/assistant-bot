@@ -37,7 +37,9 @@ KEYWORD_MAP = {
     "search_contacts": [
         "find contact", "search contact", "look up", "look for",
         "find person", "search person", "search for", "find in",
-        "search in contacts", "find in contacts", "find in address book"
+        "search in contacts", "find in contacts", "find in address book",
+        "show contact", "show info", "contact info", "get contact",
+        "view contact", "display contact"
     ],
     "add_birthday": [
         "add birthday", "set birthday", "save birthday",

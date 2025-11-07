@@ -4,6 +4,7 @@ import os
 class ModelConfig:
 
     PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
     INTENT_MODEL_PATH = os.path.join(PROJECT_ROOT, "models", "assistant-bot-intent-classifier")
     """Path to trained intent classifier model."""
 
