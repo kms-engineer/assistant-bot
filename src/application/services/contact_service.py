@@ -214,7 +214,7 @@ class ContactService:
             contact.add_email(email)
             return f"New email is set for {name}"
         else:
-            self.add_email(name, email)
+            return self.add_email(name, email)
 
     def remove_email(self, name: str) -> str:
         contact = self.address_book.find(name)

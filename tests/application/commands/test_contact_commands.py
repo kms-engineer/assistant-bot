@@ -240,9 +240,9 @@ class TestEditEmail:
 
     def test_edit_email_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email adress"):
+        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email address"):
             contact_commands.edit_email(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email adress"):
+        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email address"):
             contact_commands.edit_email([], mock_service)
 
 
@@ -304,9 +304,9 @@ class TestEditAddress:
 
     def test_edit_address_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new adress"):
-            contact_commands.edit_address(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new adress"):
+        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new address"):
+            contact_commands.edit_address([""], mock_service)
+        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new address"):
             contact_commands.edit_address([], mock_service)
 
 
@@ -435,7 +435,7 @@ class TestHello:
 
     def test_hello_command(self, mock_service):
         """Test the hello command returns the correct greeting."""
-        result = contact_commands.hello([], mock_service)
+        result = contact_commands.hello()
         assert result == "How can I help you?"
 
 
@@ -445,14 +445,14 @@ class TestHelp:
     def test_help_command_default(self, mock_service):
         """Test the help command returns the command list."""
         with patch.object(UIMessages, 'get_command_list', return_value="Command List") as mock_get_command_list:
-            result = contact_commands.help([], mock_service)
+            result = contact_commands.help()
             mock_get_command_list.assert_called_once_with(False)
             assert result == "Command List"
 
     def test_help_command_nlp_mode(self, mock_service):
         """Test the help command returns the command list in NLP mode."""
         with patch.object(UIMessages, 'get_command_list', return_value="NLP Command List") as mock_get_command_list:
-            result = contact_commands.help([], mock_service, nlp_mode=True)
+            result = contact_commands.help(nlp_mode=True)
             mock_get_command_list.assert_called_once_with(True)
             assert result == "NLP Command List"
 
@@ -463,7 +463,7 @@ class TestClear:
     @patch('os.system')
     def test_clear_command(self, mock_os_system, mock_service):
         """Test the clear command calls os.system with correct argument."""
-        result = contact_commands.clear([], mock_service)
+        result = contact_commands.clear()
         if os.name == 'posix':
             mock_os_system.assert_called_once_with('clear')
         else:

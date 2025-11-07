@@ -4,6 +4,7 @@ from src.application.services.note_service import NoteService
 from src.domain.entities.note import Note
 from src.domain.value_objects import Tag
 
+test_title = "Test note title"
 
 @pytest.fixture
 def mock_storage():
@@ -25,18 +26,18 @@ def note_service(mock_storage):
 def sample_notes(note_service):
     """Create sample notes for testing."""
     # Add notes with tags
-    id1 = note_service.add_note("Python programming basics")
+    id1 = note_service.add_note("Note title1", "Python programming basics")
     note_service.add_tag(id1, Tag("python"))
     note_service.add_tag(id1, Tag("programming"))
 
-    id2 = note_service.add_note("JavaScript async patterns")
+    id2 = note_service.add_note("Note title2", "JavaScript async patterns")
     note_service.add_tag(id2, Tag("javascript"))
     note_service.add_tag(id2, Tag("async"))
 
-    id3 = note_service.add_note("Python testing with pytest")
+    id3 = note_service.add_note("Note title3", "Python testing with pytest")
     note_service.add_tag(id3, Tag("python"))
     note_service.add_tag(id3, Tag("testing"))
-    id4 = note_service.add_note("Untagged note")
+    id4 = note_service.add_note("Note title4", "Untagged note")
 
     return {"ids": [id1, id2, id3, id4], "service": note_service}
 
@@ -46,7 +47,7 @@ class TestAddTag:
 
     def test_add_tag_success(self, note_service):
         """Test adding a tag to a note."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         result = note_service.add_tag(note_id, Tag("test-tag"))
 
         assert result == "Tag added."
@@ -56,7 +57,7 @@ class TestAddTag:
 
     def test_add_tag_with_trim(self, note_service):
         """Test that tags are trimmed before adding."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("  spaced  "))
 
         note = note_service.notes[note_id]
@@ -64,7 +65,7 @@ class TestAddTag:
 
     def test_add_tag_duplicate_raises_error(self, note_service):
         """Test that adding duplicate tag raises error."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("duplicate"))
 
         with pytest.raises(ValueError, match="Tag already exists"):
@@ -72,7 +73,7 @@ class TestAddTag:
 
     def test_add_tag_duplicate_case_insensitive(self, note_service):
         """Test that duplicate detection is case-sensitive (tags preserve case)."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("Python"))
 
         # Case-sensitive duplicate should raise error (same tag)
@@ -86,14 +87,14 @@ class TestAddTag:
 
     def test_add_tag_empty_raises_error(self, note_service):
         """Test that empty tag raises error."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
 
         with pytest.raises(ValueError):
             note_service.add_tag(note_id, Tag(""))
 
     def test_add_tag_too_long_raises_error(self, note_service):
         """Test that tag longer than 50 chars raises error."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         long_tag = "a" * 51
 
         with pytest.raises(ValueError, match="Tag too long"):
@@ -101,7 +102,7 @@ class TestAddTag:
 
     def test_add_multiple_tags(self, note_service):
         """Test adding multiple tags to a note."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("tag1"))
         note_service.add_tag(note_id, Tag("tag2"))
         note_service.add_tag(note_id, Tag("tag3"))
@@ -119,7 +120,7 @@ class TestRemoveTag:
 
     def test_remove_tag_success(self, note_service):
         """Test removing a tag from a note."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("remove-me"))
         result = note_service.remove_tag(note_id, Tag("remove-me"))
 
@@ -129,7 +130,7 @@ class TestRemoveTag:
 
     def test_remove_tag_not_found(self, note_service):
         """Test that removing non-existent tag raises error."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
 
         with pytest.raises(ValueError, match="Tag not found"):
             note_service.remove_tag(note_id, Tag("nonexistent"))
@@ -141,7 +142,7 @@ class TestRemoveTag:
 
     def test_remove_one_of_many_tags(self, note_service):
         """Test removing one tag when note has multiple tags."""
-        note_id = note_service.add_note("Test note")
+        note_id = note_service.add_note(test_title, "Test note")
         note_service.add_tag(note_id, Tag("tag1"))
         note_service.add_tag(note_id, Tag("tag2"))
         note_service.add_tag(note_id, Tag("tag3"))
@@ -162,7 +163,7 @@ class TestSearchByTag:
     def test_search_by_tag_finds_notes(self, sample_notes):
         """Test searching notes by tag."""
         service = sample_notes["service"]
-        results = service.search_by_tag("python")
+        results = service.search_notes_by_tag("python")
 
         assert len(results) == 2
         texts = [note.text for note in results]
@@ -172,23 +173,23 @@ class TestSearchByTag:
     def test_search_by_tag_case_insensitive(self, sample_notes):
         """Test that tag search is case-insensitive."""
         service = sample_notes["service"]
-        results_lower = service.search_by_tag("python")
-        results_upper = service.search_by_tag("PYTHON")
-        results_mixed = service.search_by_tag("PyThOn")
+        results_lower = service.search_notes_by_tag("python")
+        results_upper = service.search_notes_by_tag("PYTHON")
+        results_mixed = service.search_notes_by_tag("PyThOn")
 
         assert len(results_lower) == len(results_upper) == len(results_mixed) == 2
 
     def test_search_by_tag_no_results(self, sample_notes):
         """Test searching by non-existent tag."""
         service = sample_notes["service"]
-        results = service.search_by_tag("nonexistent")
+        results = service.search_notes_by_tag("nonexistent")
 
         assert len(results) == 0
 
     def test_search_by_tag_unique_tag(self, sample_notes):
         """Test searching by tag that only one note has."""
         service = sample_notes["service"]
-        results = service.search_by_tag("javascript")
+        results = service.search_notes_by_tag("javascript")
 
         assert len(results) == 1
         assert results[0].text == "JavaScript async patterns"
@@ -284,8 +285,8 @@ class TestGetNotesSortedByTag:
 
     def test_get_notes_sorted_by_tag_only_untagged(self, note_service):
         """Test grouping when only untagged notes exist."""
-        note_service.add_note("Untagged 1")
-        note_service.add_note("Untagged 2")
+        note_service.add_note(test_title, "Untagged 1")
+        note_service.add_note(test_title, "Untagged 2")
 
         tag_groups = note_service.get_notes_sorted_by_tag()
 
@@ -300,7 +301,7 @@ class TestSearchNotes:
     def test_search_notes_finds_matches(self, sample_notes):
         """Test text search finds matching notes."""
         service = sample_notes["service"]
-        results = service.search_notes("Python")
+        results = service.search_notes_by_content("Python")
 
         assert len(results) == 2
         texts = [note.text for note in results]
@@ -310,15 +311,15 @@ class TestSearchNotes:
     def test_search_notes_case_insensitive(self, sample_notes):
         """Test that text search is case-insensitive."""
         service = sample_notes["service"]
-        results_lower = service.search_notes("python")
-        results_upper = service.search_notes("PYTHON")
+        results_lower = service.search_notes_by_content("python")
+        results_upper = service.search_notes_by_content("PYTHON")
 
         assert len(results_lower) == len(results_upper) == 2
 
     def test_search_notes_partial_match(self, sample_notes):
         """Test that search matches partial text."""
         service = sample_notes["service"]
-        results = service.search_notes("async")
+        results = service.search_notes_by_content("async")
 
         assert len(results) == 1
         assert "JavaScript async patterns" in results[0].text
@@ -326,6 +327,6 @@ class TestSearchNotes:
     def test_search_notes_no_results(self, sample_notes):
         """Test searching with no matches."""
         service = sample_notes["service"]
-        results = service.search_notes("nonexistent query")
+        results = service.search_notes_by_content("nonexistent query")
 
         assert len(results) == 0
