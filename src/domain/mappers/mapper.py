@@ -7,9 +7,9 @@ from ..models.dbbase import DBBase
 class Mapper(ABC):
 
     @abstractmethod
-    def to_dbmodel(self, data: DBBase) -> Entity:
+    def to_dbmodel(self, data: Entity) -> DBBase:
         pass
 
     @abstractmethod
-    def from_dbmodel(self, data: Entity) -> DBBase:
+    def from_dbmodel(self, data: DBBase) -> Entity:
         pass

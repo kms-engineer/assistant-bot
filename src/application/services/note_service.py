@@ -28,6 +28,9 @@ class NoteService:
     def get_ids(self) -> Set[str]:
         return set(self.notes.keys())
 
+    def get_titles(self) -> Set[str]:
+        return set([item for item in self.notes.values()])
+
     def load_notes(self, filename: str = None) -> int:
         # Use the appropriate default based on storage type
         if filename is None:
@@ -56,8 +59,9 @@ class NoteService:
         self._current_filename = saved_filename
         return saved_filename
 
-    def add_note(self, text: str) -> str:
+    def add_note(self, title: str, text: str) -> str:
         note = Note.create(
+            title,
             text,
             lambda: IDGenerator.generate_unique_id(
                 lambda: self.get_ids()
@@ -72,11 +76,34 @@ class NoteService:
         self.notes[note_id].edit_text(new_text)
         return "Note updated."
 
-    def delete_note(self, note_id: str) -> str:
+    def rename_note(self, note_id: str, new_title: str) -> str:
+        if note_id not in self.notes:
+            raise KeyError("Note not found")
+        self.notes[note_id].edit_title(new_title)
+        return "Note title updated."
+
+    def delete_note_by_id(self, note_id: str) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         del self.notes[note_id]
         return "Note deleted."
+
+    def delete_note_by_title(self, title: str) -> str:
+        if not title or not title.strip():
+            raise KeyError("Note title can't be empty")
+        found_notes = list(note for note in self.notes.values() if note.title == title)
+        for note in found_notes:
+            self.delete_note_by_id(note.id)
+        return "Note(s) deleted"
+
+    def delete_note_by_tags(self, tag: str) -> str:
+        if not tag or not tag.strip():
+            raise KeyError("Note title can't be empty")
+        search_tag = Tag(tag)
+        found_notes = list(note for note in self.notes.values() if search_tag in note.tags)
+        for note in found_notes:
+            self.delete_note_by_id(note.id)
+        return "Note(s) deleted"
 
     def add_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
@@ -93,11 +120,22 @@ class NoteService:
     def get_all_notes(self) -> list[Note]:
         return list(self.notes.values())
 
-    def search_notes(self, query: str) -> list[Note]:
+    def get_note_id_by_title(self, title: str):
+        if not title or not title.strip():
+            raise KeyError("Note title can't be empty")
+        title = title.strip()
+        return next((note for note in self.notes.values() if note.title == title), None)
+
+    def search_notes_by_content(self, query: str) -> list[Note]:
         query_lower = query.lower()
         return [note for note in self.notes.values() if query_lower in note.text.lower()]
 
-    def search_by_tag(self, tag: str) -> list[Note]:
+    def search_notes_by_title(self, query: str) -> list[Note]:
+        if not query or not query.strip():
+            raise KeyError("Note title can't be empty")
+        return list(note for note in self.notes.values() if query in note.title.lower())
+
+    def search_notes_by_tag(self, tag: str) -> list[Note]:
         tag_lower = tag.lower()
         return [
             note for note in self.notes.values()
@@ -110,8 +148,10 @@ class NoteService:
             for tag in note.tags:
                 tag_value = tag.value
                 tag_counts[tag_value] = tag_counts.get(tag_value, 0) + 1
-
         return dict(sorted(tag_counts.items()))
+
+    def get_notes_sorted_by_title(self) -> dict[str, list[Note]]:
+        return dict(sorted(self.notes, key=lambda param: param["title"]))
 
     def get_notes_sorted_by_tag(self) -> dict[str, list[Note]]:
         tag_groups = {}
