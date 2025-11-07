@@ -4,7 +4,7 @@ from src.application.commands import note_commands
 from src.domain.entities.note import Note
 from src.domain.value_objects import Tag
 
-
+test_title = 'Test note title'
 @pytest.fixture
 def mock_service():
     """Create a mock NoteService for testing."""
@@ -14,7 +14,7 @@ def mock_service():
 @pytest.fixture
 def sample_note():
     """Create a sample note for testing."""
-    note = Note("Sample note text", "test-id-1")
+    note = Note(test_title, "Sample note text", "test-id-1")
     return note
 
 
@@ -130,8 +130,8 @@ class TestSearchNotes:
 
     def test_search_notes_case_insensitive(self, mock_service):
         """Test that search is case insensitive."""
-        note_upper = Note("PYTHON CODE", "test-id-upper")
-        note_lower = Note("python code", "test-id-lower")
+        note_upper = Note(test_title, "PYTHON CODE", "test-id-upper")
+        note_lower = Note(test_title, "python code", "test-id-lower")
         mock_service.search_notes.return_value = [note_upper, note_lower]
 
         result = note_commands.search_notes(["python"], mock_service)
@@ -144,7 +144,7 @@ class TestSearchNotesByTag:
 
     def test_search_by_tag_with_results(self, mock_service, sample_note):
         """Test searching notes by tag with results."""
-        sample_note.add_tag("python")
+        sample_note.add_tag(Tag("python"))
         mock_service.search_by_tag.return_value = [sample_note]
 
         result = note_commands.search_notes_by_tag(["python"], mock_service)
@@ -163,7 +163,7 @@ class TestSearchNotesByTag:
 
     def test_search_by_tag_multi_word(self, mock_service, sample_note):
         """Test searching by multi-word tag."""
-        sample_note.add_tag("machine learning")
+        sample_note.add_tag(Tag("machine learning"))
         mock_service.search_by_tag.return_value = [sample_note]
 
         result = note_commands.search_notes_by_tag(["machine", "learning"], mock_service)
@@ -176,11 +176,11 @@ class TestSearchNotesByTag:
             note_commands.search_notes_by_tag([], mock_service)
 
     def test_search_by_tag_case_insensitive(self, mock_service):
-        """Test that tag search is case insensitive."""
-        note1 = Note("Note 1", "id-1")
-        note1.add_tag("Python")
-        note2 = Note("Note 2", "id-2")
-        note2.add_tag("python")
+        """Test that tag search is case-insensitive."""
+        note1 = Note(test_title, "Note 1", "id-1")
+        note1.add_tag(Tag("Python"))
+        note2 = Note(test_title, "Note 2", "id-2")
+        note2.add_tag(Tag("python"))
         mock_service.search_by_tag.return_value = [note1, note2]
 
         result = note_commands.search_notes_by_tag(["python"], mock_service)
@@ -199,7 +199,7 @@ class TestListTags:
             "testing": 1
         }
 
-        result = note_commands.list_tags([], mock_service)
+        result = note_commands.list_tags(mock_service)
 
         assert "All tags (3 unique)" in result
         assert "python" in result
@@ -213,7 +213,7 @@ class TestListTags:
         """Test listing tags when no tags exist."""
         mock_service.list_tags.return_value = {}
 
-        result = note_commands.list_tags([], mock_service)
+        result = note_commands.list_tags(mock_service)
 
         assert result == "No tags found."
 
@@ -225,7 +225,7 @@ class TestListTags:
             "ccc": 3
         }
 
-        result = note_commands.list_tags([], mock_service)
+        result = note_commands.list_tags(mock_service)
         lines = result.split('\n')
 
         # Check that tags appear in alphabetical order
@@ -241,8 +241,8 @@ class TestShowNotesWithTags:
 
     def test_show_notes_with_tag_highlighting(self, mock_service, sample_note):
         """Test that tags are highlighted in note display."""
-        sample_note.add_tag("python")
-        sample_note.add_tag("testing")
+        sample_note.add_tag(Tag("python"))
+        sample_note.add_tag(Tag("testing"))
         mock_service.get_all_notes.return_value = [sample_note]
 
         result = note_commands.show_notes([], mock_service)
@@ -253,12 +253,12 @@ class TestShowNotesWithTags:
 
     def test_show_notes_sort_by_tag(self, mock_service):
         """Test show-notes --sort-by-tag groups notes by tags."""
-        note1 = Note("Python note", "id-1")
-        note1.add_tag("python")
-        note2 = Note("JavaScript note", "id-2")
-        note2.add_tag("javascript")
-        note3 = Note("Python note 2", "id-3")
-        note3.add_tag("python")
+        note1 = Note(test_title, "Python note", "id-1")
+        note1.add_tag(Tag("python"))
+        note2 = Note(test_title, "JavaScript note", "id-2")
+        note2.add_tag(Tag("javascript"))
+        note3 = Note(test_title, "Python note 2", "id-3")
+        note3.add_tag(Tag("python"))
 
         mock_service.get_notes_sorted_by_tag.return_value = {
             "javascript": [note2],
@@ -275,9 +275,9 @@ class TestShowNotesWithTags:
 
     def test_show_notes_with_untagged_notes(self, mock_service):
         """Test that untagged notes are properly grouped."""
-        note1 = Note("Tagged note", "id-1")
-        note1.add_tag("python")
-        note2 = Note("Untagged note", "id-2")
+        note1 = Note(test_title, "Tagged note", "id-1")
+        note1.add_tag(Tag("python"))
+        note2 = Note(test_title,"Untagged note", "id-2")
 
         mock_service.get_notes_sorted_by_tag.return_value = {
             "python": [note1],
@@ -291,10 +291,10 @@ class TestShowNotesWithTags:
 
     def test_show_notes_with_multi_tags_per_note(self, mock_service):
         """Test displaying notes with multiple tags."""
-        note = Note("Multi-tag note", "id-1")
-        note.add_tag("python")
-        note.add_tag("testing")
-        note.add_tag("async")
+        note = Note(test_title,"Multi-tag note", "id-1")
+        note.add_tag(Tag("python"))
+        note.add_tag(Tag("testing"))
+        note.add_tag(Tag("async"))
         mock_service.get_all_notes.return_value = [note]
 
         result = note_commands.show_notes([], mock_service)

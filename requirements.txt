@@ -16,6 +16,9 @@ scikit-learn>=1.0.0  # For training scripts
 # Hugging Face Hub for downloading/uploading models
 huggingface_hub>=0.16.0  # For model download/upload
 
+# MCP
+fastmcp==2.13.0
+
 # Testing
 pytest==8.4.2
 pytest-cov==7.0.0

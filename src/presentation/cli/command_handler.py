@@ -41,11 +41,15 @@ class CommandHandler:
             "find": self._wrap(contact_commands.find),
             "add-note": self._wrap_note(note_commands.add_note),
             "show-notes": self._wrap_note(note_commands.show_notes),
+            "rename-note": self._wrap_note(note_commands.rename_note),
             "edit-note": self._wrap_note(note_commands.edit_note),
             "delete-note": self._wrap_note(note_commands.delete_note),
+            "delete-note-by-title": self._wrap_note(note_commands.delete_note_by_title),
+            "delete-note-by-tag": self._wrap_note(note_commands.delete_note_by_tag),
             "add-tag": self._wrap_note(note_commands.add_tag),
             "remove-tag": self._wrap_note(note_commands.remove_tag),
             "search-notes": self._wrap_note(note_commands.search_notes),
+            "search-notes-by-title": self._wrap_note(note_commands.search_notes_by_title),
             "search-notes-by-tag": self._wrap_note(note_commands.search_notes_by_tag),
             "list-tags": self._wrap_note_no_args(note_commands.list_tags)
         }

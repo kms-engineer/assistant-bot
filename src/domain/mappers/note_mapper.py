@@ -10,6 +10,7 @@ class NoteMapper(Mapper):
     def to_dbmodel(data: Note) -> DBNote:
         return DBNote(
             id=data.id,
+            title=data.title,
             text=data.text,
             tags=",".join(str(tag) for tag in data.tags) if data.tags else None
         )
@@ -17,6 +18,7 @@ class NoteMapper(Mapper):
     @staticmethod
     def from_dbmodel(data: DBNote) -> Note:
         note = Note(
+            title=data.title,
             text=data.text,
             note_id=data.id
         )
@@ -25,5 +27,4 @@ class NoteMapper(Mapper):
             for tag_str in data.tags.split(","):
                 tag_vo = Tag(tag_str.strip())
                 note.add_tag(tag_vo)
-
         return note
