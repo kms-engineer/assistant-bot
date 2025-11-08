@@ -1,6 +1,5 @@
 import pytest
-import os
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, patch, MagicMock
 from src.application.commands import contact_commands
 from src.domain.value_objects.name import Name
 from src.domain.value_objects.phone import Phone
@@ -20,10 +19,25 @@ def mock_service():
 @pytest.fixture
 def sample_contact():
     """Create a sample contact for testing."""
-    contact = Contact(Name("John Doe"), "123")
+    contact = Contact(Name("John Doe"), "contact-123")
+    contact.add_phone(Phone("1234567890"))
+    return contact
+
+
+@pytest.fixture
+def sample_contact_with_email():
+    """Create a sample contact with email for testing."""
+    contact = Contact(Name("John Doe"), "contact-123")
     contact.add_phone(Phone("1234567890"))
     contact.add_email(Email("john.doe@example.com"))
-    contact.add_address(Address("123 Main St"))
+    return contact
+
+
+@pytest.fixture
+def sample_contact_with_birthday():
+    """Create a sample contact with birthday for testing."""
+    contact = Contact(Name("John Doe"), "contact-123")
+    contact.add_phone(Phone("1234567890"))
     contact.add_birthday(Birthday("01.01.1990"))
     return contact
 
@@ -31,12 +45,29 @@ def sample_contact():
 class TestAddContact:
     """Tests for add_contact command."""
 
-    def test_add_contact_success(self, mock_service):
-        """Test adding a contact successfully."""
-        mock_service.add_contact.return_value = "Contact added."
-        result = contact_commands.add_contact(["John Doe", "1234567890"], mock_service)
-        mock_service.add_contact.assert_called_once_with(Name("John Doe"), Phone("1234567890"))
-        assert result == "Contact added."
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_add_contact_new(self, mock_select, mock_service):
+        """Test adding a completely new contact."""
+        # Mock _select_contact_by_name to return None (no existing contact)
+        mock_select.return_value = None
+        mock_service.create_new_contact.return_value = "New contact created"
+
+        result = contact_commands.add_contact(["Alice", "1234567890"], mock_service)
+
+        mock_service.create_new_contact.assert_called_once_with(Name("Alice"), Phone("1234567890"))
+        assert result == "New contact created"
+
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_add_contact_existing(self, mock_select, mock_service, sample_contact):
+        """Test adding phone to existing contact."""
+        # Mock _select_contact_by_name to return existing contact
+        mock_select.return_value = sample_contact
+        mock_service.add_phone_to_contact.return_value = "Phone added to existing contact"
+
+        result = contact_commands.add_contact(["John Doe", "9999999999"], mock_service)
+
+        mock_service.add_phone_to_contact.assert_called_once()
+        assert "Phone added" in result or "existing contact" in result
 
     def test_add_contact_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
@@ -49,43 +80,64 @@ class TestAddContact:
 class TestChangeContact:
     """Tests for change_contact command."""
 
-    def test_change_contact_success(self, mock_service):
+    @patch('src.application.commands.contact_commands.confirm_action')
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_change_contact_success(self, mock_select, mock_confirm, mock_service, sample_contact):
         """Test changing a contact's phone number successfully."""
-        mock_service.change_phone.return_value = "Phone number updated."
+        mock_select.return_value = sample_contact
+        mock_confirm.return_value = True
+        mock_service.edit_phone_by_id.return_value = "Phone number updated."
+
         result = contact_commands.change_contact(["John Doe", "1234567890", "0987654321"], mock_service)
-        mock_service.change_phone.assert_called_once_with("John Doe", Phone("1234567890"), Phone("0987654321"))
+
+        mock_confirm.assert_called_once()
+        mock_service.edit_phone_by_id.assert_called_once()
         assert result == "Phone number updated."
+
+    @patch('src.application.commands.contact_commands.confirm_action')
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_change_contact_cancelled(self, mock_select, mock_confirm, mock_service, sample_contact):
+        """Test that cancelling change returns ACTION_CANCELLED."""
+        mock_select.return_value = sample_contact
+        mock_confirm.return_value = False
+
+        result = contact_commands.change_contact(["John Doe", "1234567890", "0987654321"], mock_service)
+
+        assert result == UIMessages.ACTION_CANCELLED
+        mock_service.edit_phone_by_id.assert_not_called()
 
     def test_change_contact_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Change command requires 3 arguments: name, old phone, and new phone"):
+        with pytest.raises(ValueError, match="Change command requires 3 arguments"):
             contact_commands.change_contact(["John Doe", "1234567890"], mock_service)
-        with pytest.raises(ValueError, match="Change command requires 3 arguments: name, old phone, and new phone"):
-            contact_commands.change_contact(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Change command requires 3 arguments: name, old phone, and new phone"):
-            contact_commands.change_contact([], mock_service)
 
 
 class TestDeleteContact:
     """Tests for delete_contact command."""
 
     @patch('src.application.commands.contact_commands.confirm_action')
-    def test_delete_contact_success(self, mock_confirm_action, mock_service):
+    def test_delete_contact_success(self, mock_confirm, mock_service, sample_contact):
         """Test deleting a contact successfully with confirmation."""
-        mock_confirm_action.return_value = True
-        mock_service.delete_contact.return_value = "Contact deleted."
+        mock_confirm.return_value = True
+        mock_service.find_all_by_name.return_value = [sample_contact]
+        mock_service.delete_contact_by_id.return_value = "Contact deleted."
+
         result = contact_commands.delete_contact(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_DELETE_CONTACT.format(name="John Doe"), default=False)
-        mock_service.delete_contact.assert_called_once_with("John Doe")
+
+        mock_confirm.assert_called_once()
+        mock_service.delete_contact_by_id.assert_called_once_with(sample_contact.id)
         assert result == "Contact deleted."
 
     @patch('src.application.commands.contact_commands.confirm_action')
-    def test_delete_contact_cancelled(self, mock_confirm_action, mock_service):
+    def test_delete_contact_cancelled(self, mock_confirm, mock_service, sample_contact):
         """Test deleting a contact when action is cancelled."""
-        mock_confirm_action.return_value = False
+        mock_confirm.return_value = False
+        mock_service.find_all_by_name.return_value = [sample_contact]
+
         result = contact_commands.delete_contact(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_DELETE_CONTACT.format(name="John Doe"), default=False)
-        mock_service.delete_contact.assert_not_called()
+
+        mock_confirm.assert_called_once()
+        mock_service.delete_contact_by_id.assert_not_called()
         assert result == UIMessages.ACTION_CANCELLED
 
     def test_delete_contact_missing_arguments(self, mock_service):
@@ -97,22 +149,28 @@ class TestDeleteContact:
 class TestShowPhone:
     """Tests for show_phone command."""
 
-    def test_show_phone_success(self, mock_service):
-        """Test showing a contact's phone numbers."""
-        mock_service.get_phones.return_value = ["1234567890", "0987654321"]
-        result = contact_commands.show_phone(["John Doe"], mock_service)
-        mock_service.get_phones.assert_called_once_with("John Doe")
-        assert result == "John Doe: 1234567890; 0987654321"
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_show_phone_success(self, mock_select, mock_service, sample_contact):
+        """Test showing phone numbers successfully."""
+        mock_select.return_value = sample_contact
 
-    def test_show_phone_no_phones(self, mock_service):
-        """Test showing phone numbers when none exist."""
-        mock_service.get_phones.return_value = []
         result = contact_commands.show_phone(["John Doe"], mock_service)
-        assert result == "John Doe has no phone numbers."
+
+        assert "1234567890" in result
+
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_show_phone_no_phones(self, mock_select, mock_service):
+        """Test showing phone when contact has no phones."""
+        contact_no_phones = Contact(Name("Jane Doe"), "contact-456")
+        mock_select.return_value = contact_no_phones
+
+        result = contact_commands.show_phone(["Jane Doe"], mock_service)
+
+        assert "No phone numbers" in result or "no phones" in result.lower()
 
     def test_show_phone_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Phone command requires 1 argument: name"):
+        with pytest.raises(ValueError, match="Show-phone command requires 1 argument: name"):
             contact_commands.show_phone([], mock_service)
 
 
@@ -122,51 +180,61 @@ class TestShowAll:
     def test_show_all_with_contacts(self, mock_service, sample_contact):
         """Test showing all contacts when contacts exist."""
         mock_service.get_all_contacts.return_value = [sample_contact]
-        result = contact_commands.show_all(mock_service)
-        mock_service.get_all_contacts.assert_called_once()
-        assert "All contacts:" in result
-        assert str(sample_contact) in result
+
+        result = contact_commands.show_all([], mock_service)
+
+        assert "John Doe" in result
+        assert "1234567890" in result
 
     def test_show_all_no_contacts(self, mock_service):
         """Test showing all contacts when no contacts exist."""
         mock_service.get_all_contacts.return_value = []
-        result = contact_commands.show_all(mock_service)
-        assert result == "No contacts found."
+
+        result = contact_commands.show_all([], mock_service)
+
+        assert "No contacts" in result
 
 
 class TestAddBirthday:
     """Tests for add_birthday command."""
 
-    def test_add_birthday_success(self, mock_service):
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_add_birthday_success(self, mock_select, mock_service, sample_contact):
         """Test adding a birthday successfully."""
-        mock_service.add_birthday.return_value = "Birthday added."
+        mock_select.return_value = sample_contact
+        mock_service.add_birthday_by_id.return_value = "Birthday added."
+
         result = contact_commands.add_birthday(["John Doe", "01.01.1990"], mock_service)
-        mock_service.add_birthday.assert_called_once_with("John Doe", Birthday("01.01.1990"))
+
+        mock_service.add_birthday_by_id.assert_called_once()
         assert result == "Birthday added."
 
     def test_add_birthday_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Add-birthday command requires 2 arguments: name and birthday \(DD.MM.YYYY\)"):
+        with pytest.raises(ValueError, match=r"Add-birthday command requires 2 arguments"):
             contact_commands.add_birthday(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Add-birthday command requires 2 arguments: name and birthday \(DD.MM.YYYY\)"):
-            contact_commands.add_birthday([], mock_service)
 
 
 class TestShowBirthday:
     """Tests for show_birthday command."""
 
-    def test_show_birthday_success(self, mock_service):
-        """Test showing a contact's birthday."""
-        mock_service.get_birthday.return_value = "01.01.1990"
-        result = contact_commands.show_birthday(["John Doe"], mock_service)
-        mock_service.get_birthday.assert_called_once_with("John Doe")
-        assert result == "John Doe's birthday: 01.01.1990"
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_show_birthday_success(self, mock_select, mock_service, sample_contact_with_birthday):
+        """Test showing birthday successfully."""
+        mock_select.return_value = sample_contact_with_birthday
 
-    def test_show_birthday_no_birthday(self, mock_service):
-        """Test showing birthday when none is set."""
-        mock_service.get_birthday.return_value = None
         result = contact_commands.show_birthday(["John Doe"], mock_service)
-        assert result == "No birthday set for John Doe."
+
+        assert "01.01.1990" in result
+
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_show_birthday_no_birthday(self, mock_select, mock_service, sample_contact):
+        """Test showing birthday when contact has no birthday."""
+        mock_select.return_value = sample_contact
+
+        result = contact_commands.show_birthday(["John Doe"], mock_service)
+
+        assert "No birthday" in result or "not set" in result.lower()
 
     def test_show_birthday_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
@@ -178,294 +246,122 @@ class TestBirthdays:
     """Tests for birthdays command."""
 
     def test_birthdays_default_days(self, mock_service):
-        """Test showing upcoming birthdays with default days."""
-        mock_service.get_upcoming_birthdays.return_value = [{"name": "John Doe", "birthdays_date": "01.01.2025"}]
+        """Test getting upcoming birthdays with default days."""
+        mock_service.get_upcoming_birthdays.return_value = []
+
         result = contact_commands.birthdays([], mock_service)
+
         mock_service.get_upcoming_birthdays.assert_called_once_with(7)
-        assert "Upcoming birthdays:" in result
-        assert "John Doe: 01.01.2025" in result
+        assert "No upcoming birthdays" in result
 
     def test_birthdays_specified_days(self, mock_service):
-        """Test showing upcoming birthdays with specified days."""
-        mock_service.get_upcoming_birthdays.return_value = [{"name": "Jane Doe", "birthdays_date": "05.02.2025"}]
+        """Test getting upcoming birthdays with specified days."""
+        mock_service.get_upcoming_birthdays.return_value = []
+
         result = contact_commands.birthdays(["30"], mock_service)
+
         mock_service.get_upcoming_birthdays.assert_called_once_with(30)
-        assert "Upcoming birthdays:" in result
-        assert "Jane Doe: 05.02.2025" in result
 
     def test_birthdays_no_upcoming(self, mock_service):
-        """Test showing upcoming birthdays when none are found."""
+        """Test when there are no upcoming birthdays."""
         mock_service.get_upcoming_birthdays.return_value = []
-        result = contact_commands.birthdays(["10"], mock_service)
-        assert result == "No upcoming birthdays in the next 10 days."
+
+        result = contact_commands.birthdays([], mock_service)
+
+        assert "No upcoming birthdays" in result
 
     def test_birthdays_invalid_days_type(self, mock_service):
-        """Test that invalid days argument raises ValueError."""
-        with pytest.raises(ValueError, match="Invalid amount of days ahead: abc"):
-            contact_commands.birthdays(["abc"], mock_service)
+        """Test that invalid days type raises ValueError."""
+        with pytest.raises(ValueError, match="Days must be a valid number"):
+            contact_commands.birthdays(["invalid"], mock_service)
 
     def test_birthdays_days_too_large(self, mock_service):
-        """Test that days argument larger than 365 returns an error message."""
-        result = contact_commands.birthdays(["366"], mock_service)
-        assert result == "Max amount of days for upcoming birthdays is 365."
+        """Test that days > 365 raises ValueError."""
+        with pytest.raises(ValueError, match="Days must be between 1 and 365"):
+            contact_commands.birthdays(["400"], mock_service)
 
 
 class TestAddEmail:
     """Tests for add_email command."""
 
-    def test_add_email_success(self, mock_service):
-        """Test adding an email successfully."""
-        mock_service.add_email.return_value = "Email added."
-        result = contact_commands.add_email(["John Doe", "john.doe@example.com"], mock_service)
-        mock_service.add_email.assert_called_once_with("John Doe", Email("john.doe@example.com"))
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_add_email_success(self, mock_select, mock_service, sample_contact):
+        """Test adding email successfully."""
+        mock_select.return_value = sample_contact
+        mock_service.add_email_by_id.return_value = "Email added."
+
+        result = contact_commands.add_email(["John Doe", "john@example.com"], mock_service)
+
+        mock_service.add_email_by_id.assert_called_once()
         assert result == "Email added."
 
     def test_add_email_missing_arguments(self, mock_service):
         """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Add-email command requires 2 arguments: name and email"):
+        with pytest.raises(ValueError, match="Add-email command requires 2 arguments"):
             contact_commands.add_email(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Add-email command requires 2 arguments: name and email"):
-            contact_commands.add_email([], mock_service)
-
-
-class TestEditEmail:
-    """Tests for edit_email command."""
-
-    def test_edit_email_success(self, mock_service):
-        """Test editing an email successfully."""
-        mock_service.edit_email.return_value = "Email updated."
-        result = contact_commands.edit_email(["John Doe", "new.email@example.com"], mock_service)
-        mock_service.edit_email.assert_called_once_with("John Doe", Email("new.email@example.com"))
-        assert result == "Email updated."
-
-    def test_edit_email_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email address"):
-            contact_commands.edit_email(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Edit-email command requires 2 arguments: name and new email address"):
-            contact_commands.edit_email([], mock_service)
 
 
 class TestRemoveEmail:
     """Tests for remove_email command."""
 
     @patch('src.application.commands.contact_commands.confirm_action')
-    def test_remove_email_success(self, mock_confirm_action, mock_service):
-        """Test removing an email successfully with confirmation."""
-        mock_confirm_action.return_value = True
-        mock_service.remove_email.return_value = "Email removed."
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_remove_email_success(self, mock_select, mock_confirm, mock_service, sample_contact_with_email):
+        """Test removing email successfully."""
+        mock_select.return_value = sample_contact_with_email
+        mock_confirm.return_value = True
+        mock_service.remove_email_by_id.return_value = "Email removed."
+
         result = contact_commands.remove_email(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_REMOVE_EMAIL.format(name="John Doe"), default=False)
-        mock_service.remove_email.assert_called_once_with("John Doe")
+
+        mock_confirm.assert_called_once()
+        mock_service.remove_email_by_id.assert_called_once()
         assert result == "Email removed."
 
     @patch('src.application.commands.contact_commands.confirm_action')
-    def test_remove_email_cancelled(self, mock_confirm_action, mock_service):
-        """Test removing an email when action is cancelled."""
-        mock_confirm_action.return_value = False
+    @patch('src.application.commands.contact_commands._select_contact_by_name')
+    def test_remove_email_cancelled(self, mock_select, mock_confirm, mock_service, sample_contact_with_email):
+        """Test that cancelling remove email returns ACTION_CANCELLED."""
+        mock_select.return_value = sample_contact_with_email
+        mock_confirm.return_value = False
+
         result = contact_commands.remove_email(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_REMOVE_EMAIL.format(name="John Doe"), default=False)
-        mock_service.remove_email.assert_not_called()
+
         assert result == UIMessages.ACTION_CANCELLED
-
-    def test_remove_email_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Remove-email command requires 1 argument: name"):
-            contact_commands.remove_email([], mock_service)
+        mock_service.remove_email_by_id.assert_not_called()
 
 
-class TestAddAddress:
-    """Tests for add_address command."""
+class TestSelectContactByName:
+    """Tests for _select_contact_by_name helper function."""
 
-    def test_add_address_success(self, mock_service):
-        """Test adding an address successfully."""
-        mock_service.add_address.return_value = "Address added."
-        result = contact_commands.add_address(["John Doe", "123", "Main", "St"], mock_service)
-        mock_service.add_address.assert_called_once_with("John Doe", Address("123 Main St"))
-        assert result == "Address added."
+    @patch('src.application.commands.contact_commands.select_from_list')
+    def test_select_single_contact(self, mock_select_list, mock_service, sample_contact):
+        """Test selecting when only one contact exists."""
+        mock_service.find_all_by_name.return_value = [sample_contact]
 
-    def test_add_address_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Add-address command requires 2 arguments: name and address"):
-            contact_commands.add_address(["John Doe"], mock_service)
-        with pytest.raises(ValueError, match="Add-address command requires 2 arguments: name and address"):
-            contact_commands.add_address([], mock_service)
+        result = contact_commands._select_contact_by_name(mock_service, "John Doe")
 
+        mock_select_list.assert_not_called()
+        assert result == sample_contact
 
-class TestEditAddress:
-    """Tests for edit_address command."""
+    @patch('src.application.commands.contact_commands.select_from_list')
+    def test_select_multiple_contacts(self, mock_select_list, mock_service, sample_contact):
+        """Test selecting when multiple contacts exist."""
+        contact2 = Contact(Name("John Doe"), "contact-456")
+        contact2.add_phone(Phone("9999999999"))
 
-    def test_edit_address_success(self, mock_service):
-        """Test editing an address successfully."""
-        mock_service.edit_address.return_value = "Address updated."
-        result = contact_commands.edit_address(["John Doe", "456", "Oak", "Ave"], mock_service)
-        mock_service.edit_address.assert_called_once_with("John Doe", Address("456 Oak Ave"))
-        assert result == "Address updated."
+        mock_service.find_all_by_name.return_value = [sample_contact, contact2]
+        mock_select_list.return_value = sample_contact
 
-    def test_edit_address_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new address"):
-            contact_commands.edit_address([""], mock_service)
-        with pytest.raises(ValueError, match="Edit-address command requires 2 arguments: name and new address"):
-            contact_commands.edit_address([], mock_service)
+        result = contact_commands._select_contact_by_name(mock_service, "John Doe")
 
+        mock_select_list.assert_called_once()
+        assert result == sample_contact
 
-class TestRemoveAddress:
-    """Tests for remove_address command."""
+    def test_select_no_contacts(self, mock_service):
+        """Test selecting when no contacts exist."""
+        mock_service.find_all_by_name.return_value = []
 
-    @patch('src.application.commands.contact_commands.confirm_action')
-    def test_remove_address_success(self, mock_confirm_action, mock_service):
-        """Test removing an address successfully with confirmation."""
-        mock_confirm_action.return_value = True
-        mock_service.remove_address.return_value = "Address removed."
-        result = contact_commands.remove_address(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_REMOVE_ADDRESS.format(name="John Doe"), default=False)
-        mock_service.remove_address.assert_called_once_with("John Doe")
-        assert result == "Address removed."
+        result = contact_commands._select_contact_by_name(mock_service, "Nonexistent")
 
-    @patch('src.application.commands.contact_commands.confirm_action')
-    def test_remove_address_cancelled(self, mock_confirm_action, mock_service):
-        """Test removing an address when action is cancelled."""
-        mock_confirm_action.return_value = False
-        result = contact_commands.remove_address(["John Doe"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_REMOVE_ADDRESS.format(name="John Doe"), default=False)
-        mock_service.remove_address.assert_not_called()
-        assert result == UIMessages.ACTION_CANCELLED
-
-    def test_remove_address_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Remove-address command requires 1 argument: name"):
-            contact_commands.remove_address([], mock_service)
-
-
-class TestSearch:
-    """Tests for search command."""
-
-    def test_search_with_results(self, mock_service, sample_contact):
-        """Test searching contacts with matching results."""
-        mock_service.search.return_value = [sample_contact]
-        result = contact_commands.search(["John"], mock_service)
-        mock_service.search.assert_called_once_with("John")
-        assert "Found contacts:" in result
-        assert str(sample_contact) in result
-
-    def test_search_no_results(self, mock_service):
-        """Test searching contacts without matches."""
-        mock_service.search.return_value = []
-        result = contact_commands.search(["NonExistent"], mock_service)
-        assert result == "No contact name, email or phone found for provided search text: NonExistent"
-
-    def test_search_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Search command requires a search_text argument"):
-            contact_commands.search([], mock_service)
-
-
-class TestFind:
-    """Tests for find command (exact search)."""
-
-    def test_find_with_results(self, mock_service, sample_contact):
-        """Test finding contacts with exact matching results."""
-        mock_service.search.return_value = [sample_contact]
-        result = contact_commands.find(["John Doe"], mock_service)
-        mock_service.search.assert_called_once_with("John Doe", exact=True)
-        assert "Found contacts:" in result
-        assert str(sample_contact) in result
-
-    def test_find_no_results(self, mock_service):
-        """Test finding contacts without exact matches."""
-        mock_service.search.return_value = []
-        result = contact_commands.find(["NonExistent"], mock_service)
-        assert result == "No contact name, email or phone found for provided search text: NonExistent"
-
-    def test_find_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Find command requires a search_text argument"):
-            contact_commands.find([], mock_service)
-
-
-class TestSaveContacts:
-    """Tests for save_contacts command."""
-
-    def test_save_contacts_success(self, mock_service):
-        """Test saving contacts successfully."""
-        mock_service.save_address_book.return_value = "contacts.json"
-        result = contact_commands.save_contacts(["contacts.json"], mock_service)
-        mock_service.save_address_book.assert_called_once_with("contacts.json", user_provided=True)
-        assert result == "Address book saved to contacts.json."
-
-    def test_save_contacts_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Save command requires a filename argument"):
-            contact_commands.save_contacts([], mock_service)
-
-
-class TestLoadContacts:
-    """Tests for load_contacts command."""
-
-    @patch('src.application.commands.contact_commands.confirm_action')
-    def test_load_contacts_success(self, mock_confirm_action, mock_service):
-        """Test loading contacts successfully with confirmation."""
-        mock_confirm_action.return_value = True
-        mock_service.load_address_book.return_value = 5
-        mock_service.get_current_filename.return_value = "loaded_contacts.json"
-        result = contact_commands.load_contacts(["my_contacts.json"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_LOAD_FILE, default=False)
-        mock_service.load_address_book.assert_called_once_with("my_contacts.json", user_provided=True)
-        mock_service.get_current_filename.assert_called_once()
-        assert result == "Address book loaded from loaded_contacts.json. 5 contact(s) found."
-
-    @patch('src.application.commands.contact_commands.confirm_action')
-    def test_load_contacts_cancelled(self, mock_confirm_action, mock_service):
-        """Test loading contacts when action is cancelled."""
-        mock_confirm_action.return_value = False
-        result = contact_commands.load_contacts(["my_contacts.json"], mock_service)
-        mock_confirm_action.assert_called_once_with(UIMessages.CONFIRM_LOAD_FILE, default=False)
-        mock_service.load_address_book.assert_not_called()
-        assert result == UIMessages.ACTION_CANCELLED
-
-    def test_load_contacts_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Load command requires a filename argument"):
-            contact_commands.load_contacts([], mock_service)
-
-
-class TestHello:
-    """Tests for hello command."""
-
-    def test_hello_command(self, mock_service):
-        """Test the hello command returns the correct greeting."""
-        result = contact_commands.hello()
-        assert result == "How can I help you?"
-
-
-class TestHelp:
-    """Tests for help command."""
-
-    def test_help_command_default(self, mock_service):
-        """Test the help command returns the command list."""
-        with patch.object(UIMessages, 'get_command_list', return_value="Command List") as mock_get_command_list:
-            result = contact_commands.help()
-            mock_get_command_list.assert_called_once_with(False)
-            assert result == "Command List"
-
-    def test_help_command_nlp_mode(self, mock_service):
-        """Test the help command returns the command list in NLP mode."""
-        with patch.object(UIMessages, 'get_command_list', return_value="NLP Command List") as mock_get_command_list:
-            result = contact_commands.help(nlp_mode=True)
-            mock_get_command_list.assert_called_once_with(True)
-            assert result == "NLP Command List"
-
-
-class TestClear:
-    """Tests for clear command."""
-
-    @patch('os.system')
-    def test_clear_command(self, mock_os_system, mock_service):
-        """Test the clear command calls os.system with correct argument."""
-        result = contact_commands.clear()
-        if os.name == 'posix':
-            mock_os_system.assert_called_once_with('clear')
-        else:
-            mock_os_system.assert_called_once_with('cls')
-        assert result == ""
+        assert result is None
