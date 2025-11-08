@@ -75,7 +75,6 @@ class ContactService:
         return "Contact phone number updated."
 
     def edit_phone_by_id(self, contact_id: str, old_phone: Phone, new_phone: Phone) -> str:
-        """Edit a phone number for a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -83,7 +82,6 @@ class ContactService:
         return "Contact phone number updated."
 
     def remove_phone_by_id(self, contact_id: str, phone: Phone) -> str:
-        """Remove a phone number from a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -104,16 +102,13 @@ class ContactService:
         return "Contact deleted."
 
     def delete_contact_by_id(self, contact_id: str) -> str:
-        """Delete a contact by its ID."""
         self.address_book.delete_by_id(contact_id)
         return "Contact deleted."
 
     def find_all_by_name(self, name: str) -> list[Contact]:
-        """Find all contacts with the given name."""
         return self.address_book.find_all(name)
 
     def add_phone_to_contact(self, contact_id: str, phone: Phone) -> str:
-        """Add a phone to an existing contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -127,7 +122,6 @@ class ContactService:
             raise
 
     def create_new_contact(self, name: Name, phone: Phone) -> str:
-        """Create a new contact even if name already exists."""
         contact = Contact.create(
             name,
             lambda: IDGenerator.generate_unique_id(
@@ -146,7 +140,6 @@ class ContactService:
         return list(self.address_book.data.values())
 
     def add_birthday_by_id(self, contact_id: str, birthday: Birthday) -> str:
-        """Add a birthday to a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -165,8 +158,27 @@ class ContactService:
     def get_upcoming_birthdays(self, days_ahead) -> list[dict]:
         return self.address_book.get_upcoming_birthdays(days_ahead)
 
+    def remove_birthday_by_id(self, contact_id: str) -> str:
+        contact = self.address_book.find_by_id(contact_id)
+        if not contact:
+            raise KeyError(f"Contact with ID {contact_id} not found")
+        birthday = contact.birthday
+        if contact.birthday:
+            contact.remove_birthday()
+            return f"Birthday {birthday} removed from {contact.name.value}."
+        else:
+            return f"{contact.name.value} has no birthday set."
+
+    def remove_birthday(self, name: str) -> str:
+        contact = self.address_book.find(name)
+        birthday = contact.birthday
+        if contact.birthday:
+            contact.remove_birthday()
+            return f"Birthday {birthday} removed from {name}."
+        else:
+            return f"{name} has no birthday set."
+
     def add_email_by_id(self, contact_id: str, email: Email) -> str:
-        """Add an email to a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -174,7 +186,6 @@ class ContactService:
         return f"Email added for {contact.name.value}."
 
     def edit_email_by_id(self, contact_id: str, email: Email) -> str:
-        """Edit email for a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -187,7 +198,6 @@ class ContactService:
             return f"Email added for {contact.name.value}."
 
     def remove_email_by_id(self, contact_id: str) -> str:
-        """Remove email from a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -226,7 +236,6 @@ class ContactService:
             raise ValueError(f"Can't remove email for {name}.\nEmail is not set yet.")
 
     def add_address_by_id(self, contact_id: str, address: Address) -> str:
-        """Add an address to a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -234,7 +243,6 @@ class ContactService:
         return f"Address added for {contact.name.value}."
 
     def edit_address_by_id(self, contact_id: str, address: Address) -> str:
-        """Edit address for a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -247,7 +255,6 @@ class ContactService:
             return f"Address added for {contact.name.value}."
 
     def remove_address_by_id(self, contact_id: str) -> str:
-        """Remove address from a contact by ID."""
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")

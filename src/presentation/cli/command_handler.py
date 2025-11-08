@@ -30,6 +30,7 @@ class CommandHandler:
             "all": self._wrap_no_args(contact_commands.show_all),
             "add-birthday": self._wrap(contact_commands.add_birthday),
             "show-birthday": self._wrap(contact_commands.show_birthday),
+            "remove-birthday": self._wrap(contact_commands.remove_birthday),
             "birthdays": self._wrap(contact_commands.birthdays),
             "add-email": self._wrap(contact_commands.add_email),
             "edit-email": self._wrap(contact_commands.edit_email),

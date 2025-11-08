@@ -77,7 +77,7 @@ class NLPConfig:
         ],
         "remove": [
             "remove_email", "remove_address", "remove_phone",
-            "remove_note", "remove_note_tag", "delete_contact"
+            "remove_birthday", "remove_note", "remove_note_tag", "delete_contact"
         ],
         "search": [
             "search_contacts", "search_notes_text", "search_notes_by_tag"
@@ -171,6 +171,13 @@ class NLPConfig:
             {
                 "required": [["add", "set"], ["birthday", "birthdate"]],
                 "optional": ["for", "contact"],
+                "confidence": 0.90
+            },
+        ],
+        "remove_birthday": [
+            {
+                "required": [["remove", "delete", "clear", "erase"], ["birthday", "birthdate"]],
+                "optional": ["for", "from"],
                 "confidence": 0.90
             },
         ],

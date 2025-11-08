@@ -46,6 +46,11 @@ KEYWORD_MAP = {
         "birthday for", "born on", "birth date", "birthday to",
         "birthday as", "record birthday", "was born"
     ],
+    "remove_birthday": [
+        "remove birthday", "delete birthday", "erase birthday",
+        "clear birthday", "remove birth date", "delete birth date",
+        "remove birthday for", "delete birthday from"
+    ],
     "list_birthdays": [
         "show birthday", "list birthday", "upcoming birthday",
         "birthdays for", "birthdays in", "who has birthday",

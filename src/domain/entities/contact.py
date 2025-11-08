@@ -37,7 +37,6 @@ class Contact(Entity):
         raise ValueError("Phone number not found")
 
     def edit_phone(self, old_phone: Phone, new_phone: Phone) -> None:
-        """Edit phone. Both parameters must be Phone VOs."""
         current = self.find_phone(old_phone)
         if new_phone in self.phones and new_phone != current:
             raise ValueError("New phone duplicates existing number")
@@ -45,12 +44,14 @@ class Contact(Entity):
         self.phones[idx] = new_phone
 
     def remove_phone(self, phone: Phone) -> None:
-        """Remove phone by Phone VO."""
         p = self.find_phone(phone)
         self.phones.remove(p)
 
     def add_birthday(self, birthday: Birthday) -> None:
         self.birthday = birthday
+
+    def remove_birthday(self) -> None:
+        self.birthday = None
 
     def add_email(self, email: Email) -> None:
         self.email = email

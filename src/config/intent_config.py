@@ -11,7 +11,7 @@ class IntentConfig:
         "remove_note_tag", "search_notes_text", "search_notes_by_tag",
         "help", "exit", "hello",
         "show_phone", "add_email", "remove_email", "add_address", "remove_address",
-        "show_birthday", "clear", "save", "load", "remove_phone",
+        "show_birthday", "remove_birthday", "clear", "save", "load", "remove_phone",
         "list_note_tags"
     ]
     """Complete list of all supported intent labels."""
@@ -46,6 +46,7 @@ class IntentConfig:
         'add_address': 'add-address',
         'remove_address': 'remove-address',
         'show_birthday': 'show-birthday',
+        'remove_birthday': 'remove-birthday',
         'clear': 'clear',
         'save': 'save',
         'load': 'load',

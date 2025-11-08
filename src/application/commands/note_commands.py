@@ -13,8 +13,16 @@ from ...presentation.cli.ui_messages import UIMessages
 def add_note(args: List[str], service: NoteService) -> str:
     if not args:
         raise ValueError("Add-note command requires text argument")
-    title = args[0]
-    text = " ".join(args[1:])
+
+    # If only one argument provided, use it as both title and text
+    if len(args) == 1:
+        title = args[0]
+        text = args[0]
+    else:
+        # Multiple arguments: first is title, rest is text
+        title = args[0]
+        text = " ".join(args[1:])
+
     note_id = service.add_note(title, text)
     return f"Note added with ID: {note_id}"
 

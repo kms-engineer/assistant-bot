@@ -218,6 +218,25 @@ def show_birthday(args: List[str], service: ContactService) -> str:
         return f"No birthday set for {contact.name.value}."
 
 
+def remove_birthday(args: List[str], service: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Remove-birthday command requires 1 argument: name")
+
+    name = args[0]
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    if not contact.birthday:
+        return f"{contact.name.value} has no birthday set."
+
+    if not confirm_action(f"Remove birthday {contact.birthday.value} from {contact.name.value}?"):
+        return UIMessages.ACTION_CANCELLED
+
+    return service.remove_birthday_by_id(contact.id)
+
+
 def birthdays(args: List[str], service: ContactService) -> str:
     if len(args) < 1:
         days = 7

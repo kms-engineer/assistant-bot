@@ -27,6 +27,7 @@ class CommandArgsConfig:
         'delete_contact': lambda e: CommandArgsConfig._get_fields(e, 'name'),
         'search_contacts': lambda e: CommandArgsConfig._get_first(e, 'name', 'phone', 'email'),
         'add_birthday': lambda e: CommandArgsConfig._get_fields(e, 'name', 'birthday'),
+        'remove_birthday': lambda e: CommandArgsConfig._get_fields(e, 'name'),
         'list_birthdays': lambda e: CommandArgsConfig._with_default(e, 'days', '7'),
         'add_note': lambda e: CommandArgsConfig._get_fields(e, 'note_text'),
         'edit_note': lambda e: CommandArgsConfig._get_fields(e, 'id', 'note_text'),
