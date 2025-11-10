@@ -33,6 +33,8 @@ ENV/
 *.swo
 *~
 .DS_Store
+.claude/
+.cache/
 
 # Testing
 .pytest_cache/
@@ -46,12 +48,14 @@ data/*.json
 !data/.gitkeep
 
 # Trained models (downloaded from Hugging Face)
-models/assistant-bot-intent-classifier/
-models/assistant-bot-ner-model/
-models/intent_classifier/
-models/ner_model/
+models/*
 !models/.gitkeep
 !models/README.md
+
+# Datasets
+datasets/*
+!datasets/.gitkeep
+!datasets/README.md
 
 # Logs
 *.log

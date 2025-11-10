@@ -37,12 +37,19 @@ KEYWORD_MAP = {
     "search_contacts": [
         "find contact", "search contact", "look up", "look for",
         "find person", "search person", "search for", "find in",
-        "search in contacts", "find in contacts", "find in address book"
+        "search in contacts", "find in contacts", "find in address book",
+        "show contact", "show info", "contact info", "get contact",
+        "view contact", "display contact"
     ],
     "add_birthday": [
         "add birthday", "set birthday", "save birthday",
         "birthday for", "born on", "birth date", "birthday to",
         "birthday as", "record birthday", "was born"
+    ],
+    "remove_birthday": [
+        "remove birthday", "delete birthday", "erase birthday",
+        "clear birthday", "remove birth date", "delete birth date",
+        "remove birthday for", "delete birthday from"
     ],
     "list_birthdays": [
         "show birthday", "list birthday", "upcoming birthday",

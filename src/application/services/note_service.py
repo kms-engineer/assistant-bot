@@ -120,6 +120,13 @@ class NoteService:
     def get_all_notes(self) -> list[Note]:
         return list(self.notes.values())
 
+    def get_note_by_id(self, note_id: str) -> Optional[Note]:
+        return self.notes.get(note_id)
+
+    def search_notes(self, query: str) -> list[Note]:
+        query_lower = query.lower()
+        return [note for note in self.notes.values() if query_lower in note.text.lower()]
+
     def get_note_id_by_title(self, title: str):
         if not title or not title.strip():
             raise KeyError("Note title can't be empty")

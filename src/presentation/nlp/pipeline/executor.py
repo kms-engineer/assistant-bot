@@ -15,9 +15,13 @@ class NLPPipeline:
 
         return {
             'intent': context.intent,
-            'confidence': context.intent_confidence,
+            'intent_confidence': context.intent_confidence,  # Include as intent_confidence
+            'confidence': context.intent_confidence,  # Keep for backward compatibility
             'entities': context.entities,
+            'entity_confidences': context.entity_confidences,
             'validation': context.validation,
+            'source': context.source,
+            'metadata': context.metadata,  # Include metadata (category, etc.)
             'raw': {
                 'source': context.source,
                 'entity_confidences': context.entity_confidences

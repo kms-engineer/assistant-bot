@@ -20,12 +20,18 @@ class ConfidenceConfig:
     REGEX_NOTE_TEXT_CONFIDENCE = 0.75
     """Confidence score for note text extracted via regex."""
 
+    REGEX_DAYS_CONFIDENCE = 0.90
+    """Confidence score for days number extracted via regex (e.g., 'next 30 days')."""
+
     # Heuristic extractor confidence scores
     HEURISTIC_NAME_POSSESSIVE_CONFIDENCE = 0.65
     """Confidence score for names extracted via possessive pattern."""
 
     HEURISTIC_NAME_FULL_CONFIDENCE = 0.60
     """Confidence score for full names extracted via heuristic."""
+
+    HEURISTIC_NAME_AFTER_CONTACT_CONFIDENCE = 0.75
+    """Confidence score for names extracted after 'contact' keyword."""
 
     HEURISTIC_ADDRESS_CITY_STATE_CONFIDENCE = 0.75
     """Confidence score for city/state/zip addresses extracted via heuristic."""

@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Optional
 
 from ..services.contact_service import ContactService
 from ...domain.value_objects.address import Address
@@ -7,9 +7,35 @@ from ...domain.value_objects.birthday import Birthday
 from ...domain.value_objects.email import Email
 from ...domain.value_objects.name import Name
 from ...domain.value_objects.phone import Phone
-from ...presentation.cli.confirmation import confirm_action
 from ...presentation.cli.ui_messages import UIMessages
+from ...domain.entities.contact import Contact
+from ...presentation.cli.confirmation import confirm_action
+from ...presentation.cli.selection import select_option, select_from_list
 
+
+def _select_contact_by_name(service: ContactService, name: str) -> Optional[Contact]:
+    matching_contacts = service.find_all_by_name(name)
+
+    if not matching_contacts:
+        raise KeyError(f"Contact '{name}' not found")
+
+    if len(matching_contacts) == 1:
+        return matching_contacts[0]
+
+    # Multiple contacts found
+    print(f"\nFound {len(matching_contacts)} contacts with name '{name}':")
+
+    selected_idx = select_from_list(
+        items=matching_contacts,
+        prompt="Select contact:",
+        formatter=str,
+        allow_cancel=True
+    )
+
+    if selected_idx is None:
+        return None
+
+    return matching_contacts[selected_idx]
 
 def add_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
@@ -17,6 +43,38 @@ def add_contact(args: List[str], service: ContactService) -> str:
 
     name_vo = Name(args[0])
     phone_vo = Phone(args[1])
+
+    # Check if contact with this name already exists
+    existing_contacts = service.find_all_by_name(name_vo.value)
+
+    if existing_contacts:
+        # Show existing contacts and ask what to do
+        print(f"\nContact(s) with name '{name_vo.value}' already exist:")
+        for contact in existing_contacts:
+            print(f"  - {contact}")
+
+        options = [
+            f"Add phone {phone_vo.value} to existing contact",
+            f"Create new contact '{name_vo.value}' with phone {phone_vo.value}",
+            "Cancel"
+        ]
+
+        choice = select_option(
+            prompt="What would you like to do?",
+            options=options,
+            allow_cancel=False  # We have cancel as option 3
+        )
+
+        if choice is None or choice == 2:  # Cancel
+            return UIMessages.ACTION_CANCELLED
+        elif choice == 0:  # Add phone to existing
+            # If multiple contacts, pick the first one (or we could let user choose)
+            contact = existing_contacts[0]
+            return service.add_phone_to_contact(contact.id, phone_vo)
+        else:  # choice == 1: Create new contact
+            return service.create_new_contact(name_vo, phone_vo)
+
+    # No existing contact, create new one
     return service.add_contact(name_vo, phone_vo)
 
 
@@ -27,7 +85,36 @@ def change_contact(args: List[str], service: ContactService) -> str:
     name = args[0]
     old_phone_vo = Phone(args[1])
     new_phone_vo = Phone(args[2])
-    return service.change_phone(name, old_phone_vo, new_phone_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    # Ask for confirmation
+    prompt = f"Change phone {old_phone_vo.value} to {new_phone_vo.value} for '{contact.name.value}'?"
+    if not confirm_action(prompt, default=True):
+        return UIMessages.ACTION_CANCELLED
+
+    return service.edit_phone_by_id(contact.id, old_phone_vo, new_phone_vo)
+
+
+def remove_phone(args: List[str], service: ContactService) -> str:
+    if len(args) < 2:
+        raise ValueError("Remove-phone command requires 2 arguments: name and phone")
+
+    name = args[0]
+    phone_vo = Phone(args[1])
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    # Ask for confirmation
+    prompt = f"Remove phone {phone_vo.value} from '{contact.name.value}'?"
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
+    return service.remove_phone_by_id(contact.id, phone_vo)
 
 
 def delete_contact(args: List[str], service: ContactService) -> str:
@@ -36,12 +123,40 @@ def delete_contact(args: List[str], service: ContactService) -> str:
 
     name = args[0]
 
+    # Find all contacts with this name
+    matching_contacts = service.find_all_by_name(name)
+
+    if not matching_contacts:
+        raise KeyError(f"Contact '{name}' not found")
+
+    contact_to_delete = None
+
+    if len(matching_contacts) > 1:
+        # Multiple contacts found, ask user to select
+        print(f"\nFound {len(matching_contacts)} contacts with name '{name}':")
+
+        from ...presentation.cli.selection import select_from_list
+
+        selected_idx = select_from_list(
+            items=matching_contacts,
+            prompt="Select contact to delete:",
+            formatter=str,
+            allow_cancel=True
+        )
+
+        if selected_idx is None:
+            return UIMessages.ACTION_CANCELLED
+
+        contact_to_delete = matching_contacts[selected_idx]
+    else:
+        contact_to_delete = matching_contacts[0]
+
     # Ask for confirmation
-    prompt = UIMessages.CONFIRM_DELETE_CONTACT.format(name=name)
+    prompt = UIMessages.CONFIRM_DELETE_CONTACT.format(name=str(contact_to_delete))
     if not confirm_action(prompt, default=False):
         return UIMessages.ACTION_CANCELLED
 
-    return service.delete_contact(name)
+    return service.delete_contact_by_id(contact_to_delete.id)
 
 
 def show_phone(args: List[str], service: ContactService) -> str:
@@ -49,13 +164,16 @@ def show_phone(args: List[str], service: ContactService) -> str:
         raise ValueError("Phone command requires 1 argument: name")
 
     name = args[0]
-    phones = service.get_phones(name)
 
-    if not phones:
-        return f"{name} has no phone numbers."
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
 
-    phones_str = "; ".join(phones)
-    return f"{name}: {phones_str}"
+    if not contact.phones:
+        return f"{contact.name.value} has no phone numbers."
+
+    phones_str = "; ".join([phone.value for phone in contact.phones])
+    return f"{contact.name.value}: {phones_str}"
 
 
 def show_all(service: ContactService) -> str:
@@ -76,7 +194,12 @@ def add_birthday(args: List[str], service: ContactService) -> str:
 
     name = args[0]
     birthday_vo = Birthday(args[1])
-    return service.add_birthday(name, birthday_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    return service.add_birthday_by_id(contact.id, birthday_vo)
 
 
 def show_birthday(args: List[str], service: ContactService) -> str:
@@ -84,12 +207,34 @@ def show_birthday(args: List[str], service: ContactService) -> str:
         raise ValueError("Show-birthday command requires 1 argument: name")
 
     name = args[0]
-    birthday = service.get_birthday(name)
 
-    if birthday:
-        return f"{name}'s birthday: {birthday}"
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    if contact.birthday:
+        return f"{contact.name.value}'s birthday: {contact.birthday.value}"
     else:
-        return f"No birthday set for {name}."
+        return f"No birthday set for {contact.name.value}."
+
+
+def remove_birthday(args: List[str], service: ContactService) -> str:
+    if len(args) < 1:
+        raise ValueError("Remove-birthday command requires 1 argument: name")
+
+    name = args[0]
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    if not contact.birthday:
+        return f"{contact.name.value} has no birthday set."
+
+    if not confirm_action(f"Remove birthday {contact.birthday.value} from {contact.name.value}?"):
+        return UIMessages.ACTION_CANCELLED
+
+    return service.remove_birthday_by_id(contact.id)
 
 
 def birthdays(args: List[str], service: ContactService) -> str:
@@ -120,7 +265,12 @@ def add_email(args: List[str], service: ContactService) -> str:
 
     name = args[0]
     email_vo = Email(args[1])
-    return service.add_email(name, email_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    return service.add_email_by_id(contact.id, email_vo)
 
 
 def edit_email(args: List[str], service: ContactService) -> str:
@@ -129,7 +279,12 @@ def edit_email(args: List[str], service: ContactService) -> str:
 
     name = args[0]
     email_vo = Email(args[1])
-    return service.edit_email(name, email_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    return service.edit_email_by_id(contact.id, email_vo)
 
 
 def remove_email(args: List[str], service: ContactService):
@@ -138,12 +293,16 @@ def remove_email(args: List[str], service: ContactService):
 
     name = args[0]
 
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
     # Ask for confirmation
-    prompt = UIMessages.CONFIRM_REMOVE_EMAIL.format(name=name)
+    prompt = UIMessages.CONFIRM_REMOVE_EMAIL.format(name=contact.name.value)
     if not confirm_action(prompt, default=False):
         return UIMessages.ACTION_CANCELLED
 
-    return service.remove_email(name)
+    return service.remove_email_by_id(contact.id)
 
 
 def add_address(args: List[str], service: ContactService) -> str:
@@ -152,7 +311,12 @@ def add_address(args: List[str], service: ContactService) -> str:
 
     name = args[0]
     address_vo = Address(" ".join(args[1:]))
-    return service.add_address(name, address_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    return service.add_address_by_id(contact.id, address_vo)
 
 
 def edit_address(args: List[str], service: ContactService) -> str:
@@ -161,7 +325,12 @@ def edit_address(args: List[str], service: ContactService) -> str:
 
     name = args[0]
     address_vo = Address(" ".join(args[1:]))
-    return service.edit_address(name, address_vo)
+
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
+    return service.edit_address_by_id(contact.id, address_vo)
 
 
 def remove_address(args: List[str], service: ContactService):
@@ -170,12 +339,16 @@ def remove_address(args: List[str], service: ContactService):
 
     name = args[0]
 
+    contact = _select_contact_by_name(service, name)
+    if not contact:
+        return UIMessages.ACTION_CANCELLED
+
     # Ask for confirmation
-    prompt = UIMessages.CONFIRM_REMOVE_ADDRESS.format(name=name)
+    prompt = UIMessages.CONFIRM_REMOVE_ADDRESS.format(name=contact.name.value)
     if not confirm_action(prompt, default=False):
         return UIMessages.ACTION_CANCELLED
 
-    return service.remove_address(name)
+    return service.remove_address_by_id(contact.id)
 
 
 def search(args: List[str], service: ContactService) -> str:

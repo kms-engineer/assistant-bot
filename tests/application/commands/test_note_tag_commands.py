@@ -1,5 +1,5 @@
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from src.application.commands import note_commands
 from src.domain.entities.note import Note
 from src.domain.value_objects import Tag
@@ -58,8 +58,10 @@ class TestAddTag:
 class TestRemoveTag:
     """Tests for remove_tag command."""
 
-    def test_remove_tag_success(self, mock_service):
+    @patch('src.application.commands.note_commands.confirm_action')
+    def test_remove_tag_success(self, mock_confirm, mock_service):
         """Test removing a tag from a note."""
+        mock_confirm.return_value = True
         mock_service.remove_tag.return_value = "Tag removed."
 
         result = note_commands.remove_tag(["test-id", "python"], mock_service)
@@ -67,8 +69,10 @@ class TestRemoveTag:
         mock_service.remove_tag.assert_called_once_with("test-id", Tag("python"))
         assert result == "Tag removed."
 
-    def test_remove_tag_with_multi_word_tag(self, mock_service):
+    @patch('src.application.commands.note_commands.confirm_action')
+    def test_remove_tag_with_multi_word_tag(self, mock_confirm, mock_service):
         """Test removing a multi-word tag."""
+        mock_confirm.return_value = True
         mock_service.remove_tag.return_value = "Tag removed."
 
         result = note_commands.remove_tag(["test-id", "machine learning"], mock_service)
@@ -84,8 +88,10 @@ class TestRemoveTag:
         with pytest.raises(ValueError, match="Remove-tag command requires 2 arguments"):
             note_commands.remove_tag(["only-id"], mock_service)
 
-    def test_remove_tag_not_found(self, mock_service):
+    @patch('src.application.commands.note_commands.confirm_action')
+    def test_remove_tag_not_found(self, mock_confirm, mock_service):
         """Test removing a non-existent tag raises error."""
+        mock_confirm.return_value = True
         mock_service.remove_tag.side_effect = ValueError("Tag not found")
 
         with pytest.raises(ValueError, match="Tag not found"):

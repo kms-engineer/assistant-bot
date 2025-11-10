@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional, Set
 
 from .extractors import (
     Entity,
@@ -6,6 +6,7 @@ from .extractors import (
     RegexExtractor,
     HeuristicExtractor
 )
+from src.config.intent_requirements import INTENT_REQUIREMENTS
 
 
 class SpanExtractor:
@@ -13,11 +14,26 @@ class SpanExtractor:
     def __init__(self):
         self.regex_extractor = RegexExtractor()
 
-    def extract(self, text: str) -> Tuple[Dict[str, str], List[Dict], Dict[str, float]]:
+    def extract(
+        self,
+        text: str,
+        intent: Optional[str] = None
+    ) -> Tuple[Dict[str, str], List[Dict], Dict[str, float]]:
+        # Get allowed entities for this intent
+        allowed_entities = self._get_allowed_entities(intent) if intent else None
+
+        # Run all extractors
         all_entities = []
         all_entities.extend(LibraryExtractor.extract_all(text))
         all_entities.extend(self.regex_extractor.extract_all(text))
         all_entities.extend(HeuristicExtractor.extract_all(text))
+
+        # Filter by allowed entities if intent provided
+        if allowed_entities:
+            all_entities = [
+                e for e in all_entities
+                if e.entity_type in allowed_entities
+            ]
 
         resolved_entities = self._resolve_conflicts(all_entities)
 
@@ -38,6 +54,17 @@ class SpanExtractor:
             })
 
         return entities, raw_spans, probabilities
+
+    @staticmethod
+    def _get_allowed_entities(intent: str) -> Optional[Set[str]]:
+        intent_req = INTENT_REQUIREMENTS.get(intent)
+        if not intent_req:
+            return None
+
+        allowed = set(intent_req.get('required', []))
+        allowed.update(intent_req.get('optional', []))
+
+        return allowed if allowed else None
 
     @staticmethod
     def _resolve_conflicts(entities: List[Entity]) -> List[Entity]:

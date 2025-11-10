@@ -17,10 +17,48 @@ class HeuristicExtractor:
     def _extract_names(text: str) -> List[Entity]:
         entities = []
 
-        # Pattern 1: Single name before possessive (e.g., "David's")
+        # Pattern 1: Name after 'contact' keyword (e.g., "contact John", "remove contact Met")
+        for match in re.finditer(RegexPatterns.NAME_AFTER_CONTACT_PATTERN, text, re.IGNORECASE):
+            name = match.group(1)
+            # Skip if it's a command word
+            if not is_stop_word(name) and name.lower() not in EntityConfig.COMMAND_WORDS:
+                entities.append(Entity(
+                    text=name,
+                    start=match.start(1),
+                    end=match.end(1),
+                    entity_type='name',
+                    confidence=ConfidenceConfig.HEURISTIC_NAME_AFTER_CONTACT_CONFIDENCE,
+                    strategy=ExtractionStrategy.HEURISTIC
+                ))
+
+        # Pattern 1b: Name before 'contact' keyword (e.g., "delete Alon contact")
+        for match in re.finditer(RegexPatterns.NAME_BEFORE_CONTACT_PATTERN, text, re.IGNORECASE):
+            name = match.group(1)
+            # Filter out command words from the beginning
+            words = name.split()
+            filtered_words = [w for w in words if w.lower() not in EntityConfig.COMMAND_WORDS and not is_stop_word(w)]
+
+            if filtered_words:
+                filtered_name = ' '.join(filtered_words)
+                # Calculate new start position
+                first_kept_word = filtered_words[0]
+                start_offset = name.find(first_kept_word)
+                new_start = match.start(1) + start_offset
+
+                entities.append(Entity(
+                    text=filtered_name,
+                    start=new_start,
+                    end=new_start + len(filtered_name),
+                    entity_type='name',
+                    confidence=ConfidenceConfig.HEURISTIC_NAME_AFTER_CONTACT_CONFIDENCE,
+                    strategy=ExtractionStrategy.HEURISTIC
+                ))
+
+        # Pattern 2: Single name before possessive (e.g., "David's")
         for match in re.finditer(RegexPatterns.NAME_POSSESSIVE_PATTERN, text):
             name = match.group(1)
-            if not is_stop_word(name):
+            # Skip if it's a command word
+            if not is_stop_word(name) and name.lower() not in EntityConfig.COMMAND_WORDS:
                 entities.append(Entity(
                     text=name,
                     start=match.start(),
@@ -30,16 +68,26 @@ class HeuristicExtractor:
                     strategy=ExtractionStrategy.HEURISTIC
                 ))
 
-        # Pattern 2: Full name (2-3 capitalized words)
+        # Pattern 3: Full name (2-3 capitalized words)
         for match in re.finditer(RegexPatterns.NAME_FULL_PATTERN, text):
             name = match.group(1)
-            # Filter out if all words are stop words
             words = name.split()
-            if not all(is_stop_word(word) for word in words):
+
+            # Filter out command words
+            filtered_words = [w for w in words if w.lower() not in EntityConfig.COMMAND_WORDS and not is_stop_word(w)]
+
+            if filtered_words:
+                # Reconstruct name without command words
+                filtered_name = ' '.join(filtered_words)
+                # Calculate new start position
+                first_kept_word = filtered_words[0]
+                start_offset = name.find(first_kept_word)
+                new_start = match.start() + start_offset
+
                 entities.append(Entity(
-                    text=name,
-                    start=match.start(),
-                    end=match.end(),
+                    text=filtered_name,
+                    start=new_start,
+                    end=new_start + len(filtered_name),
                     entity_type='name',
                     confidence=ConfidenceConfig.HEURISTIC_NAME_FULL_CONFIDENCE,
                     strategy=ExtractionStrategy.HEURISTIC

@@ -51,6 +51,12 @@ class RegexPatterns:
     NAME_FULL_PATTERN = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+){1,2})\b'
     """Regex pattern for extracting full names (2-3 words capitalized)."""
 
+    NAME_AFTER_CONTACT_PATTERN = r'\bcontact\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
+    """Regex pattern for extracting name after 'contact' keyword (e.g., 'contact John', 'delete contact Met')."""
+
+    NAME_BEFORE_CONTACT_PATTERN = r'\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\s+contact\b'
+    """Regex pattern for extracting name before 'contact' keyword (e.g., 'delete Alon contact')."""
+
     # Address patterns
     ADDRESS_CITY_PATTERN = r',\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)$'
     """Regex pattern for extracting city from address."""
@@ -178,3 +184,7 @@ class RegexPatterns:
 
     POST_DAYS_IN_ADDRESS_PATTERN = r'^\d+\s*days?$'
     """Pattern for detecting days mistakenly extracted as address."""
+
+    # Days extraction pattern for birthday/birthdays commands
+    DAYS_PATTERN = r'\b(?:next|for|in)\s+(\d+)\s+days?\b'
+    """Pattern for extracting number of days from phrases like 'next 30 days', 'for 7 days'."""

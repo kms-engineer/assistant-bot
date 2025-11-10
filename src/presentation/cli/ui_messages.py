@@ -11,6 +11,7 @@ class UIMessages:
   hello                            - Show greeting
   add <name> <phone>               - Add new contact
   change <name> <old> <new>        - Update contact's phone
+  remove-phone <name> <phone>      - Remove phone from contact
   delete-contact <name>            - Delete contact
   phone <name>                     - Show contact's phone number(s)
   all                              - Show all contacts
@@ -45,57 +46,56 @@ class UIMessages:
 """
 
     # NLP mode command list (natural language format)
-    NLP_COMMAND_LIST = """You can talk to me naturally! Here are some things you can say:
+    NLP_COMMAND_LIST = """
+══════════════════════════════════════════════════════════════════════════
+                       NATURAL LANGUAGE COMMANDS
+══════════════════════════════════════════════════════════════════════════
 
-CONTACT MANAGEMENT:
-  • "Add <name> to my contacts with phone <phone>" (name and phone required)
-  • "Add <name> with phone <phone> and birthday <DD.MM.YYYY>"
-  • "Add <name> with phone <phone> and email <email>"
-  • "Add <name> with phone <phone> from <address>"
-  • "Change phone for <name> from <old phone> to <new phone>"
-  • "Delete contact <name>"
-  • "Show phone for <name>"
-  • "Show all contacts"
+CONTACTS:
+  Show all contacts                                    - List all contacts
+  Add John 321-555-1234                                - Add new contact
+  Search contact John                                  - Search contacts
+  Search john@example.com                              - Find by email
+  Delete contact John                                  - Remove contact
+  Show John phone                                      - Display phone
 
-BIRTHDAYS:
-  • "Add birthday <DD.MM.YYYY> for <name>"
-  • "Show birthday for <name>"
-  • "Show upcoming birthdays" (for next 7 days)
-  • "Show birthdays for next <days> days" (max 365 days)
+PHONE:
+  Add John 321-555-1234                                  - Add phone number
+  Change John phone from 321-555-1234 to 321-555-9999    - Update phone
+  Remove phone 555-1234 from John                        - Delete phone
 
-EMAIL & ADDRESS:
-  • "Add email <email> for <name>"
-  • "Edit email for <name> to <new email>"
-  • "Remove email from <name>"
-  • "Add address <address> for <name>"
-  • "Edit address for <name> to <new address>"
-  • "Remove address from <name>"
+EMAIL:
+  Add email john@example.com to John                   - Add email
+  Change John's email to new@mail.com                  - Update email
+  Remove email from John                               - Delete email
 
-SEARCH:
-  • "Search for <text>" (partial match in names, emails, phones)
-  • "Find exact <text>" (exact match only)
+ADDRESS:
+  Add address 123 Main St Apt 5B, Chicago, IL 60601   - Add address
+  Change John's address to 456 Oak Ave, Austin, TX    - Update address
+  Remove address from John                            - Delete address
+
+BIRTHDAY:
+  Add birthday 15.03.1990 to John                      - Set birthday
+  Show birthdays for next 30 days                      - Upcoming birthdays
 
 NOTES:
-  • "Add note: <text>"
-  • "Show all notes"
-  • "Edit note <id> with text: <new text>"
-  • "Delete note <id>"
-  • "Add tag <tag> to note <id>"
-  • "Remove tag <tag> from note <id>"
-  • "Search notes for <query>"
-  • "Find notes with tag <tag>"
+  Add note "Meeting tomorrow at 4:00pm"                       - Create new note
+  Show all notes                                              - List all notes
+  Show note a1b2c3d4-e5f6-7890-abcd-ef1234567890              - Display note by ID
+  Edit note a1b2c3d4-e5f6-7890-abcd-ef1234567890 "New text"   - Update note
+  Remove note a1b2c3d4-e5f6-7890-abcd-ef1234567890            - Remove note
+  Add tag #work to note a1b2c3d4-e5f6-7890-abcd-ef123...      - Tag a note
+  Remove tag #work from note a1b2c3d4-e5f6-7890-abcd-...      - Remove tag
+  Show all tags                                               - List all tags
+  Search notes meeting                                        - Find by text
+  Search notes by tag #work                                   - Find by tag
 
-FILE OPERATIONS:
-  • "Save contacts to <filename>"
-  • "Load contacts from <filename>"
-
-HELP & EXIT:
-  • "Help" or "Show commands"
-  • "Exit" or "Goodbye" or "Close"
-
-TIP: You can use natural language! For example:
-   Instead of: "add John 1234567890"
-   Just say: "Add John to my contacts with phone 1234567890"
+GENERAL:
+  Hello                                                - Greeting
+  Help                                                 - Show this help
+  Clear screen                                         - Clear console
+  Exit                                                 - Close the bot
+══════════════════════════════════════════════════════════════════════════
 """
 
     GOODBYE = "Good bye!"

@@ -10,9 +10,9 @@ class IntentClassifier(BaseModel):
     def __init__(self, model_path: str = None):
         super().__init__(model_path, ModelConfig.INTENT_MODEL_PATH)
 
+        # Load model - num_labels is automatically loaded from model config
         self.model = AutoModelForSequenceClassification.from_pretrained(
-            self.model_path,
-            num_labels=len(IntentConfig.INTENT_LABELS)
+            self.model_path
         ).to(self.device)
 
     def predict(self, text: str) -> Tuple[str, float]:

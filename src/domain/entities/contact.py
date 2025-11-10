@@ -31,14 +31,12 @@ class Contact(Entity):
         self.phones.append(phone)
 
     def find_phone(self, phone: Phone) -> Phone:
-        """Find phone by Phone VO."""
         for p in self.phones:
             if p.value == phone.value:
                 return p
         raise ValueError("Phone number not found")
 
     def edit_phone(self, old_phone: Phone, new_phone: Phone) -> None:
-        """Edit phone. Both parameters must be Phone VOs."""
         current = self.find_phone(old_phone)
         if new_phone in self.phones and new_phone != current:
             raise ValueError("New phone duplicates existing number")
@@ -46,12 +44,14 @@ class Contact(Entity):
         self.phones[idx] = new_phone
 
     def remove_phone(self, phone: Phone) -> None:
-        """Remove phone by Phone VO."""
         p = self.find_phone(phone)
         self.phones.remove(p)
 
     def add_birthday(self, birthday: Birthday) -> None:
         self.birthday = birthday
+
+    def remove_birthday(self) -> None:
+        self.birthday = None
 
     def add_email(self, email: Email) -> None:
         self.email = email
@@ -66,13 +66,20 @@ class Contact(Entity):
         self.address = address
 
     def is_matching(self, search_text: str, exact: bool) -> bool:
+        # Collect all searchable field values
+        values = [str(self.name)]
+        if self.email:
+            values.append(str(self.email))
+        if self.address:
+            values.append(str(self.address))
+        values.extend(str(phone) for phone in self.phones)
+
+        # Perform search
         if exact:
-            return search_text == str(self.name) or search_text == str(self.email) or any(
-                search_text == str(phone) for phone in self.phones)
-        else:
-            return search_text.casefold() in str(self.name).casefold() or \
-                   search_text.casefold() in str(self.email).casefold() or \
-                   any(search_text.casefold() in str(phone).casefold() for phone in self.phones)
+            return search_text in values
+
+        search_lower = search_text.casefold()
+        return any(search_lower in val.casefold() for val in values)
 
     def __str__(self) -> str:
         phones_str = "; ".join(p.value for p in self.phones) or "—"

@@ -12,6 +12,7 @@ class NLPContext:
     entities: Dict[str, str] = field(default_factory=dict)
     entity_confidences: Dict[str, float] = field(default_factory=dict)
     validation: Dict = field(default_factory=dict)
+    metadata: Dict = field(default_factory=dict)
     source: str = "none"
 
 

@@ -2,7 +2,7 @@ import re
 from typing import List
 
 from .base import Entity, ExtractionStrategy, is_stop_word
-from src.config import ModelConfig, RegexPatterns
+from src.config import ModelConfig, RegexPatterns, EntityConfig
 
 try:
     import phonenumbers
@@ -23,9 +23,11 @@ except ImportError:
 
 try:
     import usaddress
+    from usaddress import RepeatedLabelError
     HAS_USADDRESS = True
 except ImportError:
     usaddress = None
+    RepeatedLabelError = Exception
     HAS_USADDRESS = False
 
 try:
@@ -164,8 +166,8 @@ class LibraryExtractor:
                                 confidence=0.80,
                                 strategy=ExtractionStrategy.LIBRARY
                             ))
-            except (ValueError, AttributeError, TypeError, KeyError):
-                # Ignore parsing errors
+            except (ValueError, AttributeError, TypeError, KeyError, RepeatedLabelError):
+                # Ignore parsing errors (including RepeatedLabelError from usaddress)
                 pass
 
         return entities
@@ -175,6 +177,7 @@ class LibraryExtractor:
         entities = []
         if not nlp_spacy:
             return entities
+
         try:
             doc = nlp_spacy(text)
             for ent in doc.ents:
@@ -186,15 +189,31 @@ class LibraryExtractor:
                         name_text = name_text[:-2]
                         name_end -= 2
 
-                    if name_text and not is_stop_word(name_text):
-                        entities.append(Entity(
-                            text=name_text,
-                            start=ent.start_char,
-                            end=name_end,
-                            entity_type='name',
-                            confidence=0.80,
-                            strategy=ExtractionStrategy.LIBRARY
-                        ))
+                    # Remove command words from beginning and end
+                    words = name_text.split()
+                    # Filter out command words
+                    filtered_words = [w for w in words if w.lower() not in EntityConfig.COMMAND_WORDS]
+
+                    if filtered_words:
+                        name_text = ' '.join(filtered_words)
+                        # Adjust start position if we removed words from beginning
+                        if words and filtered_words and words[0].lower() in EntityConfig.COMMAND_WORDS:
+                            # Calculate new start position
+                            removed_text = ' '.join([w for w in words if w.lower() in EntityConfig.COMMAND_WORDS and words.index(w) < words.index(filtered_words[0])])
+                            start_offset = len(removed_text) + (1 if removed_text else 0)  # +1 for space
+                            ent_start = ent.start_char + start_offset
+                        else:
+                            ent_start = ent.start_char
+
+                        if name_text and not is_stop_word(name_text):
+                            entities.append(Entity(
+                                text=name_text,
+                                start=ent_start,
+                                end=name_end,
+                                entity_type='name',
+                                confidence=0.80,
+                                strategy=ExtractionStrategy.LIBRARY
+                            ))
         except (ValueError, AttributeError, TypeError):
             # Ignore spacy processing errors
             pass

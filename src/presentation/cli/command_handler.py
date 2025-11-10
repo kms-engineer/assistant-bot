@@ -8,6 +8,7 @@ from ...application.commands import contact_commands, note_commands
 from ...application.services.contact_service import ContactService
 from ...application.services.note_service import NoteService
 from ...config import UIConfig
+from ...config import IntentConfig
 
 
 class CommandHandler:
@@ -23,11 +24,13 @@ class CommandHandler:
             "clear": self._wrap_no_params(contact_commands.clear),
             "add": self._wrap(contact_commands.add_contact),
             "change": self._wrap(contact_commands.change_contact),
+            "remove-phone": self._wrap(contact_commands.remove_phone),
             "delete-contact": self._wrap(contact_commands.delete_contact),
             "phone": self._wrap(contact_commands.show_phone),
             "all": self._wrap_no_args(contact_commands.show_all),
             "add-birthday": self._wrap(contact_commands.add_birthday),
             "show-birthday": self._wrap(contact_commands.show_birthday),
+            "remove-birthday": self._wrap(contact_commands.remove_birthday),
             "birthdays": self._wrap(contact_commands.birthdays),
             "add-email": self._wrap(contact_commands.add_email),
             "edit-email": self._wrap(contact_commands.edit_email),
@@ -41,6 +44,7 @@ class CommandHandler:
             "find": self._wrap(contact_commands.find),
             "add-note": self._wrap_note(note_commands.add_note),
             "show-notes": self._wrap_note(note_commands.show_notes),
+            "show-note": self._wrap_note(note_commands.show_note),
             "rename-note": self._wrap_note(note_commands.rename_note),
             "edit-note": self._wrap_note(note_commands.edit_note),
             "delete-note": self._wrap_note(note_commands.delete_note),
@@ -174,72 +178,4 @@ class CommandHandler:
 
     @staticmethod
     def get_nlp_command_examples() -> List[str]:
-        return [
-            # Contact management
-            "add a contact",
-            "add contact with phone",
-            "add contact with email and address",
-            "change phone number",
-            "delete a contact",
-            "remove a contact",
-            "show phone for contact",
-            "show all contacts",
-            "list all contacts",
-
-            # Birthday commands
-            "add birthday",
-            "add birthday for contact",
-            "show birthday",
-            "show upcoming birthdays",
-            "show birthdays for next week",
-
-            # Email commands
-            "add email",
-            "add email to contact",
-            "edit email",
-            "change email",
-            "remove email",
-            "delete email",
-
-            # Address commands
-            "add address",
-            "add address to contact",
-            "edit address",
-            "change address",
-            "remove address",
-            "delete address",
-
-            # Search and find
-            "search contacts",
-            "search for contact",
-            "find contact",
-            "find by name",
-
-            # Note commands
-            "add a note",
-            "create a note",
-            "show my notes",
-            "show all notes",
-            "edit a note",
-            "update a note",
-            "delete a note",
-            "remove a note",
-
-            # Note tag commands
-            "add tag to note",
-            "add tag",
-            "remove tag from note",
-            "remove tag",
-            "search notes",
-            "search notes by text",
-            "search notes by tag",
-            "find notes with tag",
-
-            # General commands
-            "hello",
-            "help",
-            "save",
-            "load",
-            "exit",
-            "close",
-        ]
+        return IntentConfig.NLP_COMMAND_EXAMPLES

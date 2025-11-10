@@ -6,13 +6,23 @@ from ..services.note_service import NoteService
 from ...domain.entities import Note
 from ...domain.utils.styles_utils import stylize_tag
 from ...domain.value_objects.tag import Tag
+from ...presentation.cli.confirmation import confirm_action
+from ...presentation.cli.ui_messages import UIMessages
 
 
 def add_note(args: List[str], service: NoteService) -> str:
     if not args:
         raise ValueError("Add-note command requires text argument")
-    title = args[0]
-    text = " ".join(args[1:])
+
+    # If only one argument provided, use it as both title and text
+    if len(args) == 1:
+        title = args[0]
+        text = args[0]
+    else:
+        # Multiple arguments: first is title, rest is text
+        title = args[0]
+        text = " ".join(args[1:])
+
     note_id = service.add_note(title, text)
     return f"Note added with ID: {note_id}"
 
@@ -63,12 +73,41 @@ def show_notes(args: List[str], service: NoteService) -> str:
     return "\n".join(lines)
 
 
+def show_note(args: List[str], service: NoteService) -> str:
+    if not args:
+        raise ValueError("Show-note command requires note ID argument")
+
+    note_id = args[0]
+    note = service.get_note_by_id(note_id)
+
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    lines = [f"Note ID: {note.id}"]
+    lines.append(f"Text: {note.text}")
+    if note.tags:
+        tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
+        lines.append(f"Tags: {tags_str}")
+
+    return "\n".join(lines)
+
+
 def edit_note(args: List[str], service: NoteService) -> str:
     if len(args) < 2:
         raise ValueError("Edit-note command requires 2 arguments: ID and new text")
 
     note_id = args[0]
     new_text = " ".join(args[1:])
+
+    # Get current note to show in confirmation
+    note = service.get_note_by_id(note_id)
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    # Ask for confirmation
+    prompt = f"Edit note '{note.id}'? Old text: '{note.text[:50]}...'" if len(note.text) > 50 else f"Edit note '{note.id}'? Old text: '{note.text}'"
+    if not confirm_action(prompt, default=True):
+        return UIMessages.ACTION_CANCELLED
 
     return service.edit_note(note_id, new_text)
 
@@ -78,11 +117,20 @@ def delete_note(args: List[str], service: NoteService) -> str:
         raise ValueError("Delete-note command requires ID argument")
 
     note_id = args[0]
-    return service.delete_note_by_id(note_id)
+    note = service.get_note_by_id(note_id)
+    if not note:
+        return f"Note not found with ID: {note_id}"
+
+    # Ask for confirmation
+    text_preview = note.text[:50] + "..." if len(note.text) > 50 else note.text
+    prompt = f"Delete note '{note_id}'? Text: '{text_preview}'. This can't be undone"
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
+    return service.delete_note(note_id)
 
 
 def add_tag(args: List[str], service: NoteService) -> str:
-    """Add a tag to a note."""
     if len(args) < 2:
         raise ValueError("Add-tag command requires 2 arguments: note ID and tag")
     note_id = args[0]
@@ -91,17 +139,21 @@ def add_tag(args: List[str], service: NoteService) -> str:
 
 
 def remove_tag(args: List[str], service: NoteService) -> str:
-    """Remove a tag from a note."""
     if len(args) < 2:
         raise ValueError("Remove-tag command requires 2 arguments: note ID and tag")
 
     note_id = args[0]
     tag = Tag(args[1])
+
+    # Ask for confirmation
+    prompt = f"Remove tag '{tag.value}' from note '{note_id}'?"
+    if not confirm_action(prompt, default=False):
+        return UIMessages.ACTION_CANCELLED
+
     return service.remove_tag(note_id, tag)
 
 
 def search_notes(args: List[str], service: NoteService) -> str:
-    """Search notes by text content."""
     if not args:
         raise ValueError("Search-notes command requires a search query")
 
@@ -119,7 +171,6 @@ def search_notes(args: List[str], service: NoteService) -> str:
 
 
 def search_notes_by_tag(args: List[str], service: NoteService) -> str:
-    """Search notes by tag."""
     if not args:
         raise ValueError("Search-notes-by-tag command requires a tag")
 
@@ -137,7 +188,6 @@ def search_notes_by_tag(args: List[str], service: NoteService) -> str:
 
 
 def delete_note_by_title(args: List[str], service: NoteService) -> str:
-    """Delete notes by title."""
     if not args:
         raise ValueError("Delete-note-by-title command requires a title")
     title = " ".join(args)
@@ -145,7 +195,6 @@ def delete_note_by_title(args: List[str], service: NoteService) -> str:
 
 
 def delete_note_by_tag(args: List[str], service: NoteService) -> str:
-    """Delete notes by tag."""
     if not args:
         raise ValueError("Delete-note-by-tag command requires a tag")
     tag = " ".join(args)
@@ -153,7 +202,6 @@ def delete_note_by_tag(args: List[str], service: NoteService) -> str:
 
 
 def rename_note(args: List[str], service: NoteService) -> str:
-    """Rename a note by id."""
     if len(args) < 2:
         raise ValueError("Rename-note command requires 2 arguments: ID and new title")
     note_id = args[0]
@@ -176,7 +224,6 @@ def get_titles(service: NoteService) -> str:
 
 
 def save_notes(args: List[str], service: NoteService) -> str:
-    """Save notes to storage. Optional filename argument."""
     filename = None
     if args:
         filename = args[0]
@@ -184,7 +231,6 @@ def save_notes(args: List[str], service: NoteService) -> str:
 
 
 def load_notes(args: List[str], service: NoteService) -> str:
-    """Load notes from storage. Optional filename argument."""
     filename = None
     if args:
         filename = args[0]
@@ -230,7 +276,6 @@ def get_note_by_title(args: List[str], service: NoteService) -> str:
 
 
 def list_tags(service: NoteService) -> str:
-    """List all unique tags with their usage count."""
     tag_counts = service.list_tags()
 
     if not tag_counts:
