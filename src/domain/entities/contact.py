@@ -66,17 +66,20 @@ class Contact(Entity):
         self.address = address
 
     def is_matching(self, search_text: str, exact: bool) -> bool:
+        # Collect all searchable field values
+        values = [str(self.name)]
+        if self.email:
+            values.append(str(self.email))
+        if self.address:
+            values.append(str(self.address))
+        values.extend(str(phone) for phone in self.phones)
+
+        # Perform search
         if exact:
-            return (search_text == str(self.name) or
-                    (self.email and search_text == str(self.email)) or
-                    (self.address and search_text == str(self.address)) or
-                    any(search_text == str(phone) for phone in self.phones))
-        else:
-            search_lower = search_text.casefold()
-            return (search_lower in str(self.name).casefold() or
-                    (self.email and search_lower in str(self.email).casefold()) or
-                    (self.address and search_lower in str(self.address).casefold()) or
-                    any(search_lower in str(phone).casefold() for phone in self.phones))
+            return search_text in values
+
+        search_lower = search_text.casefold()
+        return any(search_lower in val.casefold() for val in values)
 
     def __str__(self) -> str:
         phones_str = "; ".join(p.value for p in self.phones) or "—"
