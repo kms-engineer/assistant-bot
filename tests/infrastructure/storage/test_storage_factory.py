@@ -3,6 +3,7 @@ from pathlib import Path
 
 # The class to be tested
 from src.infrastructure.storage.storage_factory import StorageFactory
+
 # Mocked dependencies, which will be replaced by conftest.py
 from src.infrastructure.storage.storage_type import StorageType
 from src.infrastructure.storage.json_storage import JsonStorage
@@ -41,14 +42,17 @@ def test_create_storage_with_unsupported_type():
         StorageFactory.create_storage(MockStorageType.YAML)
 
 
-@pytest.mark.parametrize("filepath, expected_type", [
-    ("data.json", JsonStorage),
-    ("data.pkl", PickleStorage),
-    ("data.pickle", PickleStorage),
-    ("database.db", SQLiteStorage),
-    ("database.sqlite", SQLiteStorage),
-    ("database.sqlite3", SQLiteStorage)
-])
+@pytest.mark.parametrize(
+    "filepath, expected_type",
+    [
+        ("data.json", JsonStorage),
+        ("data.pkl", PickleStorage),
+        ("data.pickle", PickleStorage),
+        ("database.db", SQLiteStorage),
+        ("database.sqlite", SQLiteStorage),
+        ("database.sqlite3", SQLiteStorage),
+    ],
+)
 def test_get_storage_by_extension(filepath, expected_type):
     """Tests getting the correct storage type based on file extension."""
     storage = StorageFactory.get_storage(filepath)
@@ -58,7 +62,10 @@ def test_get_storage_by_extension(filepath, expected_type):
 def test_get_storage_with_unsupported_extension():
     """Tests that a ValueError is raised for an unsupported file extension."""
     filepath = "document.txt"
-    with pytest.raises(ValueError, match="Only .pkl, .pickle, .json, .db, .sqlite, .sqlite3 files are allowed"):
+    with pytest.raises(
+        ValueError,
+        match="Only .pkl, .pickle, .json, .db, .sqlite, .sqlite3 files are allowed",
+    ):
         StorageFactory.get_storage(filepath)
 
 

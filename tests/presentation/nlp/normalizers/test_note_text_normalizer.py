@@ -29,10 +29,10 @@ class TestNoteTextNormalizer:
             "double_quotes",
             "internal_quotes",
             "clean_text",
-        ]
+        ],
     )
     def test_normalize(self, input_text, expected_text):
         """Tests the normalize method with various text formats."""
         entities = {"note_text": input_text}
         result = NoteTextNormalizer.normalize(entities)
-        assert result['note_text'] == expected_text
+        assert result["note_text"] == expected_text

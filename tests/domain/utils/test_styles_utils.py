@@ -58,6 +58,7 @@ class TestStylingDecorators:
 
     def test_stylize_errors_decorator(self):
         """Test the @stylize_errors decorator."""
+
         @stylize_errors
         def get_error_message():
             return "Something went wrong."
@@ -67,6 +68,7 @@ class TestStylingDecorators:
 
     def test_stylize_success_decorator(self):
         """Test the @stylize_success decorator."""
+
         @stylize_success
         def get_success_message():
             return "Everything is great."
@@ -76,6 +78,7 @@ class TestStylingDecorators:
 
     def test_stylize_warning_decorator(self):
         """Test the @stylize_warning decorator."""
+
         @stylize_warning
         def get_warning_message():
             return "Handle with care."
@@ -85,10 +88,11 @@ class TestStylingDecorators:
 
     def test_decorator_preserves_function_metadata(self):
         """Test that decorators preserve the wrapped function's metadata."""
+
         @stylize_errors
         def my_function():
             """This is a docstring."""
             return "message"
 
-        assert my_function.__name__ == 'my_function'
-        assert my_function.__doc__ == 'This is a docstring.'
+        assert my_function.__name__ == "my_function"
+        assert my_function.__doc__ == "This is a docstring."

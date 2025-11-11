@@ -12,7 +12,9 @@ class TestDateFormatConfig:
         try:
             datetime.datetime.now().strftime(DateFormatConfig.PRIMARY_DATE_FORMAT)
         except ValueError:
-            pytest.fail(f"PRIMARY_DATE_FORMAT '{DateFormatConfig.PRIMARY_DATE_FORMAT}' is not a valid format string.")
+            pytest.fail(
+                f"PRIMARY_DATE_FORMAT '{DateFormatConfig.PRIMARY_DATE_FORMAT}' is not a valid format string."
+            )
 
     def test_min_birthday_year_is_int(self):
         """Test that MIN_BIRTHDAY_YEAR is a reasonable integer."""

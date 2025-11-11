@@ -13,7 +13,7 @@ class TestNoteTextValidator:
             "a",
             "  This is a note with whitespace.  ",
         ],
-        ids=["simple_note", "single_character", "with_whitespace"]
+        ids=["simple_note", "single_character", "with_whitespace"],
     )
     def test_validate_success(self, text):
         """Scenario: Valid note text is provided."""
@@ -26,7 +26,7 @@ class TestNoteTextValidator:
             ("", ValidationConfig.NOTE_ERROR_EMPTY),
             ("   ", ValidationConfig.NOTE_ERROR_EMPTY),
         ],
-        ids=["none_value", "empty_string", "whitespace_only"]
+        ids=["none_value", "empty_string", "whitespace_only"],
     )
     def test_validate_failure(self, text, expected_error):
         """Scenario: Invalid note text is provided."""

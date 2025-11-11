@@ -20,10 +20,22 @@ class TestBirthdayValidator:
             ("25-12-1990", ValidationConfig.BIRTHDAY_ERROR_INVALID_FORMAT),
             ("1990.12.25", ValidationConfig.BIRTHDAY_ERROR_INVALID_FORMAT),
             ("32.12.1990", ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE),  # Invalid day
-            ("25.13.1990", ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE),  # Invalid month
-            ("29.02.1991", ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE),  # Not a leap year
-            ((datetime.now() + timedelta(days=1)).strftime('%d.%m.%Y'), ValidationConfig.BIRTHDAY_ERROR_FUTURE_DATE),
-            (f"01.01.{DateFormatConfig.MIN_BIRTHDAY_YEAR - 1}", ValidationConfig.BIRTHDAY_ERROR_INVALID_YEAR),
+            (
+                "25.13.1990",
+                ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE,
+            ),  # Invalid month
+            (
+                "29.02.1991",
+                ValidationConfig.BIRTHDAY_ERROR_INVALID_DATE,
+            ),  # Not a leap year
+            (
+                (datetime.now() + timedelta(days=1)).strftime("%d.%m.%Y"),
+                ValidationConfig.BIRTHDAY_ERROR_FUTURE_DATE,
+            ),
+            (
+                f"01.01.{DateFormatConfig.MIN_BIRTHDAY_YEAR - 1}",
+                ValidationConfig.BIRTHDAY_ERROR_INVALID_YEAR,
+            ),
         ],
         ids=[
             "none_value",
@@ -36,7 +48,7 @@ class TestBirthdayValidator:
             "invalid_leap_day",
             "future_date",
             "year_too_early",
-        ]
+        ],
     )
     def test_validate_failure(self, birthday, expected_error_part):
         """Scenario: An invalid birthday string is provided."""
@@ -58,4 +70,9 @@ class TestBirthdayValidator:
         invalid_date_for_custom = "25.01.2000"
 
         assert BirthdayValidator.validate(valid_date, date_format=custom_format) is True
-        assert BirthdayValidator.validate(invalid_date_for_custom, date_format=custom_format) is not True
+        assert (
+            BirthdayValidator.validate(
+                invalid_date_for_custom, date_format=custom_format
+            )
+            is not True
+        )

@@ -1,4 +1,5 @@
 """Tests for HybridNLP class."""
+
 import pytest
 from unittest.mock import Mock, MagicMock, patch
 from src.presentation.nlp.hybrid_nlp import HybridNLP
@@ -47,45 +48,43 @@ class TestHybridNLP:
         assert "intent" in result
         assert "entities" in result
         # Should detect days parameter
-        assert result["intent"] in ["show_birthdays", "get_birthdays", "upcoming_birthdays", "list_birthdays"]
+        assert result["intent"] in [
+            "show_birthdays",
+            "get_birthdays",
+            "upcoming_birthdays",
+            "list_birthdays",
+        ]
 
     def test_get_command_args_add_contact(self, hybrid_nlp):
         """Test getting command args for add_contact intent."""
         nlp_result = {
             "intent": "add_contact",
-            "entities": {
-                "name": "John",
-                "phone": "1234567890"
-            }
+            "entities": {"name": "John", "phone": "1234567890"},
         }
 
         command, args = hybrid_nlp.get_command_args(nlp_result)
 
-        assert command in IntentConfig.INTENT_TO_COMMAND_MAP.get("add_contact", "add_contact")
+        assert command in IntentConfig.INTENT_TO_COMMAND_MAP.get(
+            "add_contact", "add_contact"
+        )
         assert isinstance(args, list)
 
     def test_get_command_args_search_contacts(self, hybrid_nlp):
         """Test getting command args for search_contacts intent."""
-        nlp_result = {
-            "intent": "search_contacts",
-            "entities": {
-                "name": "Alice"
-            }
-        }
+        nlp_result = {"intent": "search_contacts", "entities": {"name": "Alice"}}
 
         command, args = hybrid_nlp.get_command_args(nlp_result)
 
-        assert command in IntentConfig.INTENT_TO_COMMAND_MAP.get("search_contacts", "search_contacts")
+        assert command in IntentConfig.INTENT_TO_COMMAND_MAP.get(
+            "search_contacts", "search_contacts"
+        )
         assert isinstance(args, list)
 
     def test_get_command_args_add_note(self, hybrid_nlp):
         """Test getting command args for add_note intent."""
         nlp_result = {
             "intent": "add_note",
-            "entities": {
-                "title": "Meeting",
-                "text": "Team meeting tomorrow"
-            }
+            "entities": {"title": "Meeting", "text": "Team meeting tomorrow"},
         }
 
         command, args = hybrid_nlp.get_command_args(nlp_result)
@@ -95,10 +94,7 @@ class TestHybridNLP:
 
     def test_get_command_args_unknown_intent(self, hybrid_nlp):
         """Test getting command args for unknown intent."""
-        nlp_result = {
-            "intent": "unknown_intent",
-            "entities": {}
-        }
+        nlp_result = {"intent": "unknown_intent", "entities": {}}
 
         command, args = hybrid_nlp.get_command_args(nlp_result)
 
@@ -122,12 +118,7 @@ class TestHybridNLP:
 
     def test_process_returns_dict(self, hybrid_nlp):
         """Test that process always returns a dictionary."""
-        user_texts = [
-            "Add contact",
-            "Show all",
-            "Delete note",
-            "Search Alice"
-        ]
+        user_texts = ["Add contact", "Show all", "Delete note", "Search Alice"]
 
         for text in user_texts:
             result = hybrid_nlp.process(text)
@@ -170,11 +161,7 @@ class TestHybridNLPEdgeCases:
 
     def test_process_mixed_case(self, hybrid_nlp):
         """Test processing mixed case text."""
-        user_texts = [
-            "ADD CONTACT JOHN",
-            "add contact john",
-            "AdD cOnTaCt JoHn"
-        ]
+        user_texts = ["ADD CONTACT JOHN", "add contact john", "AdD cOnTaCt JoHn"]
 
         for text in user_texts:
             result = hybrid_nlp.process(text)
@@ -200,7 +187,11 @@ class TestGetCommandArgs:
             command, _ = HybridNLP.get_command_args(nlp_result)
 
             # Command should be from INTENT_TO_COMMAND_MAP or the intent itself
-            assert command in [expected_command, intent, IntentConfig.INTENT_TO_COMMAND_MAP.get(intent, intent)]
+            assert command in [
+                expected_command,
+                intent,
+                IntentConfig.INTENT_TO_COMMAND_MAP.get(intent, intent),
+            ]
 
     def test_get_command_args_no_entities(self):
         """Test get_command_args with no entities."""
@@ -214,10 +205,7 @@ class TestGetCommandArgs:
         """Test that entity order is preserved in args."""
         nlp_result = {
             "intent": "add_contact",
-            "entities": {
-                "name": "John",
-                "phone": "1234567890"
-            }
+            "entities": {"name": "John", "phone": "1234567890"},
         }
 
         command, args = HybridNLP.get_command_args(nlp_result)

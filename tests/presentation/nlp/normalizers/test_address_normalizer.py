@@ -55,7 +55,7 @@ class TestAddressNormalizer:
             "multi_word_city",
             "config_city_pattern",
             "whitespace_only",
-        ]
+        ],
     )
     def test_normalize(self, input_entities, expected_output):
         """Tests the normalize method with various address formats."""

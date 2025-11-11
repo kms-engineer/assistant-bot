@@ -29,13 +29,13 @@ class TestTagNormalizer:
             "invalid_chars",
             "spaces_and_prefix",
             "mixed_chars",
-        ]
+        ],
     )
     def test_normalize(self, input_tag, expected_tag):
         """Tests the normalize method with various tag formats."""
         entities = {"tag": input_tag}
         result = TagNormalizer.normalize(entities)
-        assert result['tag'] == expected_tag
+        assert result["tag"] == expected_tag
 
     def test_normalize_no_tag_key(self):
         """Tests that the normalizer does nothing if the 'tag' key is missing."""

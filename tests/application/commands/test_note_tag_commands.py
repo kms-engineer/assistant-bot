@@ -4,7 +4,9 @@ from src.application.commands import note_commands
 from src.domain.entities.note import Note
 from src.domain.value_objects import Tag
 
-test_title = 'Test note title'
+test_title = "Test note title"
+
+
 @pytest.fixture
 def mock_service():
     """Create a mock NoteService for testing."""
@@ -58,7 +60,7 @@ class TestAddTag:
 class TestRemoveTag:
     """Tests for remove_tag command."""
 
-    @patch('src.application.commands.note_commands.confirm_action')
+    @patch("src.application.commands.note_commands.confirm_action")
     def test_remove_tag_success(self, mock_confirm, mock_service):
         """Test removing a tag from a note."""
         mock_confirm.return_value = True
@@ -69,7 +71,7 @@ class TestRemoveTag:
         mock_service.remove_tag.assert_called_once_with("test-id", Tag("python"))
         assert result == "Tag removed."
 
-    @patch('src.application.commands.note_commands.confirm_action')
+    @patch("src.application.commands.note_commands.confirm_action")
     def test_remove_tag_with_multi_word_tag(self, mock_confirm, mock_service):
         """Test removing a multi-word tag."""
         mock_confirm.return_value = True
@@ -77,7 +79,9 @@ class TestRemoveTag:
 
         result = note_commands.remove_tag(["test-id", "machine learning"], mock_service)
 
-        mock_service.remove_tag.assert_called_once_with("test-id", Tag("machine learning"))
+        mock_service.remove_tag.assert_called_once_with(
+            "test-id", Tag("machine learning")
+        )
         assert result == "Tag removed."
 
     def test_remove_tag_missing_arguments(self, mock_service):
@@ -88,7 +92,7 @@ class TestRemoveTag:
         with pytest.raises(ValueError, match="Remove-tag command requires 2 arguments"):
             note_commands.remove_tag(["only-id"], mock_service)
 
-    @patch('src.application.commands.note_commands.confirm_action')
+    @patch("src.application.commands.note_commands.confirm_action")
     def test_remove_tag_not_found(self, mock_confirm, mock_service):
         """Test removing a non-existent tag raises error."""
         mock_confirm.return_value = True
@@ -131,7 +135,9 @@ class TestSearchNotes:
 
     def test_search_notes_missing_query(self, mock_service):
         """Test that missing query raises ValueError."""
-        with pytest.raises(ValueError, match="Search-notes command requires a search query"):
+        with pytest.raises(
+            ValueError, match="Search-notes command requires a search query"
+        ):
             note_commands.search_notes([], mock_service)
 
     def test_search_notes_case_insensitive(self, mock_service):
@@ -172,13 +178,17 @@ class TestSearchNotesByTag:
         sample_note.add_tag(Tag("machine learning"))
         mock_service.search_by_tag.return_value = [sample_note]
 
-        result = note_commands.search_notes_by_tag(["machine", "learning"], mock_service)
+        result = note_commands.search_notes_by_tag(
+            ["machine", "learning"], mock_service
+        )
 
         mock_service.search_by_tag.assert_called_once_with("machine learning")
 
     def test_search_by_tag_missing_tag(self, mock_service):
         """Test that missing tag raises ValueError."""
-        with pytest.raises(ValueError, match="Search-notes-by-tag command requires a tag"):
+        with pytest.raises(
+            ValueError, match="Search-notes-by-tag command requires a tag"
+        ):
             note_commands.search_notes_by_tag([], mock_service)
 
     def test_search_by_tag_case_insensitive(self, mock_service):
@@ -202,7 +212,7 @@ class TestListTags:
         mock_service.list_tags.return_value = {
             "python": 3,
             "javascript": 2,
-            "testing": 1
+            "testing": 1,
         }
 
         result = note_commands.list_tags(mock_service)
@@ -225,14 +235,10 @@ class TestListTags:
 
     def test_list_tags_sorted(self, mock_service):
         """Test that tags are displayed in sorted order."""
-        mock_service.list_tags.return_value = {
-            "aaa": 1,
-            "bbb": 2,
-            "ccc": 3
-        }
+        mock_service.list_tags.return_value = {"aaa": 1, "bbb": 2, "ccc": 3}
 
         result = note_commands.list_tags(mock_service)
-        lines = result.split('\n')
+        lines = result.split("\n")
 
         # Check that tags appear in alphabetical order
         tag_lines = [line for line in lines if "note(s)" in line]
@@ -268,7 +274,7 @@ class TestShowNotesWithTags:
 
         mock_service.get_notes_sorted_by_tag.return_value = {
             "javascript": [note2],
-            "python": [note1, note3]
+            "python": [note1, note3],
         }
 
         result = note_commands.show_notes(["--sort-by-tag"], mock_service)
@@ -283,11 +289,11 @@ class TestShowNotesWithTags:
         """Test that untagged notes are properly grouped."""
         note1 = Note(test_title, "Tagged note", "id-1")
         note1.add_tag(Tag("python"))
-        note2 = Note(test_title,"Untagged note", "id-2")
+        note2 = Note(test_title, "Untagged note", "id-2")
 
         mock_service.get_notes_sorted_by_tag.return_value = {
             "python": [note1],
-            "untagged": [note2]
+            "untagged": [note2],
         }
 
         result = note_commands.show_notes(["--sort-by-tag"], mock_service)
@@ -297,7 +303,7 @@ class TestShowNotesWithTags:
 
     def test_show_notes_with_multi_tags_per_note(self, mock_service):
         """Test displaying notes with multiple tags."""
-        note = Note(test_title,"Multi-tag note", "id-1")
+        note = Note(test_title, "Multi-tag note", "id-1")
         note.add_tag(Tag("python"))
         note.add_tag(Tag("testing"))
         note.add_tag(Tag("async"))

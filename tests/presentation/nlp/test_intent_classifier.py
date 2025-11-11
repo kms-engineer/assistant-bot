@@ -1,4 +1,5 @@
 """Tests for IntentClassifier class."""
+
 import pytest
 import torch
 from unittest.mock import Mock, MagicMock, patch
@@ -19,7 +20,7 @@ class TestIntentClassifier:
         # Mock tokenizer to return proper tensors
         mock_inputs = {
             "input_ids": torch.tensor([[1, 2, 3]]),
-            "attention_mask": torch.tensor([[1, 1, 1]])
+            "attention_mask": torch.tensor([[1, 1, 1]]),
         }
         mock_tokenizer.return_value = MagicMock()
         mock_tokenizer.return_value.to = Mock(return_value=mock_inputs)
@@ -29,19 +30,29 @@ class TestIntentClassifier:
 
         # Mock model outputs with actual torch tensors
         mock_outputs = Mock()
-        mock_outputs.logits = torch.tensor([[2.0, 1.0, 0.5]])  # Highest score for index 0
+        mock_outputs.logits = torch.tensor(
+            [[2.0, 1.0, 0.5]]
+        )  # Highest score for index 0
         mock_model.return_value = mock_outputs
 
         return mock_tokenizer, mock_model, mock_label_map
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_returns_tuple(self, mock_json_load, mock_open, mock_exists,
-                                   mock_tokenizer_loader, mock_model_loader,
-                                   mock_model_components):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_returns_tuple(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+        mock_model_components,
+    ):
         """Test that predict returns a tuple of (intent, confidence)."""
         mock_tokenizer, mock_model, mock_label_map = mock_model_components
 
@@ -58,14 +69,22 @@ class TestIntentClassifier:
         assert isinstance(result[0], str)  # Intent label
         assert isinstance(result[1], float)  # Confidence score
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_confidence_range(self, mock_json_load, mock_open, mock_exists,
-                                     mock_tokenizer_loader, mock_model_loader,
-                                     mock_model_components):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_confidence_range(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+        mock_model_components,
+    ):
         """Test that confidence score is between 0 and 1."""
         mock_tokenizer, mock_model, mock_label_map = mock_model_components
 
@@ -79,14 +98,22 @@ class TestIntentClassifier:
 
         assert 0.0 <= confidence <= 1.0
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_empty_text(self, mock_json_load, mock_open, mock_exists,
-                               mock_tokenizer_loader, mock_model_loader,
-                               mock_model_components):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_empty_text(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+        mock_model_components,
+    ):
         """Test prediction with empty text."""
         mock_tokenizer, mock_model, mock_label_map = mock_model_components
 
@@ -101,14 +128,22 @@ class TestIntentClassifier:
         assert isinstance(intent, str)
         assert isinstance(confidence, float)
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_long_text(self, mock_json_load, mock_open, mock_exists,
-                               mock_tokenizer_loader, mock_model_loader,
-                               mock_model_components):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_long_text(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+        mock_model_components,
+    ):
         """Test prediction with very long text."""
         mock_tokenizer, mock_model, mock_label_map = mock_model_components
 
@@ -145,13 +180,21 @@ class TestIntentClassifier:
 class TestIntentClassifierEdgeCases:
     """Tests for IntentClassifier edge cases."""
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_special_characters(self, mock_json_load, mock_open, mock_exists,
-                                       mock_tokenizer_loader, mock_model_loader):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_special_characters(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+    ):
         """Test prediction with special characters."""
         # Setup mocks
         mock_tokenizer = Mock()
@@ -160,7 +203,7 @@ class TestIntentClassifierEdgeCases:
 
         mock_inputs = {
             "input_ids": torch.tensor([[1, 2, 3]]),
-            "attention_mask": torch.tensor([[1, 1, 1]])
+            "attention_mask": torch.tensor([[1, 1, 1]]),
         }
         mock_tokenizer.return_value = MagicMock()
         mock_tokenizer.return_value.to = Mock(return_value=mock_inputs)
@@ -184,13 +227,21 @@ class TestIntentClassifierEdgeCases:
         assert isinstance(intent, str)
         assert isinstance(confidence, float)
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_numbers_only(self, mock_json_load, mock_open, mock_exists,
-                                  mock_tokenizer_loader, mock_model_loader):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_numbers_only(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+    ):
         """Test prediction with numbers only."""
         # Setup mocks
         mock_tokenizer = Mock()
@@ -199,7 +250,7 @@ class TestIntentClassifierEdgeCases:
 
         mock_inputs = {
             "input_ids": torch.tensor([[1, 2, 3]]),
-            "attention_mask": torch.tensor([[1, 1, 1]])
+            "attention_mask": torch.tensor([[1, 1, 1]]),
         }
         mock_tokenizer.return_value = MagicMock()
         mock_tokenizer.return_value.to = Mock(return_value=mock_inputs)
@@ -223,7 +274,7 @@ class TestIntentClassifierEdgeCases:
         assert isinstance(intent, str)
         assert isinstance(confidence, float)
 
-    @patch('os.path.exists', return_value=False)
+    @patch("os.path.exists", return_value=False)
     def test_classifier_init_invalid_model_path(self, mock_exists):
         """Test that classifier raises error with invalid model path."""
         with pytest.raises(ValueError, match="Model not found"):
@@ -233,26 +284,30 @@ class TestIntentClassifierEdgeCases:
 class TestIntentClassifierIntegration:
     """Integration tests for IntentClassifier with real-like scenarios."""
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_multiple_predictions(self, mock_json_load, mock_open, mock_exists,
-                                  mock_tokenizer_loader, mock_model_loader):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_multiple_predictions(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+    ):
         """Test making multiple predictions in sequence."""
         # Setup mocks
         mock_tokenizer = Mock()
         mock_model = Mock()
-        mock_label_map = {
-            0: "add_contact",
-            1: "search_contacts",
-            2: "add_note"
-        }
+        mock_label_map = {0: "add_contact", 1: "search_contacts", 2: "add_note"}
 
         mock_inputs = {
             "input_ids": torch.tensor([[1, 2, 3]]),
-            "attention_mask": torch.tensor([[1, 1, 1]])
+            "attention_mask": torch.tensor([[1, 1, 1]]),
         }
         mock_tokenizer.return_value = MagicMock()
         mock_tokenizer.return_value.to = Mock(return_value=mock_inputs)
@@ -285,13 +340,21 @@ class TestIntentClassifierIntegration:
         assert 0.0 <= conf1 <= 1.0
         assert 0.0 <= conf2 <= 1.0
 
-    @patch('src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained')
-    @patch('src.presentation.nlp.base_model.AutoTokenizer.from_pretrained')
-    @patch('os.path.exists', return_value=True)
-    @patch('builtins.open', new_callable=MagicMock)
-    @patch('json.load')
-    def test_predict_various_intents(self, mock_json_load, mock_open, mock_exists,
-                                    mock_tokenizer_loader, mock_model_loader):
+    @patch(
+        "src.presentation.nlp.intent_classifier.AutoModelForSequenceClassification.from_pretrained"
+    )
+    @patch("src.presentation.nlp.base_model.AutoTokenizer.from_pretrained")
+    @patch("os.path.exists", return_value=True)
+    @patch("builtins.open", new_callable=MagicMock)
+    @patch("json.load")
+    def test_predict_various_intents(
+        self,
+        mock_json_load,
+        mock_open,
+        mock_exists,
+        mock_tokenizer_loader,
+        mock_model_loader,
+    ):
         """Test prediction with various intent types."""
         # Setup mocks
         mock_tokenizer = Mock()
@@ -301,12 +364,12 @@ class TestIntentClassifierIntegration:
             1: "edit_phone",
             2: "delete_contact",
             3: "search_contacts",
-            4: "add_note"
+            4: "add_note",
         }
 
         mock_inputs = {
             "input_ids": torch.tensor([[1, 2, 3]]),
-            "attention_mask": torch.tensor([[1, 1, 1]])
+            "attention_mask": torch.tensor([[1, 1, 1]]),
         }
         mock_tokenizer.return_value = MagicMock()
         mock_tokenizer.return_value.to = Mock(return_value=mock_inputs)
@@ -329,7 +392,7 @@ class TestIntentClassifierIntegration:
             "Edit phone number",
             "Delete contact Alice",
             "Search for Bob",
-            "Add note about meeting"
+            "Add note about meeting",
         ]
 
         for text in test_inputs:

@@ -17,7 +17,7 @@ class TestPhoneValidator:
             "min_length",
             "max_length",
             "max_length_with_plus",
-        ]
+        ],
     )
     def test_validate_success(self, phone):
         """Scenario: A valid phone string is provided."""
@@ -29,7 +29,10 @@ class TestPhoneValidator:
             (None, ValidationConfig.PHONE_ERROR_NOT_STRING),
             ("", ValidationConfig.PHONE_ERROR_EMPTY),
             ("1234567", ValidationConfig.PHONE_ERROR_INVALID_LENGTH),  # too short
-            ("1" * (ValidationConfig.PHONE_MAX_DIGITS + 1), ValidationConfig.PHONE_ERROR_INVALID_LENGTH),  # too long
+            (
+                "1" * (ValidationConfig.PHONE_MAX_DIGITS + 1),
+                ValidationConfig.PHONE_ERROR_INVALID_LENGTH,
+            ),  # too long
             ("123-456-7890", ValidationConfig.PHONE_ERROR_INVALID_FORMAT),
             ("123a4567890", ValidationConfig.PHONE_ERROR_INVALID_FORMAT),
             ("+123-456", ValidationConfig.PHONE_ERROR_INVALID_FORMAT),
@@ -42,7 +45,7 @@ class TestPhoneValidator:
             "with_hyphens",
             "with_letters",
             "plus_with_hyphens",
-        ]
+        ],
     )
     def test_validate_failure(self, phone, expected_error):
         """Scenario: An invalid phone string is provided."""
@@ -63,7 +66,7 @@ class TestPhoneValidator:
             "digits_only",
             "empty_string",
             "none_value",
-        ]
+        ],
     )
     def test_normalize(self, raw_phone, expected_normalized):
         """

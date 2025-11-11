@@ -24,7 +24,9 @@ class TestIntentConfig:
         assert 0.0 <= IntentConfig.KEYWORD_CONFIDENCE_MIN <= 1.0
         assert isinstance(IntentConfig.KEYWORD_CONFIDENCE_MAX, float)
         assert 0.0 <= IntentConfig.KEYWORD_CONFIDENCE_MAX <= 1.0
-        assert IntentConfig.KEYWORD_CONFIDENCE_MIN <= IntentConfig.KEYWORD_CONFIDENCE_MAX
+        assert (
+            IntentConfig.KEYWORD_CONFIDENCE_MIN <= IntentConfig.KEYWORD_CONFIDENCE_MAX
+        )
 
     def test_default_intent_values(self):
         """Test the values and types of default intent configurations."""

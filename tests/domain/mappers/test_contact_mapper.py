@@ -53,7 +53,7 @@ class TestContactMapper:
             phones="1234567890,0987654321",
             birthday="01.01.1990",
             email="john.doe@example.com",
-            address="123 Main St"
+            address="123 Main St",
         )
 
         contact = ContactMapper.from_dbmodel(db_contact)
@@ -76,7 +76,7 @@ class TestContactMapper:
             phones=None,
             birthday=None,
             email=None,
-            address=None
+            address=None,
         )
 
         contact = ContactMapper.from_dbmodel(db_contact)

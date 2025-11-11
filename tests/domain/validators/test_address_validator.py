@@ -19,7 +19,7 @@ class TestAddressValidator:
             "ukrainian_style_address",
             "min_length",
             "max_length",
-        ]
+        ],
     )
     def test_validate_success(self, address):
         """Scenario: A valid address string is provided."""
@@ -32,7 +32,10 @@ class TestAddressValidator:
             ("  ", ValidationConfig.ADDRESS_ERROR_EMPTY),
             (None, ValidationConfig.ADDRESS_ERROR_EMPTY),
             ("A", ValidationConfig.ADDRESS_ERROR_TOO_SHORT),
-            ("A" * (ValidationConfig.ADDRESS_MAX_LENGTH + 1), ValidationConfig.ADDRESS_ERROR_TOO_LONG),
+            (
+                "A" * (ValidationConfig.ADDRESS_MAX_LENGTH + 1),
+                ValidationConfig.ADDRESS_ERROR_TOO_LONG,
+            ),
             ("123 Main St!", ValidationConfig.ADDRESS_ERROR_INVALID_FORMAT),
         ],
         ids=[
@@ -42,7 +45,7 @@ class TestAddressValidator:
             "too_short",
             "too_long",
             "invalid_character",
-        ]
+        ],
     )
     def test_validate_failure(self, address, expected_error):
         """Scenario: An invalid address string is provided."""

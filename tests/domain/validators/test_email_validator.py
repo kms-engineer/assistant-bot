@@ -21,7 +21,7 @@ class TestEmailValidator:
             "hyphen_email",
             "numeric_local_part",
             "with_whitespace",
-        ]
+        ],
     )
     def test_validate_success(self, email):
         """Scenario: A valid email string is provided."""
@@ -38,7 +38,10 @@ class TestEmailValidator:
             ("@example.com", ValidationConfig.EMAIL_ERROR_INVALID_FORMAT),
             ("test@.com", ValidationConfig.EMAIL_ERROR_INVALID_FORMAT),
             ("test@example..com", ValidationConfig.EMAIL_ERROR_INVALID_FORMAT),
-            ("a" * (ValidationConfig.EMAIL_MAX_LENGTH) + "@test.com", ValidationConfig.EMAIL_ERROR_TOO_LONG),
+            (
+                "a" * (ValidationConfig.EMAIL_MAX_LENGTH) + "@test.com",
+                ValidationConfig.EMAIL_ERROR_TOO_LONG,
+            ),
         ],
         ids=[
             "empty_string",
@@ -50,7 +53,7 @@ class TestEmailValidator:
             "no_domain_name",
             "double_dot_in_domain",
             "too_long",
-        ]
+        ],
     )
     def test_validate_failure(self, email, expected_error):
         """Scenario: An invalid email string is provided."""

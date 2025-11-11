@@ -27,17 +27,22 @@ class TestBirthdayNormalizer:
             "dateutil_fuzzy",
             "no_dateutil_dd_mm_yyyy",
             "no_dateutil_yyyy_mm_dd",
-        ]
+        ],
     )
-    def test_normalize_valid_date(self, input_entities, expected_birthday, dateutil_available):
+    def test_normalize_valid_date(
+        self, input_entities, expected_birthday, dateutil_available
+    ):
         """Tests normalization of valid birthday strings."""
-        with patch('src.presentation.nlp.normalizers.birthday_normalizer.DATEUTIL_AVAILABLE', dateutil_available):
+        with patch(
+            "src.presentation.nlp.normalizers.birthday_normalizer.DATEUTIL_AVAILABLE",
+            dateutil_available,
+        ):
             result = BirthdayNormalizer.normalize(input_entities.copy())
 
-            assert result['_birthday_valid'] is True
-            assert result['birthday'] == expected_birthday
-            assert 'age' in result
-            assert isinstance(result['age'], int)
+            assert result["_birthday_valid"] is True
+            assert result["birthday"] == expected_birthday
+            assert "age" in result
+            assert isinstance(result["age"], int)
 
     @pytest.mark.parametrize(
         "input_entities, dateutil_available",
@@ -53,16 +58,22 @@ class TestBirthdayNormalizer:
             "dateutil_invalid",
             "no_dateutil_unsupported",
             "gibberish_input",
-        ]
+        ],
     )
     def test_normalize_invalid_date(self, input_entities, dateutil_available):
         """Tests handling of invalid or unparseable birthday strings."""
-        with patch('src.presentation.nlp.normalizers.birthday_normalizer.DATEUTIL_AVAILABLE', dateutil_available):
+        with patch(
+            "src.presentation.nlp.normalizers.birthday_normalizer.DATEUTIL_AVAILABLE",
+            dateutil_available,
+        ):
             result = BirthdayNormalizer.normalize(input_entities.copy())
 
-            assert result['_birthday_valid'] is False
-            assert '_validation_errors' in result
-            assert any(f"Failed to parse birthday: {input_entities['birthday']}" in e for e in result['_validation_errors'])
+            assert result["_birthday_valid"] is False
+            assert "_validation_errors" in result
+            assert any(
+                f"Failed to parse birthday: {input_entities['birthday']}" in e
+                for e in result["_validation_errors"]
+            )
 
     @pytest.mark.parametrize(
         "input_entities",
@@ -77,7 +88,7 @@ class TestBirthdayNormalizer:
             "no_birthday_key",
             "empty_birthday",
             "none_birthday",
-        ]
+        ],
     )
     def test_normalize_no_input(self, input_entities):
         """Tests that the normalizer does nothing if the birthday field is missing or empty."""

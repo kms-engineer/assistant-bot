@@ -21,7 +21,7 @@ class TestNameValidator:
             "name_with_apostrophe",
             "min_length",
             "max_length",
-        ]
+        ],
     )
     def test_validate_success(self, name):
         """Scenario: A valid name string is provided."""
@@ -34,7 +34,10 @@ class TestNameValidator:
             ("  ", ValidationConfig.NAME_ERROR_EMPTY),
             (None, ValidationConfig.NAME_ERROR_EMPTY),
             ("J", ValidationConfig.NAME_ERROR_TOO_SHORT),
-            ("J" * (ValidationConfig.NAME_MAX_LENGTH + 1), ValidationConfig.NAME_ERROR_TOO_LONG),
+            (
+                "J" * (ValidationConfig.NAME_MAX_LENGTH + 1),
+                ValidationConfig.NAME_ERROR_TOO_LONG,
+            ),
             ("John123", ValidationConfig.NAME_ERROR_INVALID_CHARS),
             ("John!", ValidationConfig.NAME_ERROR_INVALID_CHARS),
         ],
@@ -46,7 +49,7 @@ class TestNameValidator:
             "too_long",
             "with_digits",
             "with_symbols",
-        ]
+        ],
     )
     def test_validate_failure(self, name, expected_error):
         """Scenario: An invalid name string is provided."""
