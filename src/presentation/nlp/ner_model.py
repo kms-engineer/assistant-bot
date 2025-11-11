@@ -26,13 +26,11 @@ class NERModel(BaseModel):
             model=self.model,
             tokenizer=self.tokenizer,
             aggregation_strategy="simple",
-            device=self._get_pipeline_device()
+            device=self._get_pipeline_device(),
         )
 
     def extract_entities(
-        self,
-        text: str,
-        intent: Optional[str] = None
+        self, text: str, intent: Optional[str] = None
     ) -> Tuple[Dict[str, Optional[str]], Dict[str, float]]:
         # Get allowed entities for this intent (if provided)
         allowed_entities = self._get_allowed_entities(intent) if intent else None
@@ -52,16 +50,14 @@ class NERModel(BaseModel):
         if not intent_req:
             return None
 
-        allowed = set(intent_req.get('required', []))
-        allowed.update(intent_req.get('optional', []))
+        allowed = set(intent_req.get("required", []))
+        allowed.update(intent_req.get("optional", []))
 
         return allowed if allowed else None
 
     @staticmethod
     def _parse_ner_results(
-        ner_results: List[Dict],
-        text: str,
-        allowed_entities: Optional[Set[str]] = None
+        ner_results: List[Dict], text: str, allowed_entities: Optional[Set[str]] = None
     ) -> Tuple[Dict[str, Optional[str]], Dict[str, float]]:
         entities: Dict[str, Optional[str]] = {
             "name": None,
@@ -72,20 +68,24 @@ class NERModel(BaseModel):
             "tag": None,
             "note_text": None,
             "id": None,
-            "days": None
+            "days": None,
         }
 
         # Track confidence scores for each entity
         confidences: Dict[str, float] = {}
-        entity_scores: Dict[str, List[float]] = {}  # Accumulate scores for multi-token entities
-        entity_spans: Dict[str, Dict[str, int]] = {}  # Track start/end positions for accurate extraction
+        entity_scores: Dict[str, List[float]] = (
+            {}
+        )  # Accumulate scores for multi-token entities
+        entity_spans: Dict[str, Dict[str, int]] = (
+            {}
+        )  # Track start/end positions for accurate extraction
 
         # Group entities by type
         for result in ner_results:
-            entity_group = result['entity_group']  # e.g., "NAME", "PHONE"
-            score = result.get('score', 1.0)  # Confidence score from model
-            start = result.get('start', 0)
-            end = result.get('end', 0)
+            entity_group = result["entity_group"]  # e.g., "NAME", "PHONE"
+            score = result.get("score", 1.0)  # Confidence score from model
+            start = result.get("start", 0)
+            end = result.get("end", 0)
 
             # Map entity group to our entity keys (lowercase)
             entity_key = entity_group.lower()
@@ -98,21 +98,21 @@ class NERModel(BaseModel):
             if entity_key in entities:
                 if entity_key not in entity_spans:
                     # First occurrence of this entity
-                    entity_spans[entity_key] = {'start': start, 'end': end}
+                    entity_spans[entity_key] = {"start": start, "end": end}
                     entity_scores[entity_key] = [score]
                 else:
                     # Extend the span to include this token
-                    entity_spans[entity_key]['end'] = end
+                    entity_spans[entity_key]["end"] = end
                     entity_scores[entity_key].append(score)
 
         # Extract entities using spans from original text
         for key, span in entity_spans.items():
             if span:
                 # Extract directly from original text using character positions
-                entity_text = text[span['start']:span['end']].strip()
+                entity_text = text[span["start"] : span["end"]].strip()
 
                 # Clean possessive 's from names
-                if key == 'name' and entity_text.endswith("'s"):
+                if key == "name" and entity_text.endswith("'s"):
                     entity_text = entity_text[:-2]
 
                 entities[key] = entity_text

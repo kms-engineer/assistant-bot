@@ -7,12 +7,19 @@ from .regex_gate import RegexCommandGate
 LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
 
 
-def process_classic_input(user_input: str, parser: CommandParser, handler: CommandHandler) -> str:
+def process_classic_input(
+    user_input: str, parser: CommandParser, handler: CommandHandler
+) -> str:
     command, args = parser.parse(user_input)
     return handler.handle(command, args)
 
 
-def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: CommandHandler, nlp_manager=None) -> str:
+def process_nlp_input(
+    user_input: str,
+    regex_gate: RegexCommandGate,
+    handler: CommandHandler,
+    nlp_manager=None,
+) -> str:
     # First try regex matching
     parsed = regex_gate.match(user_input)
     if parsed:
@@ -29,7 +36,7 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
                 return _get_nlp_failure_message(user_input, handler)
 
             # Check confidence - if very low, suggest commands
-            confidence = nlp_result.get('confidence', 0.0)
+            confidence = nlp_result.get("confidence", 0.0)
 
             if confidence < LOW_CONFIDENCE_THRESHOLD:
                 # Low confidence result - might be wrong, suggest alternatives
@@ -37,20 +44,22 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
                 return f"Low confidence understanding (confidence: {confidence:.2f}).\n{suggestion_msg}"
 
             # Check if validation passed
-            if nlp_result.get('validation', {}).get('valid', False):
+            if nlp_result.get("validation", {}).get("valid", False):
                 command, args = nlp_manager.get_command_args(nlp_result)
                 return handler.handle(command, args)
             else:
                 # Show what was understood and what's missing
-                missing = nlp_result.get('validation', {}).get('missing', [])
-                errors = nlp_result.get('validation', {}).get('errors', [])
+                missing = nlp_result.get("validation", {}).get("missing", [])
+                errors = nlp_result.get("validation", {}).get("errors", [])
 
                 response = f"I understood your intent as '{nlp_result['intent']}'"
-                if nlp_result['entities']:
+                if nlp_result["entities"]:
                     response += f" with: {nlp_result['entities']}"
 
                 if missing:
-                    response += f"\n\nMissing required information: {', '.join(missing)}"
+                    response += (
+                        f"\n\nMissing required information: {', '.join(missing)}"
+                    )
                 if errors:
                     response += f"\n\nValidation errors: {'; '.join(errors)}"
 
@@ -63,7 +72,9 @@ def process_nlp_input(user_input: str, regex_gate: RegexCommandGate, handler: Co
     return _get_nlp_failure_message(user_input, handler)
 
 
-def _get_nlp_failure_message(user_input: str, handler: CommandHandler, error: str = None) -> str:
+def _get_nlp_failure_message(
+    user_input: str, handler: CommandHandler, error: str = None
+) -> str:
     # Get example phrases for NLP
     examples = handler.get_nlp_command_examples()
 

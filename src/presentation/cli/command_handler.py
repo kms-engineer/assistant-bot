@@ -13,7 +13,12 @@ from ...config import IntentConfig
 
 class CommandHandler:
 
-    def __init__(self, contact_service: ContactService, note_service: NoteService, nlp_mode: bool = False):
+    def __init__(
+        self,
+        contact_service: ContactService,
+        note_service: NoteService,
+        nlp_mode: bool = False,
+    ):
         self.contact_service = contact_service
         self.note_service = note_service
         self.nlp_mode = nlp_mode
@@ -53,9 +58,11 @@ class CommandHandler:
             "add-tag": self._wrap_note(note_commands.add_tag),
             "remove-tag": self._wrap_note(note_commands.remove_tag),
             "search-notes": self._wrap_note(note_commands.search_notes),
-            "search-notes-by-title": self._wrap_note(note_commands.search_notes_by_title),
+            "search-notes-by-title": self._wrap_note(
+                note_commands.search_notes_by_title
+            ),
             "search-notes-by-tag": self._wrap_note(note_commands.search_notes_by_tag),
-            "list-tags": self._wrap_note_no_args(note_commands.list_tags)
+            "list-tags": self._wrap_note_no_args(note_commands.list_tags),
         }
 
     def _wrap(self, command_func: Callable) -> Callable:
@@ -114,12 +121,16 @@ class CommandHandler:
             return self.commands[command](args)
 
         available = [*self.commands.keys(), "close", "exit"]
-        suggestion = get_close_matches(command, available, n=1, cutoff=UIConfig.CLASSIC_COMMAND_SUGGESTION_CUTOFF)
-        return UIMessages.invalid_command(available, suggestion[0] if suggestion else None)
+        suggestion = get_close_matches(
+            command, available, n=1, cutoff=UIConfig.CLASSIC_COMMAND_SUGGESTION_CUTOFF
+        )
+        return UIMessages.invalid_command(
+            available, suggestion[0] if suggestion else None
+        )
 
     def _handle_pipeline(self, nlp_result: Dict) -> str:
-        intent = nlp_result['intent']
-        entities = nlp_result['entities']
+        intent = nlp_result["intent"]
+        entities = nlp_result["entities"]
 
         # Build the pipeline
         pipeline_commands = self.pipeline.build_pipeline(intent, entities)
@@ -127,6 +138,7 @@ class CommandHandler:
         if not pipeline_commands:
             # No pipeline, execute as single command
             from ..nlp.hybrid_nlp import HybridNLP
+
             temp_nlp = HybridNLP()
             command, args = temp_nlp.get_command_args(nlp_result)
             if command == "pipeline":
@@ -140,11 +152,11 @@ class CommandHandler:
         for i, pipeline_item in enumerate(pipeline_commands):
             command = pipeline_item[0]
             args = pipeline_item[1]
-            step_type = pipeline_item[2] if len(pipeline_item) > 2 else 'primary'
+            step_type = pipeline_item[2] if len(pipeline_item) > 2 else "primary"
             metadata = pipeline_item[3] if len(pipeline_item) > 3 else {}
 
             # Handle note ID from primary command
-            if metadata.get('note_id_from_primary') and note_id_for_tags:
+            if metadata.get("note_id_from_primary") and note_id_for_tags:
                 # Insert note ID at the beginning of args
                 args = [note_id_for_tags] + args
 
@@ -154,7 +166,7 @@ class CommandHandler:
                 results.append(f"{i + 1}. {result}")
 
                 # Extract note ID if this was a note creation
-                if command == 'add-note' and step_type == 'primary':
+                if command == "add-note" and step_type == "primary":
                     note_id_for_tags = self.pipeline.extract_note_id_from_result(result)
 
             except Exception as e:

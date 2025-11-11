@@ -21,7 +21,7 @@ class Contact(Entity):
         self.address: Optional[Address] = None
 
     @classmethod
-    def create(cls, name: Name, id_generator: Callable[[], str]) -> 'Contact':
+    def create(cls, name: Name, id_generator: Callable[[], str]) -> "Contact":
         contact_id = id_generator()
         return cls(name, contact_id)
 

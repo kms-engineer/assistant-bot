@@ -17,6 +17,7 @@ from ...domain.models.dbnote import DBNote
 T = TypeVar("T")
 
 from ..logging.logger import setup_logger
+
 log = setup_logger()
 
 # import logging
@@ -40,18 +41,23 @@ class SQLiteStorage(Storage):
         self._session_factory = None
         self._engine = None
 
-
     def _create_session(self) -> Session:
         if not self._is_initialized:
-            raise RuntimeError("SQLiteStorage is not initialized. Call 'initialize' method first.")
+            raise RuntimeError(
+                "SQLiteStorage is not initialized. Call 'initialize' method first."
+            )
         if self._session_factory is None:
-            raise RuntimeError("Session factory is not set. Ensure 'initialize' method has been called.")
+            raise RuntimeError(
+                "Session factory is not set. Ensure 'initialize' method has been called."
+            )
         return self._session_factory()
 
     def initialize(self, db_name: str) -> None:
         db_path = self.resolver.get_full_path(db_name)
         print(f"Initializing SQLite database at {db_path}")
-        self._engine: Engine = create_engine(f"sqlite:///{db_path}", echo=False, future=True)
+        self._engine: Engine = create_engine(
+            f"sqlite:///{db_path}", echo=False, future=True
+        )
         self._session_factory = sessionmaker(bind=self._engine, expire_on_commit=False)
         self._is_initialized = True
         self._base_class.metadata.create_all(self._engine)
@@ -96,26 +102,31 @@ class SQLiteStorage(Storage):
                 session.rollback()
                 raise
 
-
     def save(self, data: Any, filename: str, **kwargs) -> str:
         self.initialize(db_name=filename)
 
         if isinstance(data, AddressBook):
             # Clear existing contacts and save new ones
-            self._clear_and_save(DBContact, data.data.values(), ContactMapper.to_dbmodel)
+            self._clear_and_save(
+                DBContact, data.data.values(), ContactMapper.to_dbmodel
+            )
             return filename
         elif isinstance(data, Notebook):
             # Clear existing notes and save new ones
             self._clear_and_save(DBNote, data.data.values(), NoteMapper.to_dbmodel)
             return filename
 
-        return "Unsupported data type for save operation. Supported: AddressBook, Notebook"
+        return (
+            "Unsupported data type for save operation. Supported: AddressBook, Notebook"
+        )
 
     def _clear_and_save(self, model_class, entities, mapper_func):
         with self._create_session() as session:
             try:
                 # Get existing IDs from database
-                existing_ids = {record.id for record in session.query(model_class.id).all()}
+                existing_ids = {
+                    record.id for record in session.query(model_class.id).all()
+                }
 
                 # Get IDs from entities to save
                 entity_ids = set()
@@ -131,14 +142,15 @@ class SQLiteStorage(Storage):
                 # Delete records that are no longer in the collection
                 ids_to_delete = existing_ids - entity_ids
                 if ids_to_delete:
-                    session.query(model_class).filter(model_class.id.in_(ids_to_delete)).delete(synchronize_session=False)
+                    session.query(model_class).filter(
+                        model_class.id.in_(ids_to_delete)
+                    ).delete(synchronize_session=False)
 
                 session.commit()
             except Exception as e:
                 log.error(f"Failed to clear and save: {e}")
                 session.rollback()
                 raise
-
 
     def load(self, filename: str, **kwargs) -> Optional[Any]:
         if not self._is_initialized:

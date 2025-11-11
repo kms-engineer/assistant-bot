@@ -7,6 +7,7 @@ from src.config import ModelConfig, RegexPatterns, EntityConfig
 try:
     import phonenumbers
     from phonenumbers import NumberParseException
+
     HAS_PHONENUMBERS = True
 except ImportError:
     phonenumbers = None
@@ -15,6 +16,7 @@ except ImportError:
 
 try:
     from email_validator import validate_email, EmailNotValidError
+
     HAS_EMAIL_VALIDATOR = True
 except ImportError:
     validate_email = None
@@ -24,6 +26,7 @@ except ImportError:
 try:
     import usaddress
     from usaddress import RepeatedLabelError
+
     HAS_USADDRESS = True
 except ImportError:
     usaddress = None
@@ -32,6 +35,7 @@ except ImportError:
 
 try:
     import pyap
+
     HAS_PYAP = True
 except ImportError:
     pyap = None
@@ -39,6 +43,7 @@ except ImportError:
 
 try:
     import spacy
+
     HAS_SPACY = True
     try:
         nlp_spacy = spacy.load(ModelConfig.SPACY_MODEL_NAME)
@@ -52,6 +57,7 @@ except ImportError:
 
 try:
     from dateutil import parser as date_parser
+
     HAS_DATEUTIL = True
 except ImportError:
     date_parser = None
@@ -88,15 +94,19 @@ class LibraryExtractor:
             return entities
         try:
             for match in phonenumbers.PhoneNumberMatcher(text, "US"):
-                phone_str = phonenumbers.format_number(match.number, phonenumbers.PhoneNumberFormat.E164)
-                entities.append(Entity(
-                    text=phone_str.replace('+1', ''),
-                    start=match.start,
-                    end=match.end,
-                    entity_type='phone',
-                    confidence=0.95,
-                    strategy=ExtractionStrategy.LIBRARY
-                ))
+                phone_str = phonenumbers.format_number(
+                    match.number, phonenumbers.PhoneNumberFormat.E164
+                )
+                entities.append(
+                    Entity(
+                        text=phone_str.replace("+1", ""),
+                        start=match.start,
+                        end=match.end,
+                        entity_type="phone",
+                        confidence=0.95,
+                        strategy=ExtractionStrategy.LIBRARY,
+                    )
+                )
         except (NumberParseException, AttributeError, ValueError) as e:
             # Ignore parse errors for invalid phone numbers
             pass
@@ -111,14 +121,16 @@ class LibraryExtractor:
             email_str = match.group()
             try:
                 validate_email(email_str)
-                entities.append(Entity(
-                    text=email_str,
-                    start=match.start(),
-                    end=match.end(),
-                    entity_type='email',
-                    confidence=0.95,
-                    strategy=ExtractionStrategy.LIBRARY
-                ))
+                entities.append(
+                    Entity(
+                        text=email_str,
+                        start=match.start(),
+                        end=match.end(),
+                        entity_type="email",
+                        confidence=0.95,
+                        strategy=ExtractionStrategy.LIBRARY,
+                    )
+                )
             except (EmailNotValidError, ValueError, TypeError):
                 # Ignore invalid emails
                 pass
@@ -131,16 +143,18 @@ class LibraryExtractor:
         # Try pyap first (better at finding addresses)
         if HAS_PYAP and pyap:
             try:
-                addresses = pyap.parse(text, country='US')
+                addresses = pyap.parse(text, country="US")
                 for addr in addresses:
-                    entities.append(Entity(
-                        text=str(addr),
-                        start=text.find(str(addr)),
-                        end=text.find(str(addr)) + len(str(addr)),
-                        entity_type='address',
-                        confidence=0.85,
-                        strategy=ExtractionStrategy.LIBRARY
-                    ))
+                    entities.append(
+                        Entity(
+                            text=str(addr),
+                            start=text.find(str(addr)),
+                            end=text.find(str(addr)) + len(str(addr)),
+                            entity_type="address",
+                            confidence=0.85,
+                            strategy=ExtractionStrategy.LIBRARY,
+                        )
+                    )
             except (ValueError, AttributeError, TypeError):
                 # Ignore parsing errors
                 pass
@@ -149,24 +163,32 @@ class LibraryExtractor:
         if HAS_USADDRESS and usaddress and not entities:
             try:
                 parsed, address_type = usaddress.tag(text)
-                if address_type in ['Street Address', 'Ambiguous']:
+                if address_type in ["Street Address", "Ambiguous"]:
                     address_parts = []
                     for key, value in parsed.items():
-                        if key not in ['Recipient', 'NotAddress']:
+                        if key not in ["Recipient", "NotAddress"]:
                             address_parts.append(value)
                     if address_parts:
-                        address_str = ' '.join(address_parts)
+                        address_str = " ".join(address_parts)
                         start = text.find(address_str)
                         if start >= 0:
-                            entities.append(Entity(
-                                text=address_str,
-                                start=start,
-                                end=start + len(address_str),
-                                entity_type='address',
-                                confidence=0.80,
-                                strategy=ExtractionStrategy.LIBRARY
-                            ))
-            except (ValueError, AttributeError, TypeError, KeyError, RepeatedLabelError):
+                            entities.append(
+                                Entity(
+                                    text=address_str,
+                                    start=start,
+                                    end=start + len(address_str),
+                                    entity_type="address",
+                                    confidence=0.80,
+                                    strategy=ExtractionStrategy.LIBRARY,
+                                )
+                            )
+            except (
+                ValueError,
+                AttributeError,
+                TypeError,
+                KeyError,
+                RepeatedLabelError,
+            ):
                 # Ignore parsing errors (including RepeatedLabelError from usaddress)
                 pass
 
@@ -192,28 +214,45 @@ class LibraryExtractor:
                     # Remove command words from beginning and end
                     words = name_text.split()
                     # Filter out command words
-                    filtered_words = [w for w in words if w.lower() not in EntityConfig.COMMAND_WORDS]
+                    filtered_words = [
+                        w for w in words if w.lower() not in EntityConfig.COMMAND_WORDS
+                    ]
 
                     if filtered_words:
-                        name_text = ' '.join(filtered_words)
+                        name_text = " ".join(filtered_words)
                         # Adjust start position if we removed words from beginning
-                        if words and filtered_words and words[0].lower() in EntityConfig.COMMAND_WORDS:
+                        if (
+                            words
+                            and filtered_words
+                            and words[0].lower() in EntityConfig.COMMAND_WORDS
+                        ):
                             # Calculate new start position
-                            removed_text = ' '.join([w for w in words if w.lower() in EntityConfig.COMMAND_WORDS and words.index(w) < words.index(filtered_words[0])])
-                            start_offset = len(removed_text) + (1 if removed_text else 0)  # +1 for space
+                            removed_text = " ".join(
+                                [
+                                    w
+                                    for w in words
+                                    if w.lower() in EntityConfig.COMMAND_WORDS
+                                    and words.index(w) < words.index(filtered_words[0])
+                                ]
+                            )
+                            start_offset = len(removed_text) + (
+                                1 if removed_text else 0
+                            )  # +1 for space
                             ent_start = ent.start_char + start_offset
                         else:
                             ent_start = ent.start_char
 
                         if name_text and not is_stop_word(name_text):
-                            entities.append(Entity(
-                                text=name_text,
-                                start=ent_start,
-                                end=name_end,
-                                entity_type='name',
-                                confidence=0.80,
-                                strategy=ExtractionStrategy.LIBRARY
-                            ))
+                            entities.append(
+                                Entity(
+                                    text=name_text,
+                                    start=ent_start,
+                                    end=name_end,
+                                    entity_type="name",
+                                    confidence=0.80,
+                                    strategy=ExtractionStrategy.LIBRARY,
+                                )
+                            )
         except (ValueError, AttributeError, TypeError):
             # Ignore spacy processing errors
             pass
@@ -237,14 +276,16 @@ class LibraryExtractor:
                 try:
                     # Validate date by parsing (we don't use the result, just check if valid)
                     _ = date_parser.parse(date_str, fuzzy=False)
-                    entities.append(Entity(
-                        text=date_str,
-                        start=match.start(),
-                        end=match.end(),
-                        entity_type='birthday',
-                        confidence=0.85,
-                        strategy=ExtractionStrategy.LIBRARY
-                    ))
+                    entities.append(
+                        Entity(
+                            text=date_str,
+                            start=match.start(),
+                            end=match.end(),
+                            entity_type="birthday",
+                            confidence=0.85,
+                            strategy=ExtractionStrategy.LIBRARY,
+                        )
+                    )
                     break  # Take first valid date
                 except (ValueError, TypeError, OverflowError):
                     # Ignore invalid date formats
@@ -255,10 +296,10 @@ class LibraryExtractor:
     @staticmethod
     def get_available_libraries() -> dict:
         return {
-            'phonenumbers': HAS_PHONENUMBERS,
-            'email_validator': HAS_EMAIL_VALIDATOR,
-            'usaddress': HAS_USADDRESS,
-            'pyap': HAS_PYAP,
-            'spacy': HAS_SPACY,
-            'dateutil': HAS_DATEUTIL,
+            "phonenumbers": HAS_PHONENUMBERS,
+            "email_validator": HAS_EMAIL_VALIDATOR,
+            "usaddress": HAS_USADDRESS,
+            "pyap": HAS_PYAP,
+            "spacy": HAS_SPACY,
+            "dateutil": HAS_DATEUTIL,
         }

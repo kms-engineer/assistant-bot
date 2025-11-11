@@ -21,7 +21,7 @@ class IntentClassifier(BaseModel):
             return_tensors="pt",
             truncation=True,
             max_length=ModelConfig.TOKENIZER_MAX_LENGTH,
-            padding=True
+            padding=True,
         ).to(self.device)
 
         # Get predictions

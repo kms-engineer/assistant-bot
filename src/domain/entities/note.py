@@ -20,7 +20,7 @@ class Note(Entity):
         self.tags: list[Tag] = []
 
     @classmethod
-    def create(cls, title: str, text: str, id_generator: Callable[[], str]) -> 'Note':
+    def create(cls, title: str, text: str, id_generator: Callable[[], str]) -> "Note":
         note_id = id_generator()
         return cls(title, text, note_id)
 

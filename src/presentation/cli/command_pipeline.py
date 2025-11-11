@@ -20,14 +20,16 @@ class CommandPipeline:
         pipeline_def = self.PIPELINE_DEFINITIONS[intent]
 
         # Check if any pipeline step has entities available
-        for step in pipeline_def['pipeline']:
-            step_entities = step['entities']
+        for step in pipeline_def["pipeline"]:
+            step_entities = step["entities"]
             if any(entity in entities for entity in step_entities):
                 return True
 
         return False
 
-    def build_pipeline(self, intent: str, entities: Dict) -> list[tuple[Any, list[str], str] | tuple[Any, list[str], str, dict[str, Any]]]:
+    def build_pipeline(
+        self, intent: str, entities: Dict
+    ) -> list[tuple[Any, list[str], str] | tuple[Any, list[str], str, dict[str, Any]]]:
         if intent not in self.PIPELINE_DEFINITIONS:
             return []
 
@@ -35,37 +37,47 @@ class CommandPipeline:
         commands = []
 
         # Add primary command
-        primary_command = pipeline_def['primary_command']
-        primary_args = self._build_args_for_intent(entities, pipeline_def['primary_required'])
-        commands.append((primary_command, primary_args, 'primary'))
+        primary_command = pipeline_def["primary_command"]
+        primary_args = self._build_args_for_intent(
+            entities, pipeline_def["primary_required"]
+        )
+        commands.append((primary_command, primary_args, "primary"))
 
         # Add pipeline steps
-        for step in pipeline_def['pipeline']:
-            step_entities = step['entities']
-            min_entities = step.get('min_entities', 1)
+        for step in pipeline_def["pipeline"]:
+            step_entities = step["entities"]
+            min_entities = step.get("min_entities", 1)
 
             # Check if we have enough entities for this step
-            available_entities = [e for e in step_entities if e in entities and entities[e]]
+            available_entities = [
+                e for e in step_entities if e in entities and entities[e]
+            ]
             if len(available_entities) >= min_entities:
-                step_command = step['command']
+                step_command = step["command"]
                 step_args = self._build_args_for_pipeline_step(
-                    step_command,
-                    entities,
-                    step_entities,
-                    primary_args
+                    step_command, entities, step_entities, primary_args
                 )
-                condition = step.get('condition', None)
-                note_id_from_primary = step.get('note_id_from_primary', False)
+                condition = step.get("condition", None)
+                note_id_from_primary = step.get("note_id_from_primary", False)
 
-                commands.append((step_command, step_args, 'pipeline', {
-                    'condition': condition,
-                    'note_id_from_primary': note_id_from_primary
-                }))
+                commands.append(
+                    (
+                        step_command,
+                        step_args,
+                        "pipeline",
+                        {
+                            "condition": condition,
+                            "note_id_from_primary": note_id_from_primary,
+                        },
+                    )
+                )
 
         return commands
 
     @staticmethod
-    def _build_args_for_intent(entities: Dict, required_entities: List[str]) -> List[str]:
+    def _build_args_for_intent(
+        entities: Dict, required_entities: List[str]
+    ) -> List[str]:
         args = []
 
         # For primary commands, use required entities in order
@@ -76,11 +88,19 @@ class CommandPipeline:
         return args
 
     @staticmethod
-    def _build_args_for_pipeline_step(command: str, entities: Dict, step_entities: List[str], primary_args: List[str]) -> List[str]:
+    def _build_args_for_pipeline_step(
+        command: str, entities: Dict, step_entities: List[str], primary_args: List[str]
+    ) -> List[str]:
         args = []
 
         # Most pipeline commands need the contact name first
-        if command in ['add-email', 'add-address', 'add-birthday', 'edit-email', 'edit-address']:
+        if command in [
+            "add-email",
+            "add-address",
+            "add-birthday",
+            "edit-email",
+            "edit-address",
+        ]:
             # Get name from primary args (first arg is usually name)
             if primary_args:
                 args.append(primary_args[0])
@@ -102,7 +122,7 @@ class CommandPipeline:
         for i, item in enumerate(pipeline):
             if len(item) >= 3:
                 command, args, step_type = item[:3]
-                if step_type == 'primary':
+                if step_type == "primary":
                     steps.append(f"1. {command} {' '.join(args)}")
                 else:
                     steps.append(f"{i + 1}. {command} {' '.join(args)}")
@@ -116,11 +136,14 @@ class CommandPipeline:
         import re
 
         # Remove ANSI color codes
-        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-        clean_result = ansi_escape.sub('', result)
+        ansi_escape = re.compile(r"\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+        clean_result = ansi_escape.sub("", result)
 
         # Match UUID format (8-4-4-4-12 hex characters) or simple numeric ID
-        match = re.search(r'ID:\s*([a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}|\d+)', clean_result)
+        match = re.search(
+            r"ID:\s*([a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}|\d+)",
+            clean_result,
+        )
         if match:
             return match.group(1)
         return None

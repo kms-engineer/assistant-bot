@@ -3,6 +3,7 @@ from typing import Any, Optional
 
 from .storage_type import StorageType
 
+
 class Storage(ABC):
     @abstractmethod
     def save(self, data: Any, filename: str, **kwargs) -> str:

@@ -4,7 +4,7 @@ from .dbbase import DBBase
 
 
 class DBContact(DBBase):
-    __tablename__ = 'contacts'
+    __tablename__ = "contacts"
 
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)

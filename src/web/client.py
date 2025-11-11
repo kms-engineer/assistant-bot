@@ -1,6 +1,7 @@
 from fastmcp import Client
 import asyncio
 
+
 async def main():
     # async with Client("server.py") as client:
     async with Client("http://127.0.0.1:8080/mcp") as client:
@@ -10,5 +11,6 @@ async def main():
         print(f"Result: {result}")
         resources = await client.list_resources()
         print(f"Resources: {resources}")
+
 
 asyncio.run(main())

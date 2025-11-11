@@ -5,6 +5,7 @@ from ..logging.logger import setup_logger
 
 log = setup_logger()
 
+
 def migrate_files(src_dir: str, dest_dir: str):
     try:
 
@@ -17,7 +18,7 @@ def migrate_files(src_dir: str, dest_dir: str):
         count = 0
         src_dir = os.path.abspath(src_dir)
         for filename in os.listdir(src_dir):
-            if filename.startswith('.'):
+            if filename.startswith("."):
                 continue
 
             source_file_path = os.path.join(src_dir, filename)

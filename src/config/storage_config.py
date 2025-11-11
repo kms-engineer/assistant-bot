@@ -1,4 +1,3 @@
-
 class StorageConfig:
 
     # Default storage type can be configured here if needed

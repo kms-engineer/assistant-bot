@@ -3,7 +3,10 @@ from typing import Optional, Set
 from ...domain.entities.note import Note
 from ...domain.utils.id_generator import IDGenerator
 from ...domain.value_objects.tag import Tag
-from ...infrastructure.persistence.data_path_resolver import DEFAULT_NOTES_FILE, DEFAULT_ADDRESS_BOOK_DATABASE_NAME
+from ...infrastructure.persistence.data_path_resolver import (
+    DEFAULT_NOTES_FILE,
+    DEFAULT_ADDRESS_BOOK_DATABASE_NAME,
+)
 from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
 from ...infrastructure.serialization.json_serializer import JsonSerializer
 from ...infrastructure.storage.json_storage import JsonStorage
@@ -36,8 +39,7 @@ class NoteService:
         if filename is None:
             filename = self._default_filename
         loaded_notes, normalized_filename = self.storage.load_notes(
-            filename,
-            default=[]
+            filename, default=[]
         )
 
         self.notes = loaded_notes
@@ -52,20 +54,13 @@ class NoteService:
     def save_notes(self, filename: Optional[str] = None) -> str:
         target = filename if filename else self._current_filename
 
-        saved_filename = self.storage.save_notes(
-            self.notes,
-            target
-        )
+        saved_filename = self.storage.save_notes(self.notes, target)
         self._current_filename = saved_filename
         return saved_filename
 
     def add_note(self, title: str, text: str) -> str:
         note = Note.create(
-            title,
-            text,
-            lambda: IDGenerator.generate_unique_id(
-                lambda: self.get_ids()
-            )
+            title, text, lambda: IDGenerator.generate_unique_id(lambda: self.get_ids())
         )
         self.notes[note.id] = note
         return note.id
@@ -100,7 +95,9 @@ class NoteService:
         if not tag or not tag.strip():
             raise KeyError("Note title can't be empty")
         search_tag = Tag(tag)
-        found_notes = list(note for note in self.notes.values() if search_tag in note.tags)
+        found_notes = list(
+            note for note in self.notes.values() if search_tag in note.tags
+        )
         for note in found_notes:
             self.delete_note_by_id(note.id)
         return "Note(s) deleted"
@@ -125,7 +122,9 @@ class NoteService:
 
     def search_notes(self, query: str) -> list[Note]:
         query_lower = query.lower()
-        return [note for note in self.notes.values() if query_lower in note.text.lower()]
+        return [
+            note for note in self.notes.values() if query_lower in note.text.lower()
+        ]
 
     def get_note_id_by_title(self, title: str):
         if not title or not title.strip():
@@ -135,7 +134,9 @@ class NoteService:
 
     def search_notes_by_content(self, query: str) -> list[Note]:
         query_lower = query.lower()
-        return [note for note in self.notes.values() if query_lower in note.text.lower()]
+        return [
+            note for note in self.notes.values() if query_lower in note.text.lower()
+        ]
 
     def search_notes_by_title(self, query: str) -> list[Note]:
         if not query or not query.strip():
@@ -145,7 +146,8 @@ class NoteService:
     def search_notes_by_tag(self, tag: str) -> list[Note]:
         tag_lower = tag.lower()
         return [
-            note for note in self.notes.values()
+            note
+            for note in self.notes.values()
             if any(tag_lower == t.value.lower() for t in note.tags)
         ]
 

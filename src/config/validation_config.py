@@ -1,4 +1,3 @@
-
 class ValidationConfig:
 
     # Name validation
@@ -37,19 +36,25 @@ class ValidationConfig:
 
     # Error messages - Email
     EMAIL_ERROR_EMPTY = "Email cannot be empty or whitespace"
-    EMAIL_ERROR_INVALID_FORMAT = "Email must be a valid email address (e.g., user@example.com)"
+    EMAIL_ERROR_INVALID_FORMAT = (
+        "Email must be a valid email address (e.g., user@example.com)"
+    )
     EMAIL_ERROR_TOO_LONG = f"Email must be at most {EMAIL_MAX_LENGTH} characters long"
 
     # Error messages - Phone
     PHONE_ERROR_NOT_STRING = "Phone number must be string value"
     PHONE_ERROR_EMPTY = "Phone number cannot be empty or whitespace"
     PHONE_ERROR_INVALID_LENGTH = f"Phone number must contain between {PHONE_MIN_DIGITS} and {PHONE_MAX_DIGITS} digits"
-    PHONE_ERROR_INVALID_FORMAT = "Phone number must start with + or a digit and contain only digits"
+    PHONE_ERROR_INVALID_FORMAT = (
+        "Phone number must start with + or a digit and contain only digits"
+    )
 
     # Error messages - Birthday
     BIRTHDAY_ERROR_NOT_STRING = "Birthday must be a string"
     BIRTHDAY_ERROR_EMPTY = "Birthday cannot be empty or whitespace"
-    BIRTHDAY_ERROR_INVALID_FORMAT = "Birthday contain invalid date format. Use DD.MM.YYYY"
+    BIRTHDAY_ERROR_INVALID_FORMAT = (
+        "Birthday contain invalid date format. Use DD.MM.YYYY"
+    )
     BIRTHDAY_ERROR_FUTURE_DATE = "Birthday cannot be in future"
     BIRTHDAY_ERROR_INVALID_YEAR = "Birthday contain invalid year"
     BIRTHDAY_ERROR_INVALID_MONTH = "Birthday contain invalid month"
@@ -62,8 +67,12 @@ class ValidationConfig:
 
     # Error messages - Address
     ADDRESS_ERROR_EMPTY = "Address cannot be empty or whitespace"
-    ADDRESS_ERROR_TOO_SHORT = f"Address must be at least {ADDRESS_MIN_LENGTH} characters long"
-    ADDRESS_ERROR_TOO_LONG = f"Address must be at most {ADDRESS_MAX_LENGTH} characters long"
+    ADDRESS_ERROR_TOO_SHORT = (
+        f"Address must be at least {ADDRESS_MIN_LENGTH} characters long"
+    )
+    ADDRESS_ERROR_TOO_LONG = (
+        f"Address must be at most {ADDRESS_MAX_LENGTH} characters long"
+    )
     ADDRESS_ERROR_INVALID_FORMAT = "Address must contain valid characters"
 
     # Error messages - Note Text

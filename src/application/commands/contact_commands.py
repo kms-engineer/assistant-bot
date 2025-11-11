@@ -29,13 +29,14 @@ def _select_contact_by_name(service: ContactService, name: str) -> Optional[Cont
         items=matching_contacts,
         prompt="Select contact:",
         formatter=str,
-        allow_cancel=True
+        allow_cancel=True,
     )
 
     if selected_idx is None:
         return None
 
     return matching_contacts[selected_idx]
+
 
 def add_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
@@ -56,13 +57,13 @@ def add_contact(args: List[str], service: ContactService) -> str:
         options = [
             f"Add phone {phone_vo.value} to existing contact",
             f"Create new contact '{name_vo.value}' with phone {phone_vo.value}",
-            "Cancel"
+            "Cancel",
         ]
 
         choice = select_option(
             prompt="What would you like to do?",
             options=options,
-            allow_cancel=False  # We have cancel as option 3
+            allow_cancel=False,  # We have cancel as option 3
         )
 
         if choice is None or choice == 2:  # Cancel
@@ -80,7 +81,9 @@ def add_contact(args: List[str], service: ContactService) -> str:
 
 def change_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 3:
-        raise ValueError("Change command requires 3 arguments: name, old phone, and new phone")
+        raise ValueError(
+            "Change command requires 3 arguments: name, old phone, and new phone"
+        )
 
     name = args[0]
     old_phone_vo = Phone(args[1])
@@ -141,7 +144,7 @@ def delete_contact(args: List[str], service: ContactService) -> str:
             items=matching_contacts,
             prompt="Select contact to delete:",
             formatter=str,
-            allow_cancel=True
+            allow_cancel=True,
         )
 
         if selected_idx is None:
@@ -190,7 +193,9 @@ def show_all(service: ContactService) -> str:
 
 def add_birthday(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Add-birthday command requires 2 arguments: name and birthday (DD.MM.YYYY)")
+        raise ValueError(
+            "Add-birthday command requires 2 arguments: name and birthday (DD.MM.YYYY)"
+        )
 
     name = args[0]
     birthday_vo = Birthday(args[1])
@@ -231,7 +236,9 @@ def remove_birthday(args: List[str], service: ContactService) -> str:
     if not contact.birthday:
         return f"{contact.name.value} has no birthday set."
 
-    if not confirm_action(f"Remove birthday {contact.birthday.value} from {contact.name.value}?"):
+    if not confirm_action(
+        f"Remove birthday {contact.birthday.value} from {contact.name.value}?"
+    ):
         return UIMessages.ACTION_CANCELLED
 
     return service.remove_birthday_by_id(contact.id)
@@ -275,7 +282,9 @@ def add_email(args: List[str], service: ContactService) -> str:
 
 def edit_email(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Edit-email command requires 2 arguments: name and new email address")
+        raise ValueError(
+            "Edit-email command requires 2 arguments: name and new email address"
+        )
 
     name = args[0]
     email_vo = Email(args[1])
@@ -321,7 +330,9 @@ def add_address(args: List[str], service: ContactService) -> str:
 
 def edit_address(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Edit-address command requires 2 arguments: name and new address")
+        raise ValueError(
+            "Edit-address command requires 2 arguments: name and new address"
+        )
 
     name = args[0]
     address_vo = Address(" ".join(args[1:]))
@@ -415,5 +426,5 @@ def help(nlp_mode: bool = False) -> str:
 
 
 def clear() -> str:
-    os.system('clear' if os.name == 'posix' else 'cls')
+    os.system("clear" if os.name == "posix" else "cls")
     return ""

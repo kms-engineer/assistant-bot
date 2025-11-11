@@ -1,4 +1,3 @@
-
 class ConfidenceConfig:
 
     # Regex extractor confidence scores

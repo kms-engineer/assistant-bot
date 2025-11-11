@@ -6,10 +6,10 @@ from .pickle_storage import PickleStorage
 from .sqlite_storage import SQLiteStorage
 
 __all__ = [
-    'Storage',
-    'StorageType',
-    'StorageFactory',
-    'JsonStorage',
-    'PickleStorage',
-    'SQLiteStorage',
+    "Storage",
+    "StorageType",
+    "StorageFactory",
+    "JsonStorage",
+    "PickleStorage",
+    "SQLiteStorage",
 ]

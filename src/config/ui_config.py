@@ -1,4 +1,3 @@
-
 class UIConfig:
 
     # Command suggestion in classic mode

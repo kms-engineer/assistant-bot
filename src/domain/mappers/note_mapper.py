@@ -12,16 +12,12 @@ class NoteMapper(Mapper):
             id=data.id,
             title=data.title,
             text=data.text,
-            tags=",".join(str(tag) for tag in data.tags) if data.tags else None
+            tags=",".join(str(tag) for tag in data.tags) if data.tags else None,
         )
 
     @staticmethod
     def from_dbmodel(data: DBNote) -> Note:
-        note = Note(
-            title=data.title,
-            text=data.text,
-            note_id=data.id
-        )
+        note = Note(title=data.title, text=data.text, note_id=data.id)
 
         if data.tags:
             for tag_str in data.tags.split(","):

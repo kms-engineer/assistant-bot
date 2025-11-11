@@ -16,19 +16,19 @@ class PickleStorage(Storage):
 
     @property
     def file_extension(self) -> str:
-        return '.pkl'
+        return ".pkl"
 
     @property
     def storage_type(self) -> StorageType:
         return StorageType.PICKLE
 
     def save(self, data: Any, filename: str, **kwargs) -> str:
-        user_provided = kwargs.get('user_provided', False)
+        user_provided = kwargs.get("user_provided", False)
         if user_provided:
             self.resolver.raise_if_reserved(filename, RESERVED_BASENAME)
 
         filename = self.resolver.ensure_pkl_suffix(filename)
-        self.resolver.validate_filename(filename, allowed_extensions=('.pkl',))
+        self.resolver.validate_filename(filename, allowed_extensions=(".pkl",))
         filepath = self.resolver.get_full_path(filename)
 
         tmp_file = None
@@ -38,7 +38,7 @@ class PickleStorage(Storage):
                 delete=False,
                 dir=str(self.resolver.data_dir),
                 prefix=Path(filename).stem + "_",
-                suffix=".tmp"
+                suffix=".tmp",
             ) as tmp:
                 tmp_file = Path(tmp.name)
                 try:
@@ -67,12 +67,12 @@ class PickleStorage(Storage):
             raise IOError(f"Failed to save data: {e}") from e
 
     def load(self, filename: str, **kwargs) -> Optional[Any]:
-        user_provided = kwargs.get('user_provided', False)
+        user_provided = kwargs.get("user_provided", False)
         if user_provided:
             self.resolver.raise_if_reserved(filename, RESERVED_BASENAME)
 
         filename = self.resolver.ensure_pkl_suffix(filename)
-        self.resolver.validate_filename(filename, allowed_extensions=('.pkl',))
+        self.resolver.validate_filename(filename, allowed_extensions=(".pkl",))
         filepath = self.resolver.get_full_path(filename)
 
         if not filepath.exists():

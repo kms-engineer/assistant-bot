@@ -24,10 +24,7 @@ class ContactMapper(Mapper):
     @staticmethod
     def from_dbmodel(data: DBContact) -> Contact:
         name_vo = Name(data.name)
-        contact = Contact(
-            name=name_vo,
-            contact_id=data.id
-        )
+        contact = Contact(name=name_vo, contact_id=data.id)
 
         if data.phones:
             for phone_str in data.phones.split(","):

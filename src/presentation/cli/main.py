@@ -16,7 +16,7 @@ from ...infrastructure.persistence.data_path_resolver import (
     DEFAULT_DATA_DIR,
     DEFAULT_ADDRESS_BOOK_DATABASE_NAME,
     DEFAULT_JSON_FILE,
-    DEFAULT_CONTACTS_FILE
+    DEFAULT_CONTACTS_FILE,
 )
 from ...infrastructure.persistence.migrator import migrate_files
 from ...infrastructure.storage.json_storage import JsonStorage
@@ -24,8 +24,11 @@ from ...infrastructure.storage.pickle_storage import PickleStorage
 from ...infrastructure.storage.sqlite_storage import SQLiteStorage
 
 
-def save_and_exit(contact_service: ContactService, note_service: NoteService = None,
-                  storage_type: StorageType = None) -> None:
+def save_and_exit(
+    contact_service: ContactService,
+    note_service: NoteService = None,
+    storage_type: StorageType = None,
+) -> None:
     print(UIMessages.SAVING)
 
     # Save contacts
@@ -58,7 +61,7 @@ def parse_cli_mode() -> CLIMode:
         type=str,
         choices=["classic", "nlp"],
         default="classic",
-        help="CLI mode: classic or nlp (default: classic)"
+        help="CLI mode: classic or nlp (default: classic)",
     )
     cli_args = arg_parser.parse_args()
     return CLIMode.from_string(cli_args.mode)
@@ -77,21 +80,35 @@ def main() -> None:
     try:
         count = 0
         if isinstance(storage, SQLiteStorage):
-            count = contact_service.load_address_book(DEFAULT_ADDRESS_BOOK_DATABASE_NAME, user_provided=True)
+            count = contact_service.load_address_book(
+                DEFAULT_ADDRESS_BOOK_DATABASE_NAME, user_provided=True
+            )
         elif isinstance(storage, JsonStorage):
-            count = contact_service.load_address_book(DEFAULT_JSON_FILE, user_provided=True)
+            count = contact_service.load_address_book(
+                DEFAULT_JSON_FILE, user_provided=True
+            )
         elif isinstance(storage, PickleStorage):
-            count = contact_service.load_address_book(DEFAULT_CONTACTS_FILE, user_provided=True)
+            count = contact_service.load_address_book(
+                DEFAULT_CONTACTS_FILE, user_provided=True
+            )
         print(UIMessages.loaded_successfully("Address book", count))
     except Exception as e:
-        print(stylize_error_message(message=f"Failed to load address book: {e}. Starting with an empty book."))
+        print(
+            stylize_error_message(
+                message=f"Failed to load address book: {e}. Starting with an empty book."
+            )
+        )
 
     # Load notes
     try:
         note_count = note_service.load_notes()
         print(f"Loaded {note_count} notes successfully")
     except Exception as e:
-        print(stylize_error_message(message=f"Failed to load notes: {e}. Starting with empty notes."))
+        print(
+            stylize_error_message(
+                message=f"Failed to load notes: {e}. Starting with empty notes."
+            )
+        )
 
     parser = CommandParser()
     regex_gate = RegexCommandGate()
@@ -101,6 +118,7 @@ def main() -> None:
     is_nlp_mode = mode == CLIMode.NLP
     if is_nlp_mode:
         from .nlp_manager import NLPManager
+
         nlp_manager = NLPManager()
         nlp_manager.initialize_nlp_processor()
 
@@ -108,7 +126,7 @@ def main() -> None:
     handler = CommandHandler(contact_service, note_service, nlp_mode=is_nlp_mode)
 
     # Show mode-appropriate help
-    print(UIMessages.WELCOME + '\n\n' + UIMessages.get_command_list(is_nlp_mode))
+    print(UIMessages.WELCOME + "\n\n" + UIMessages.get_command_list(is_nlp_mode))
 
     while True:
         try:
@@ -121,8 +139,10 @@ def main() -> None:
             elif mode == CLIMode.NLP:
                 result = process_nlp_input(user_input, regex_gate, handler, nlp_manager)
                 if not result:
-                    print("Could not understand the command. "
-                          "Please try rephrasing or type 'help' for available commands.")
+                    print(
+                        "Could not understand the command. "
+                        "Please try rephrasing or type 'help' for available commands."
+                    )
                     continue
             else:
                 continue

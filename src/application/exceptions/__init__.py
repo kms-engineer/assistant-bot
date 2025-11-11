@@ -3,5 +3,5 @@ from .base import (
 )
 
 __all__ = [
-    'StorageException',
+    "StorageException",
 ]

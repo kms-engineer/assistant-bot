@@ -14,21 +14,21 @@ class NLPPipeline:
                 context = stage.execute(context)
 
         return {
-            'intent': context.intent,
-            'intent_confidence': context.intent_confidence,  # Include as intent_confidence
-            'confidence': context.intent_confidence,  # Keep for backward compatibility
-            'entities': context.entities,
-            'entity_confidences': context.entity_confidences,
-            'validation': context.validation,
-            'source': context.source,
-            'metadata': context.metadata,  # Include metadata (category, etc.)
-            'raw': {
-                'source': context.source,
-                'entity_confidences': context.entity_confidences
-            }
+            "intent": context.intent,
+            "intent_confidence": context.intent_confidence,  # Include as intent_confidence
+            "confidence": context.intent_confidence,  # Keep for backward compatibility
+            "entities": context.entities,
+            "entity_confidences": context.entity_confidences,
+            "validation": context.validation,
+            "source": context.source,
+            "metadata": context.metadata,  # Include metadata (category, etc.)
+            "raw": {
+                "source": context.source,
+                "entity_confidences": context.entity_confidences,
+            },
         }
 
     def shutdown(self):
         for stage in self.stages:
-            if hasattr(stage, 'shutdown'):
+            if hasattr(stage, "shutdown"):
                 stage.shutdown()

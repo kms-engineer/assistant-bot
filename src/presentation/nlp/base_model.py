@@ -21,7 +21,7 @@ class BaseModel:
     def _select_device() -> str:
         if torch.cuda.is_available():
             return "cuda"
-        elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+        elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
             return "mps"
         return "cpu"
 
@@ -31,7 +31,7 @@ class BaseModel:
 
     def _load_label_map(self) -> Dict[int, str]:
         label_map_path = os.path.join(self.model_path, "label_map.json")
-        with open(label_map_path, 'r') as f:
+        with open(label_map_path, "r") as f:
             label_map = json.load(f)
             return {int(k): v for k, v in label_map.items()}
 

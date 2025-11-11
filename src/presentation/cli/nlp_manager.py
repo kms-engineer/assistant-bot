@@ -40,9 +40,7 @@ class NLPManager:
                 return False
 
             subprocess.run(
-                [sys.executable, str(download_script)],
-                check=True,
-                capture_output=False
+                [sys.executable, str(download_script)], check=True, capture_output=False
             )
             print("Models downloaded successfully!\n")
             return True
@@ -54,10 +52,7 @@ class NLPManager:
             print(f"Unexpected error during download: {e}\n")
             return False
 
-    def initialize_nlp_processor(
-        self,
-        use_parallel: bool = True
-    ) -> bool:
+    def initialize_nlp_processor(self, use_parallel: bool = True) -> bool:
         print("\nInitializing NLP mode...")
 
         # Check if models exist
@@ -82,7 +77,7 @@ class NLPManager:
             self.nlp_processor = HybridNLP(
                 intent_model_path=str(self.intent_model_path),
                 ner_model_path=str(self.ner_model_path),
-                use_parallel=use_parallel
+                use_parallel=use_parallel,
             )
             print("NLP mode ready!\n")
             return True
@@ -113,5 +108,5 @@ class NLPManager:
         return self.nlp_processor is not None
 
     def shutdown(self):
-        if self.nlp_processor and hasattr(self.nlp_processor, 'shutdown'):
+        if self.nlp_processor and hasattr(self.nlp_processor, "shutdown"):
             self.nlp_processor.shutdown()

@@ -12,16 +12,16 @@ from .phone_config import PhoneConfig
 from .command_args_config import CommandArgsConfig
 
 __all__ = [
-    'NLPConfig',
-    'ValidationConfig',
-    'UIConfig',
-    'StorageConfig',
-    'IntentConfig',
-    'EntityConfig',
-    'ModelConfig',
-    'ConfidenceConfig',
-    'RegexPatterns',
-    'DateFormatConfig',
-    'PhoneConfig',
-    'CommandArgsConfig',
+    "NLPConfig",
+    "ValidationConfig",
+    "UIConfig",
+    "StorageConfig",
+    "IntentConfig",
+    "EntityConfig",
+    "ModelConfig",
+    "ConfidenceConfig",
+    "RegexPatterns",
+    "DateFormatConfig",
+    "PhoneConfig",
+    "CommandArgsConfig",
 ]
