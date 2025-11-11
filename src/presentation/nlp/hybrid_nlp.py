@@ -58,7 +58,8 @@ class HybridNLP:
         return self.pipeline.execute(user_text)
 
     def shutdown(self):
-        self.pipeline.shutdown()
+        if self.pipeline:
+            self.pipeline.shutdown()
 
     def __del__(self):
         self.shutdown()

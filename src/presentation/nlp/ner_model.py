@@ -13,9 +13,12 @@ class NERModel(BaseModel):
     def __init__(self, model_path: str = None):
         super().__init__(model_path, ModelConfig.NER_MODEL_PATH)
 
+        # Load the pretrained token-classification model without forcing num_labels so
+        # the checkpoint's label/head dimensions are preserved. Forcing num_labels
+        # can lead to size mismatches when the local EntityConfig differs from the
+        # model's training-time label map.
         self.model = AutoModelForTokenClassification.from_pretrained(
-            self.model_path,
-            num_labels=len(EntityConfig.ENTITY_LABELS)
+            self.model_path
         ).to(self.device)
 
         self.ner_pipeline = pipeline(

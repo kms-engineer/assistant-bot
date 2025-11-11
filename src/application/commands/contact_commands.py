@@ -100,7 +100,7 @@ def change_contact(args: List[str], service: ContactService) -> str:
 
 def remove_phone(args: List[str], service: ContactService) -> str:
     if len(args) < 2:
-        raise ValueError("Remove-phone command requires 2 arguments: name and phone")
+        raise ValueError("remove-phone command requires 2 arguments: name and phone")
 
     name = args[0]
     phone_vo = Phone(args[1])
@@ -119,7 +119,7 @@ def remove_phone(args: List[str], service: ContactService) -> str:
 
 def delete_contact(args: List[str], service: ContactService) -> str:
     if len(args) < 1:
-        raise ValueError("Delete-contact command requires 1 argument: name")
+        raise ValueError("delete-contact command requires 1 argument: name")
 
     name = args[0]
 
@@ -161,7 +161,7 @@ def delete_contact(args: List[str], service: ContactService) -> str:
 
 def show_phone(args: List[str], service: ContactService) -> str:
     if len(args) < 1:
-        raise ValueError("Phone command requires 1 argument: name")
+        raise ValueError("show-phone command requires 1 argument: name")
 
     name = args[0]
 
@@ -243,10 +243,10 @@ def birthdays(args: List[str], service: ContactService) -> str:
     else:
         try:
             days = int(args[0])
-            if days > 365:
-                return f"Max amount of days for upcoming birthdays is 365."
         except ValueError:
             raise ValueError(f"Invalid amount of days ahead: {args[0]}")
+    if days > 365:
+        raise ValueError(f"Max amount of days for upcoming birthdays is 365.")
 
     upcoming = service.get_upcoming_birthdays(days)
 
