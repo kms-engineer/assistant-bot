@@ -19,7 +19,7 @@ class NLPManager:
         self.models_dir = self.project_root / "models"
         self.intent_model_path = self.models_dir / "assistant-bot-intent-classifier"
         self.ner_model_path = self.models_dir / "assistant-bot-ner-model"
-        self.nlp_processor : Optional[HybridNLP] = None
+        self.nlp_processor: Optional[HybridNLP] = None
 
     def check_models_exist(self) -> tuple[bool, bool]:
         intent_exists = (

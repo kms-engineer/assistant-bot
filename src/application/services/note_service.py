@@ -17,10 +17,14 @@ from ...infrastructure.storage.storage_type import StorageType
 
 class NoteService:
 
-    def __init__(self, storage: Optional[Storage] = None, serializer: Optional[JsonSerializer] = None):
+    def __init__(
+        self,
+        storage: Optional[Storage] = None,
+        serializer: Optional[JsonSerializer] = None,
+    ):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notes : dict[Any, Any] = {}
+        self.notes: dict[Any, Any] = {}
         self.raw_storage = raw_storage
         if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
@@ -156,7 +160,7 @@ class NoteService:
         return self.search_notes_by_tag(tag)
 
     def list_tags(self) -> dict[str, int]:
-        tag_counts : dict[str, int] = {}
+        tag_counts: dict[str, int] = {}
         for note in self.notes.values():
             for tag in note.tags:
                 tag_value = tag.value

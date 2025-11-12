@@ -31,7 +31,9 @@ class StorageFactory:
         storage_path = Path(filepath.lower())
         if storage_path.suffix.endswith(".json"):
             return JsonStorage(storage_path)
-        elif storage_path.suffix.endswith(".pkl") or storage_path.suffix.endswith(".pickle"):
+        elif storage_path.suffix.endswith(".pkl") or storage_path.suffix.endswith(
+            ".pickle"
+        ):
             return PickleStorage(storage_path)
         elif (
             storage_path.suffix.endswith(".db")

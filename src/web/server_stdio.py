@@ -107,7 +107,9 @@ def save_address_book(filename: Optional[str] = None):
     tags={"address book", "load"},
     description="Load an address book from a file or storage",
 )
-def load_address_book(filename: Optional[str] | None = None, user_provided: bool = False):
+def load_address_book(
+    filename: Optional[str] | None = None, user_provided: bool = False
+):
     return contact_service.load_address_book(filename, user_provided=user_provided)
 
 

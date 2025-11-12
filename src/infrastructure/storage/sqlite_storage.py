@@ -39,7 +39,7 @@ class SQLiteStorage(Storage):
         self._is_initialized = False
         self._base_class = base
         self._session_factory = None
-        self._engine : Engine | None = None
+        self._engine: Engine | None = None
 
     def _create_session(self) -> Session:
         if not self._is_initialized:
@@ -55,9 +55,7 @@ class SQLiteStorage(Storage):
     def initialize(self, db_name: str) -> None:
         db_path = self.resolver.get_full_path(db_name)
         print(f"Initializing SQLite database at {db_path}")
-        self._engine = create_engine(
-            f"sqlite:///{db_path}", echo=False, future=True
-        )
+        self._engine = create_engine(f"sqlite:///{db_path}", echo=False, future=True)
         self._session_factory = sessionmaker(bind=self._engine, expire_on_commit=False)
         self._is_initialized = True
         self._base_class.metadata.create_all(self._engine)
