@@ -30,6 +30,7 @@ def add_note(args: List[str], service: NoteService) -> str:
 def append_notes(lines: List[str], notes: List[Note]):
     for note in notes:
         lines.append(f"ID: {note.id}")
+        lines.append(f"Title: {note.title}")
         lines.append(f"Text: {note.text}")
         if note.tags:
             tags_str = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
