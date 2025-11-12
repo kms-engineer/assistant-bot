@@ -12,7 +12,7 @@ class RegexFallbackStage(PipelineStage):
 
     def should_skip(self, context: NLPContext) -> bool:
         # Skip if validation passed AND we have at least one entity
-        if not context.validation.get('valid', False):
+        if not context.validation.get("valid", False):
             return False
 
         # Check if we have any non-None entities
@@ -24,11 +24,12 @@ class RegexFallbackStage(PipelineStage):
 
     def execute(self, context: NLPContext) -> NLPContext:
         entities_regex, spans, probs = self.span_extractor.extract(
-            context.user_text,
-            intent=context.intent
+            context.user_text, intent=context.intent
         )
 
-        merged = EntityMerger.merge(entities_regex, context.entities, probs, context.entity_confidences)
+        merged = EntityMerger.merge(
+            entities_regex, context.entities, probs, context.entity_confidences
+        )
         context.entities = merged
         context.source = "ner+regex"
 

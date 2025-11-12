@@ -1,6 +1,10 @@
 from typing import Optional
 
-from src.domain.utils.styles_utils import stylize_success, stylize_errors, stylize_warning
+from src.domain.utils.styles_utils import (
+    stylize_success,
+    stylize_errors,
+    stylize_warning,
+)
 
 
 class UIMessages:
@@ -132,9 +136,13 @@ GENERAL:
 
     @staticmethod
     @stylize_warning
-    def invalid_command(available_commands: list, suggestion: Optional[str] = None) -> str:
-        available = ', '.join(sorted(available_commands))
+    def invalid_command(
+        available_commands: list, suggestion: Optional[str] = None
+    ) -> str:
+        available = ", ".join(sorted(available_commands))
         if suggestion:
-            return (f"Invalid command. Did you mean '{suggestion}'? \n"
-                    f"Available commands: {available}")
+            return (
+                f"Invalid command. Did you mean '{suggestion}'? \n"
+                f"Available commands: {available}"
+            )
         return f"Invalid command. Available commands: {available}"

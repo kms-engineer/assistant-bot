@@ -9,4 +9,14 @@ class TestStorageConfig:
         """Test that StorageConfig is currently empty."""
         # This test is designed to fail if any attributes are added to StorageConfig,
         # prompting a review of the tests for the new configuration.
-        assert len([attr for attr in dir(StorageConfig) if not attr.startswith('__') and not callable(getattr(StorageConfig, attr))]) == 0
+        assert (
+            len(
+                [
+                    attr
+                    for attr in dir(StorageConfig)
+                    if not attr.startswith("__")
+                    and not callable(getattr(StorageConfig, attr))
+                ]
+            )
+            == 0
+        )

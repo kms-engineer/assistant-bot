@@ -3,14 +3,15 @@ from unittest.mock import Mock
 from src.domain.entities.note import Note
 from src.domain.value_objects.tag import Tag
 
-test_title='Test note title'
+test_title = "Test note title"
+
 
 class TestNote:
     """Tests for the Note entity."""
 
     def test_note_creation_success(self):
         """Test successful creation of a Note."""
-        note = Note(test_title,  "Test note text  ", "test-id-1")
+        note = Note(test_title, "Test note text  ", "test-id-1")
         assert note.title == test_title
         assert note.text == "Test note text"
         assert note.id == "test-id-1"
@@ -84,7 +85,11 @@ class TestNote:
 
     def test_str_representation_with_tags_and_long_text(self):
         """Test the string representation of a note with tags and long text."""
-        note = Note(test_title, "This is a very long note text that should be truncated.", "id-1")
+        note = Note(
+            test_title,
+            "This is a very long note text that should be truncated.",
+            "id-1",
+        )
         note.add_tag(Tag("long"))
         note.add_tag(Tag("test"))
         expected = "Note 'Test note title'\n[long, test]:\nThis is a very long note text that should be trunc..."

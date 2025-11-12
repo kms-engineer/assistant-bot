@@ -6,6 +6,7 @@ from src.domain.value_objects import Tag
 
 test_title = "Test note title"
 
+
 @pytest.fixture
 def mock_storage():
     """Create a mock storage for testing."""

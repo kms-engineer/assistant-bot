@@ -4,17 +4,17 @@ from .stages import (
     ValidationStage,
     RegexFallbackStage,
     TemplateFallbackStage,
-    PostProcessStage
+    PostProcessStage,
 )
 from .executor import NLPPipeline
 
 __all__ = [
-    'NLPContext',
-    'PipelineStage',
-    'ParallelIntentNERStage',
-    'ValidationStage',
-    'RegexFallbackStage',
-    'TemplateFallbackStage',
-    'PostProcessStage',
-    'NLPPipeline'
+    "NLPContext",
+    "PipelineStage",
+    "ParallelIntentNERStage",
+    "ValidationStage",
+    "RegexFallbackStage",
+    "TemplateFallbackStage",
+    "PostProcessStage",
+    "NLPPipeline",
 ]

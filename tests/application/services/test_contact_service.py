@@ -19,7 +19,9 @@ def mock_storage():
 @pytest.fixture
 def contact_service(mock_storage):
     """Create a ContactService with mock storage."""
-    with patch('src.application.services.contact_service.DomainStorageAdapter') as mock_adapter:
+    with patch(
+        "src.application.services.contact_service.DomainStorageAdapter"
+    ) as mock_adapter:
         mock_adapter.return_value = mock_storage
         service = ContactService(storage=mock_storage)
         return service
@@ -103,8 +105,12 @@ class TestContactService:
 
     def test_get_upcoming_birthdays(self, contact_service):
         """Test getting upcoming birthdays."""
-        with patch.object(contact_service.address_book, 'get_upcoming_birthdays') as mock_get_birthdays:
-            mock_get_birthdays.return_value = [{"name": "John Doe", "birthday": "2024-12-25"}]
+        with patch.object(
+            contact_service.address_book, "get_upcoming_birthdays"
+        ) as mock_get_birthdays:
+            mock_get_birthdays.return_value = [
+                {"name": "John Doe", "birthday": "2024-12-25"}
+            ]
             result = contact_service.get_upcoming_birthdays(10)
             mock_get_birthdays.assert_called_once_with(10)
             assert len(result) == 1
@@ -135,7 +141,9 @@ class TestContactService:
 
     def test_remove_email_not_set(self, contact_service, sample_contact):
         """Test removing an email when none is set."""
-        with pytest.raises(ValueError, match="Can't remove email for John Doe.\nEmail is not set yet."):
+        with pytest.raises(
+            ValueError, match="Can't remove email for John Doe.\nEmail is not set yet."
+        ):
             contact_service.remove_email("John Doe")
 
     def test_add_address_success(self, contact_service, sample_contact):
@@ -163,7 +171,10 @@ class TestContactService:
 
     def test_remove_address_not_set(self, contact_service, sample_contact):
         """Test removing an address when none is set."""
-        with pytest.raises(ValueError, match="Can't remove address for John Doe.\nAddress is not set yet."):
+        with pytest.raises(
+            ValueError,
+            match="Can't remove address for John Doe.\nAddress is not set yet.",
+        ):
             contact_service.remove_address("John Doe")
 
     def test_search_exact(self, contact_service, sample_contact):
@@ -181,7 +192,9 @@ class TestContactService:
     def test_load_address_book(self, contact_service, mock_storage):
         """Test loading an address book from storage."""
         mock_address_book = AddressBook()
-        mock_address_book.add_record(Contact.create(Name("Loaded Contact"), lambda: "1"))
+        mock_address_book.add_record(
+            Contact.create(Name("Loaded Contact"), lambda: "1")
+        )
         mock_storage.load_contacts.return_value = (mock_address_book, "loaded.pkl")
         count = contact_service.load_address_book("loaded.pkl")
         assert count == 1
@@ -192,6 +205,8 @@ class TestContactService:
         """Test saving an address book to storage."""
         mock_storage.save_contacts.return_value = "saved.pkl"
         filename = contact_service.save_address_book("saved.pkl")
-        mock_storage.save_contacts.assert_called_once_with(contact_service.address_book, "saved.pkl", user_provided=False)
+        mock_storage.save_contacts.assert_called_once_with(
+            contact_service.address_book, "saved.pkl", user_provided=False
+        )
         assert filename == "saved.pkl"
         assert contact_service.get_current_filename() == "saved.pkl"

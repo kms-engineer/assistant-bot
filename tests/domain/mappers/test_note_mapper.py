@@ -5,6 +5,7 @@ from src.domain.value_objects.tag import Tag
 
 test_title = "Test note title"
 
+
 class TestNoteMapper:
     """Tests for the NoteMapper class."""
 
@@ -38,7 +39,7 @@ class TestNoteMapper:
             id="test-id-1",
             title=test_title,
             text="Test note text",
-            tags="tag1, tag2, tag3"
+            tags="tag1, tag2, tag3",
         )
 
         note = NoteMapper.from_dbmodel(db_note)
@@ -54,10 +55,7 @@ class TestNoteMapper:
     def test_from_dbmodel_no_tags(self):
         """Test mapping a DBNote model with no tags to a Note entity."""
         db_note = DBNote(
-            id="test-id-2",
-            title=test_title,
-            text="Another note",
-            tags=None
+            id="test-id-2", title=test_title, text="Another note", tags=None
         )
 
         note = NoteMapper.from_dbmodel(db_note)

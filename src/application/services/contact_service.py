@@ -23,10 +23,11 @@ class ContactService:
         self.address_book = AddressBook()
         self._current_filename = DEFAULT_CONTACTS_FILE
 
-    def load_address_book(self, filename: str = DEFAULT_CONTACTS_FILE, user_provided: bool = False) -> int:
+    def load_address_book(
+        self, filename: str = DEFAULT_CONTACTS_FILE, user_provided: bool = False
+    ) -> int:
         loaded_book, normalized_filename = self.storage.load_contacts(
-            filename,
-            user_provided=user_provided
+            filename, user_provided=user_provided
         )
 
         self.address_book = loaded_book if loaded_book else AddressBook()
@@ -34,13 +35,13 @@ class ContactService:
 
         return len(self.address_book.data)
 
-    def save_address_book(self, filename: Optional[str] = None, user_provided: bool = False) -> str:
+    def save_address_book(
+        self, filename: Optional[str] = None, user_provided: bool = False
+    ) -> str:
         target = filename if filename else self._current_filename
 
         saved_filename = self.storage.save_contacts(
-            self.address_book,
-            target,
-            user_provided=user_provided
+            self.address_book, target, user_provided=user_provided
         )
         self._current_filename = saved_filename
         return saved_filename
@@ -55,7 +56,9 @@ class ContactService:
             except ValueError as e:
                 # Phone already exists for this contact
                 if "already exists" in str(e):
-                    return f"Phone number {phone.value} already exists for {name.value}."
+                    return (
+                        f"Phone number {phone.value} already exists for {name.value}."
+                    )
                 raise  # Re-raise if it's a different ValueError
         except KeyError:
             # Contact doesn't exist, create new one
@@ -63,7 +66,7 @@ class ContactService:
                 name,
                 lambda: IDGenerator.generate_unique_id(
                     lambda: self.address_book.get_ids()
-                )
+                ),
             )
             contact.add_phone(phone)
             self.address_book.add_record(contact)
@@ -74,7 +77,9 @@ class ContactService:
         contact.edit_phone(old_phone, new_phone)
         return "Contact phone number updated."
 
-    def edit_phone_by_id(self, contact_id: str, old_phone: Phone, new_phone: Phone) -> str:
+    def edit_phone_by_id(
+        self, contact_id: str, old_phone: Phone, new_phone: Phone
+    ) -> str:
         contact = self.address_book.find_by_id(contact_id)
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
@@ -86,14 +91,18 @@ class ContactService:
         if not contact:
             raise KeyError(f"Contact with ID {contact_id} not found")
         if len(contact.phones) == 1:
-            raise ValueError(f"Cannot remove the only phone number. Contact must have at least one phone.")
+            raise ValueError(
+                f"Cannot remove the only phone number. Contact must have at least one phone."
+            )
         contact.remove_phone(phone)
         return f"Phone number {phone.value} removed from {contact.name.value}."
 
     def remove_phone(self, name: str, phone: Phone) -> str:
         contact = self.address_book.find(name)
         if len(contact.phones) == 1:
-            raise ValueError(f"Cannot remove the only phone number. Contact must have at least one phone.")
+            raise ValueError(
+                f"Cannot remove the only phone number. Contact must have at least one phone."
+            )
         contact.remove_phone(phone)
         return f"Phone number {phone.value} removed from {name}."
 
@@ -124,9 +133,7 @@ class ContactService:
     def create_new_contact(self, name: Name, phone: Phone) -> str:
         contact = Contact.create(
             name,
-            lambda: IDGenerator.generate_unique_id(
-                lambda: self.address_book.get_ids()
-            )
+            lambda: IDGenerator.generate_unique_id(lambda: self.address_book.get_ids()),
         )
         contact.add_phone(phone)
         self.address_book.add_record(contact)
@@ -206,7 +213,9 @@ class ContactService:
             contact.remove_email()
             return f"Email {email} from {contact.name.value} removed successfully"
         else:
-            raise ValueError(f"Can't remove email for {contact.name.value}.\nEmail is not set yet.")
+            raise ValueError(
+                f"Can't remove email for {contact.name.value}.\nEmail is not set yet."
+            )
 
     def add_email(self, name: str, email: Email) -> str:
         contact = self.address_book.find(name)
@@ -263,7 +272,9 @@ class ContactService:
             contact.remove_address()
             return f"Address {address} from {contact.name.value} removed successfully"
         else:
-            raise ValueError(f"Can't remove address for {contact.name.value}.\nAddress is not set yet.")
+            raise ValueError(
+                f"Can't remove address for {contact.name.value}.\nAddress is not set yet."
+            )
 
     def add_address(self, name: str, address: Address) -> str:
         contact = self.address_book.find(name)
@@ -286,10 +297,16 @@ class ContactService:
             contact.remove_address()
             return f"Address {address} from {name} removed successfully"
         else:
-            raise ValueError(f"Can't remove address for {name}.\nAddress is not set yet.")
+            raise ValueError(
+                f"Can't remove address for {name}.\nAddress is not set yet."
+            )
 
     def search(self, search_text: str, exact=False) -> list[Contact]:
-        return list(filter(lambda c: c.is_matching(search_text, exact), self.address_book.values()))
+        return list(
+            filter(
+                lambda c: c.is_matching(search_text, exact), self.address_book.values()
+            )
+        )
 
     def get_current_filename(self) -> str:
         return self._current_filename

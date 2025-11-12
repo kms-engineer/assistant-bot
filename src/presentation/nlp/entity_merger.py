@@ -4,12 +4,7 @@ from src.config import NLPConfig, EntityConfig
 
 class EntityMerger:
     @staticmethod
-    def merge(
-        regex_ent: Dict,
-        ner_ent: Dict,
-        regex_conf: Dict,
-        ner_conf: Dict
-    ) -> Dict:
+    def merge(regex_ent: Dict, ner_ent: Dict, regex_conf: Dict, ner_conf: Dict) -> Dict:
         merged = {}
         all_keys = set(regex_ent.keys()) | set(ner_ent.keys())
 
@@ -24,8 +19,12 @@ class EntityMerger:
             elif n_val and not r_val:
                 merged[key] = n_val
             else:
-                r_conf = regex_conf.get(key, EntityConfig.DEFAULT_REGEX_CONFIDENCE if r_val else 0.0)
-                n_conf = ner_conf.get(key, EntityConfig.DEFAULT_NER_CONFIDENCE if n_val else 0.0)
+                r_conf = regex_conf.get(
+                    key, EntityConfig.DEFAULT_REGEX_CONFIDENCE if r_val else 0.0
+                )
+                n_conf = ner_conf.get(
+                    key, EntityConfig.DEFAULT_NER_CONFIDENCE if n_val else 0.0
+                )
 
                 conf_diff = abs(r_conf - n_conf)
 

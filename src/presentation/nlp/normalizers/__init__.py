@@ -7,11 +7,11 @@ from .tag_normalizer import TagNormalizer
 from .note_text_normalizer import NoteTextNormalizer
 
 __all__ = [
-    'PhoneNormalizer',
-    'EmailNormalizer',
-    'NameNormalizer',
-    'BirthdayNormalizer',
-    'AddressNormalizer',
-    'TagNormalizer',
-    'NoteTextNormalizer',
+    "PhoneNormalizer",
+    "EmailNormalizer",
+    "NameNormalizer",
+    "BirthdayNormalizer",
+    "AddressNormalizer",
+    "TagNormalizer",
+    "NoteTextNormalizer",
 ]

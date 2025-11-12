@@ -5,7 +5,7 @@ def select_from_list(
     items: List,
     prompt: str = "Select an option:",
     formatter: Optional[Callable] = None,
-    allow_cancel: bool = True
+    allow_cancel: bool = True,
 ) -> Optional[int]:
     if not items:
         return None
@@ -46,8 +46,12 @@ def select_from_list(
         if 1 <= choice <= len(items):
             return choice - 1  # Return 0-based index
         else:
-            print(f"Please enter a number between {0 if allow_cancel else 1} and {len(items)}.")
+            print(
+                f"Please enter a number between {0 if allow_cancel else 1} and {len(items)}."
+            )
 
 
-def select_option(prompt: str, options: List[str], allow_cancel: bool = True) -> Optional[int]:
+def select_option(
+    prompt: str, options: List[str], allow_cancel: bool = True
+) -> Optional[int]:
     return select_from_list(items=options, prompt=prompt, allow_cancel=allow_cancel)

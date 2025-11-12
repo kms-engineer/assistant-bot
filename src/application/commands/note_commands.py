@@ -62,7 +62,11 @@ def show_notes(args: List[str], service: NoteService) -> str:
                 lines.append("")
     else:
         # Regular listing with tag highlighting
-        notes = service.get_notes_sorted_by_title() if sort_by_title else service.get_all_notes()
+        notes = (
+            service.get_notes_sorted_by_title()
+            if sort_by_title
+            else service.get_all_notes()
+        )
 
         if not notes:
             return "No notes found."
@@ -105,7 +109,11 @@ def edit_note(args: List[str], service: NoteService) -> str:
         return f"Note not found with ID: {note_id}"
 
     # Ask for confirmation
-    prompt = f"Edit note '{note.id}'? Old text: '{note.text[:50]}...'" if len(note.text) > 50 else f"Edit note '{note.id}'? Old text: '{note.text}'"
+    prompt = (
+        f"Edit note '{note.id}'? Old text: '{note.text[:50]}...'"
+        if len(note.text) > 50
+        else f"Edit note '{note.id}'? Old text: '{note.text}'"
+    )
     if not confirm_action(prompt, default=True):
         return UIMessages.ACTION_CANCELLED
 

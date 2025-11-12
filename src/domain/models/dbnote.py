@@ -4,7 +4,7 @@ from .dbbase import DBBase
 
 
 class DBNote(DBBase):
-    __tablename__ = 'notes'
+    __tablename__ = "notes"
 
     id = Column(String, primary_key=True)
     title = Column(String, nullable=False)

@@ -1,4 +1,3 @@
-
 class DateFormatConfig:
 
     # Primary date format

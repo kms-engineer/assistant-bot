@@ -15,16 +15,19 @@ class PhoneValidator(BaseValidator):
         if not phone or len(phone) == 0:
             return ValidationConfig.PHONE_ERROR_EMPTY
 
-        if phone[0] == '+':
+        if phone[0] == "+":
             phone = phone[1:]
         if not (all(c.isdigit() for c in phone)):
             return ValidationConfig.PHONE_ERROR_INVALID_FORMAT
 
         # Extract digits only (skip the + if present)
-        digits = ''.join(c for c in phone if c.isdigit())
+        digits = "".join(c for c in phone if c.isdigit())
 
         # Check length is between 8 and 15 digits
-        if len(digits) < ValidationConfig.PHONE_MIN_DIGITS or len(digits) > ValidationConfig.PHONE_MAX_DIGITS:
+        if (
+            len(digits) < ValidationConfig.PHONE_MIN_DIGITS
+            or len(digits) > ValidationConfig.PHONE_MAX_DIGITS
+        ):
             return ValidationConfig.PHONE_ERROR_INVALID_LENGTH
 
         return True
@@ -33,6 +36,6 @@ class PhoneValidator(BaseValidator):
     def normalize(raw: str) -> str:
         if not raw:
             return ""
-        if raw.startswith('+'):
-            return re.sub(r"\D+", '', raw[1:])
-        return re.sub(r"\D+", '', raw)
+        if raw.startswith("+"):
+            return re.sub(r"\D+", "", raw[1:])
+        return re.sub(r"\D+", "", raw)

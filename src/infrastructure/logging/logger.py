@@ -4,9 +4,7 @@ from pathlib import Path
 
 
 def setup_logger(
-    name: str = "assistant_bot",
-    level: int = logging.INFO,
-    log_file: Path = None
+    name: str = "assistant_bot", level: int = logging.INFO, log_file: Path = None
 ) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(level)
@@ -15,8 +13,8 @@ def setup_logger(
         return logger
 
     formatter = logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        datefmt='%Y-%m-%d %H:%M:%S'
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
     )
 
     console_handler = logging.StreamHandler(sys.stdout)

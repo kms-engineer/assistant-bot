@@ -9,13 +9,13 @@ from .note_text_validator import NoteTextValidator
 from .intent_validator import IntentValidator
 
 __all__ = [
-    'BaseValidator',
-    'NameValidator',
-    'EmailValidator',
-    'PhoneValidator',
-    'AddressValidator',
-    'BirthdayValidator',
-    'TagValidator',
-    'NoteTextValidator',
-    'IntentValidator',
+    "BaseValidator",
+    "NameValidator",
+    "EmailValidator",
+    "PhoneValidator",
+    "AddressValidator",
+    "BirthdayValidator",
+    "TagValidator",
+    "NoteTextValidator",
+    "IntentValidator",
 ]

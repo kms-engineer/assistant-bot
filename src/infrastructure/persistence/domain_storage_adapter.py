@@ -11,7 +11,7 @@ class DomainStorageAdapter:
     def __init__(self, storage: Storage, serializer: JsonSerializer = None):
         self.storage = storage
         self.serializer = serializer if serializer else JsonSerializer()
-        self.resolver = getattr(storage, 'resolver', None)
+        self.resolver = getattr(storage, "resolver", None)
 
     @property
     def file_extension(self) -> str:
@@ -25,15 +25,17 @@ class DomainStorageAdapter:
         if self.storage.storage_type == StorageType.SQLITE:
             return filename
 
-        if self.storage.file_extension == '.json':
+        if self.storage.file_extension == ".json":
             return self.resolver.ensure_json_suffix(filename)
-        elif self.storage.file_extension == '.pkl':
+        elif self.storage.file_extension == ".pkl":
             return self.resolver.ensure_pkl_suffix(filename)
         return filename
 
     def save_contacts(self, address_book, filename: str, **kwargs) -> str:
-        if self.storage.storage_type == StorageType.PICKLE \
-                or self.storage.storage_type == StorageType.SQLITE:
+        if (
+            self.storage.storage_type == StorageType.PICKLE
+            or self.storage.storage_type == StorageType.SQLITE
+        ):
             data = address_book
         elif self.storage.storage_type == StorageType.JSON:
             data = [
@@ -54,7 +56,7 @@ class DomainStorageAdapter:
 
         if loaded is None:
             return None, normalized_filename
-        elif hasattr(loaded, 'data') and hasattr(loaded, 'add_record'):
+        elif hasattr(loaded, "data") and hasattr(loaded, "add_record"):
             return loaded, normalized_filename
         elif isinstance(loaded, list):
             address_book = AddressBook()
@@ -76,10 +78,7 @@ class DomainStorageAdapter:
         if self.storage.storage_type == StorageType.PICKLE:
             data = notes
         elif self.storage.storage_type == StorageType.JSON:
-            data = [
-                self.serializer.note_to_dict(note)
-                for note in notes.values()
-            ]
+            data = [self.serializer.note_to_dict(note) for note in notes.values()]
         elif self.storage.storage_type == StorageType.SQLITE:
             # Convert notes dict to Notebook for SQLite storage
             notebook = Notebook()
@@ -94,7 +93,9 @@ class DomainStorageAdapter:
 
     def load_notes(self, filename: str, **kwargs):
         # For SQLite, use load_notes method if available
-        if self.storage.storage_type == StorageType.SQLITE and hasattr(self.storage, 'load_notes'):
+        if self.storage.storage_type == StorageType.SQLITE and hasattr(
+            self.storage, "load_notes"
+        ):
             loaded = self.storage.load_notes(filename, **kwargs)
         else:
             loaded = self.storage.load(filename, **kwargs)

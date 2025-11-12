@@ -8,12 +8,17 @@ from src.infrastructure.storage.storage_type import StorageType
 
 class SampleObject:
     """A simple custom object for testing pickling."""
+
     def __init__(self, name, value):
         self.name = name
         self.value = value
 
     def __eq__(self, other):
-        return isinstance(other, SampleObject) and self.name == other.name and self.value == other.value
+        return (
+            isinstance(other, SampleObject)
+            and self.name == other.name
+            and self.value == other.value
+        )
 
 
 @pytest.fixture
@@ -34,7 +39,7 @@ def test_initialization(tmp_path: Path):
 
 def test_properties(storage: PickleStorage):
     """Tests the file_extension and storage_type properties."""
-    assert storage.file_extension == '.pkl'
+    assert storage.file_extension == ".pkl"
     assert storage.storage_type == StorageType.PICKLE
 
 
@@ -114,11 +119,10 @@ def test_overwrite_existing_file(storage: PickleStorage):
     assert storage.load(filename) == new_data
 
 
-@pytest.mark.parametrize("invalid_filename", [
-    "../invalid.pkl",
-    "path/traversal.pkl",
-    "another\\bad\\name.pkl"
-])
+@pytest.mark.parametrize(
+    "invalid_filename",
+    ["../invalid.pkl", "path/traversal.pkl", "another\\bad\\name.pkl"],
+)
 def test_save_with_invalid_filename(storage: PickleStorage, invalid_filename: str):
     """Tests that attempting to save with a malicious filename raises an error."""
     with pytest.raises(ValueError, match="Filename must not contain directories"):
@@ -131,11 +135,21 @@ def test_user_provided_filename_is_checked(storage: PickleStorage):
     data = {"a": 1}
 
     # Should raise error on save if user_provided is True
-    with pytest.raises(ValueError, match="Filename '{}' is reserved. Please use a different name.".format(reserved_filename)):
+    with pytest.raises(
+        ValueError,
+        match="Filename '{}' is reserved. Please use a different name.".format(
+            reserved_filename
+        ),
+    ):
         storage.save(data, reserved_filename, user_provided=True)
 
     # Should raise error on load if user_provided is True
-    with pytest.raises(ValueError, match="Filename '{}' is reserved. Please use a different name.".format(reserved_filename)):
+    with pytest.raises(
+        ValueError,
+        match="Filename '{}' is reserved. Please use a different name.".format(
+            reserved_filename
+        ),
+    ):
         storage.load(reserved_filename, user_provided=True)
 
     # Should NOT raise error if user_provided is False (the default)

@@ -5,9 +5,9 @@ from .template_fallback_stage import TemplateFallbackStage
 from .post_process_stage import PostProcessStage
 
 __all__ = [
-    'ParallelIntentNERStage',
-    'ValidationStage',
-    'RegexFallbackStage',
-    'TemplateFallbackStage',
-    'PostProcessStage'
+    "ParallelIntentNERStage",
+    "ValidationStage",
+    "RegexFallbackStage",
+    "TemplateFallbackStage",
+    "PostProcessStage",
 ]

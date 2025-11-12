@@ -17,7 +17,7 @@ class TestTagValidator:
             "simple_tag",
             "min_length_implied",
             "max_length",
-        ]
+        ],
     )
     def test_validate_success(self, tag):
         """Scenario: A valid tag string is provided."""
@@ -30,9 +30,18 @@ class TestTagValidator:
             (123, ValidationConfig.TAG_ERROR_NOT_STRING),
             ("", ValidationConfig.TAG_ERROR_EMPTY),
             ("  ", ValidationConfig.TAG_ERROR_EMPTY),
-            ("a" * (ValidationConfig.TAG_MAX_LENGTH + 1), ValidationConfig.TAG_ERROR_TOO_LONG),
+            (
+                "a" * (ValidationConfig.TAG_MAX_LENGTH + 1),
+                ValidationConfig.TAG_ERROR_TOO_LONG,
+            ),
         ],
-        ids=["none_value", "not_a_string", "empty_string", "whitespace_only", "too_long"]
+        ids=[
+            "none_value",
+            "not_a_string",
+            "empty_string",
+            "whitespace_only",
+            "too_long",
+        ],
     )
     def test_validate_failure(self, tag, expected_error):
         """Scenario: An invalid tag is provided."""

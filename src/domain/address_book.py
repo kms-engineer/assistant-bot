@@ -26,8 +26,11 @@ class AddressBook(UserDict):
         raise KeyError("Contact not found")
 
     def find_all(self, contact_name: str) -> list[Contact]:
-        matches = [contact for contact in self.data.values()
-                   if contact.name.value == contact_name]
+        matches = [
+            contact
+            for contact in self.data.values()
+            if contact.name.value == contact_name
+        ]
         return matches
 
     def find_by_id(self, contact_id: str) -> Optional[Contact]:
@@ -62,9 +65,11 @@ class AddressBook(UserDict):
                 continue
 
             if today <= next_birthday_date <= next_n_days:
-                upcoming_birthdays.append({
-                    "name": contact.name.value,
-                    "birthdays_date": next_birthday_date.strftime(DATE_FORMAT)
-                })
+                upcoming_birthdays.append(
+                    {
+                        "name": contact.name.value,
+                        "birthdays_date": next_birthday_date.strftime(DATE_FORMAT),
+                    }
+                )
 
         return upcoming_birthdays

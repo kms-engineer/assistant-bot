@@ -4,9 +4,9 @@ from .regex_extractor import RegexExtractor
 from .heuristic_extractor import HeuristicExtractor
 
 __all__ = [
-    'Entity',
-    'ExtractionStrategy',
-    'LibraryExtractor',
-    'RegexExtractor',
-    'HeuristicExtractor',
+    "Entity",
+    "ExtractionStrategy",
+    "LibraryExtractor",
+    "RegexExtractor",
+    "HeuristicExtractor",
 ]

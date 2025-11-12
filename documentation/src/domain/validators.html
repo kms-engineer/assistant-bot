@@ -1,0 +1,1168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="pdoc 16.0.0"/>
+    <title>src.domain.validators API documentation</title>
+
+    <style>/*! * Bootstrap Reboot v5.0.0 (https://getbootstrap.com/) * Copyright 2011-2021 The Bootstrap Authors * Copyright 2011-2021 Twitter, Inc. * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE) * Forked from Normalize.css, licensed MIT (https://github.com/necolas/normalize.css/blob/master/LICENSE.md) */*,::after,::before{box-sizing:border-box}@media (prefers-reduced-motion:no-preference){:root{scroll-behavior:smooth}}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Liberation Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";font-size:1rem;font-weight:400;line-height:1.5;color:#212529;background-color:#fff;-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}hr{margin:1rem 0;color:inherit;background-color:currentColor;border:0;opacity:.25}hr:not([size]){height:1px}h1,h2,h3,h4,h5,h6{margin-top:0;margin-bottom:.5rem;font-weight:500;line-height:1.2}h1{font-size:calc(1.375rem + 1.5vw)}@media (min-width:1200px){h1{font-size:2.5rem}}h2{font-size:calc(1.325rem + .9vw)}@media (min-width:1200px){h2{font-size:2rem}}h3{font-size:calc(1.3rem + .6vw)}@media (min-width:1200px){h3{font-size:1.75rem}}h4{font-size:calc(1.275rem + .3vw)}@media (min-width:1200px){h4{font-size:1.5rem}}h5{font-size:1.25rem}h6{font-size:1rem}p{margin-top:0;margin-bottom:1rem}abbr[data-bs-original-title],abbr[title]{-webkit-text-decoration:underline dotted;text-decoration:underline dotted;cursor:help;-webkit-text-decoration-skip-ink:none;text-decoration-skip-ink:none}address{margin-bottom:1rem;font-style:normal;line-height:inherit}ol,ul{padding-left:2rem}dl,ol,ul{margin-top:0;margin-bottom:1rem}ol ol,ol ul,ul ol,ul ul{margin-bottom:0}dt{font-weight:700}dd{margin-bottom:.5rem;margin-left:0}blockquote{margin:0 0 1rem}b,strong{font-weight:bolder}small{font-size:.875em}mark{padding:.2em;background-color:#fcf8e3}sub,sup{position:relative;font-size:.75em;line-height:0;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}a{color:#0d6efd;text-decoration:underline}a:hover{color:#0a58ca}a:not([href]):not([class]),a:not([href]):not([class]):hover{color:inherit;text-decoration:none}code,kbd,pre,samp{font-family:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;font-size:1em;direction:ltr;unicode-bidi:bidi-override}pre{display:block;margin-top:0;margin-bottom:1rem;overflow:auto;font-size:.875em}pre code{font-size:inherit;color:inherit;word-break:normal}code{font-size:.875em;color:#d63384;word-wrap:break-word}a>code{color:inherit}kbd{padding:.2rem .4rem;font-size:.875em;color:#fff;background-color:#212529;border-radius:.2rem}kbd kbd{padding:0;font-size:1em;font-weight:700}figure{margin:0 0 1rem}img,svg{vertical-align:middle}table{caption-side:bottom;border-collapse:collapse}caption{padding-top:.5rem;padding-bottom:.5rem;color:#6c757d;text-align:left}th{text-align:inherit;text-align:-webkit-match-parent}tbody,td,tfoot,th,thead,tr{border-color:inherit;border-style:solid;border-width:0}label{display:inline-block}button{border-radius:0}button:focus:not(:focus-visible){outline:0}button,input,optgroup,select,textarea{margin:0;font-family:inherit;font-size:inherit;line-height:inherit}button,select{text-transform:none}[role=button]{cursor:pointer}select{word-wrap:normal}select:disabled{opacity:1}[list]::-webkit-calendar-picker-indicator{display:none}[type=button],[type=reset],[type=submit],button{-webkit-appearance:button}[type=button]:not(:disabled),[type=reset]:not(:disabled),[type=submit]:not(:disabled),button:not(:disabled){cursor:pointer}::-moz-focus-inner{padding:0;border-style:none}textarea{resize:vertical}fieldset{min-width:0;padding:0;margin:0;border:0}legend{float:left;width:100%;padding:0;margin-bottom:.5rem;font-size:calc(1.275rem + .3vw);line-height:inherit}@media (min-width:1200px){legend{font-size:1.5rem}}legend+*{clear:left}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-fields-wrapper,::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute,::-webkit-datetime-edit-month-field,::-webkit-datetime-edit-text,::-webkit-datetime-edit-year-field{padding:0}::-webkit-inner-spin-button{height:auto}[type=search]{outline-offset:-2px;-webkit-appearance:textfield}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-color-swatch-wrapper{padding:0}::file-selector-button{font:inherit}::-webkit-file-upload-button{font:inherit;-webkit-appearance:button}output{display:inline-block}iframe{border:0}summary{display:list-item;cursor:pointer}progress{vertical-align:baseline}[hidden]{display:none!important}</style>
+    <style>/*! syntax-highlighting.css */pre{line-height:125%;}span.linenos{color:inherit; background-color:transparent; padding-left:5px; padding-right:20px;}.pdoc-code .hll{background-color:#ffffcc}.pdoc-code{background:#f8f8f8;}.pdoc-code .c{color:#3D7B7B; font-style:italic}.pdoc-code .err{border:1px solid #FF0000}.pdoc-code .k{color:#008000; font-weight:bold}.pdoc-code .o{color:#666666}.pdoc-code .ch{color:#3D7B7B; font-style:italic}.pdoc-code .cm{color:#3D7B7B; font-style:italic}.pdoc-code .cp{color:#9C6500}.pdoc-code .cpf{color:#3D7B7B; font-style:italic}.pdoc-code .c1{color:#3D7B7B; font-style:italic}.pdoc-code .cs{color:#3D7B7B; font-style:italic}.pdoc-code .gd{color:#A00000}.pdoc-code .ge{font-style:italic}.pdoc-code .gr{color:#E40000}.pdoc-code .gh{color:#000080; font-weight:bold}.pdoc-code .gi{color:#008400}.pdoc-code .go{color:#717171}.pdoc-code .gp{color:#000080; font-weight:bold}.pdoc-code .gs{font-weight:bold}.pdoc-code .gu{color:#800080; font-weight:bold}.pdoc-code .gt{color:#0044DD}.pdoc-code .kc{color:#008000; font-weight:bold}.pdoc-code .kd{color:#008000; font-weight:bold}.pdoc-code .kn{color:#008000; font-weight:bold}.pdoc-code .kp{color:#008000}.pdoc-code .kr{color:#008000; font-weight:bold}.pdoc-code .kt{color:#B00040}.pdoc-code .m{color:#666666}.pdoc-code .s{color:#BA2121}.pdoc-code .na{color:#687822}.pdoc-code .nb{color:#008000}.pdoc-code .nc{color:#0000FF; font-weight:bold}.pdoc-code .no{color:#880000}.pdoc-code .nd{color:#AA22FF}.pdoc-code .ni{color:#717171; font-weight:bold}.pdoc-code .ne{color:#CB3F38; font-weight:bold}.pdoc-code .nf{color:#0000FF}.pdoc-code .nl{color:#767600}.pdoc-code .nn{color:#0000FF; font-weight:bold}.pdoc-code .nt{color:#008000; font-weight:bold}.pdoc-code .nv{color:#19177C}.pdoc-code .ow{color:#AA22FF; font-weight:bold}.pdoc-code .w{color:#bbbbbb}.pdoc-code .mb{color:#666666}.pdoc-code .mf{color:#666666}.pdoc-code .mh{color:#666666}.pdoc-code .mi{color:#666666}.pdoc-code .mo{color:#666666}.pdoc-code .sa{color:#BA2121}.pdoc-code .sb{color:#BA2121}.pdoc-code .sc{color:#BA2121}.pdoc-code .dl{color:#BA2121}.pdoc-code .sd{color:#BA2121; font-style:italic}.pdoc-code .s2{color:#BA2121}.pdoc-code .se{color:#AA5D1F; font-weight:bold}.pdoc-code .sh{color:#BA2121}.pdoc-code .si{color:#A45A77; font-weight:bold}.pdoc-code .sx{color:#008000}.pdoc-code .sr{color:#A45A77}.pdoc-code .s1{color:#BA2121}.pdoc-code .ss{color:#19177C}.pdoc-code .bp{color:#008000}.pdoc-code .fm{color:#0000FF}.pdoc-code .vc{color:#19177C}.pdoc-code .vg{color:#19177C}.pdoc-code .vi{color:#19177C}.pdoc-code .vm{color:#19177C}.pdoc-code .il{color:#666666}</style>
+    <style>/*! theme.css */:root{--pdoc-background:#fff;}.pdoc{--text:#212529;--muted:#6c757d;--link:#3660a5;--link-hover:#1659c5;--code:#f8f8f8;--active:#fff598;--accent:#eee;--accent2:#c1c1c1;--nav-hover:rgba(255, 255, 255, 0.5);--name:#0066BB;--def:#008800;--annotation:#007020;}</style>
+    <style>/*! layout.css */html, body{width:100%;height:100%;}html, main{scroll-behavior:smooth;}body{background-color:var(--pdoc-background);}@media (max-width:769px){#navtoggle{cursor:pointer;position:absolute;width:50px;height:40px;top:1rem;right:1rem;border-color:var(--text);color:var(--text);display:flex;opacity:0.8;z-index:999;}#navtoggle:hover{opacity:1;}#togglestate + div{display:none;}#togglestate:checked + div{display:inherit;}main, header{padding:2rem 3vw;}header + main{margin-top:-3rem;}.git-button{display:none !important;}nav input[type="search"]{max-width:77%;}nav input[type="search"]:first-child{margin-top:-6px;}nav input[type="search"]:valid ~ *{display:none !important;}}@media (min-width:770px){:root{--sidebar-width:clamp(12.5rem, 28vw, 22rem);}nav{position:fixed;overflow:auto;height:100vh;width:var(--sidebar-width);}main, header{padding:3rem 2rem 3rem calc(var(--sidebar-width) + 3rem);width:calc(54rem + var(--sidebar-width));max-width:100%;}header + main{margin-top:-4rem;}#navtoggle{display:none;}}#togglestate{position:absolute;height:0;opacity:0;}nav.pdoc{--pad:clamp(0.5rem, 2vw, 1.75rem);--indent:1.5rem;background-color:var(--accent);border-right:1px solid var(--accent2);box-shadow:0 0 20px rgba(50, 50, 50, .2) inset;padding:0 0 0 var(--pad);overflow-wrap:anywhere;scrollbar-width:thin; scrollbar-color:var(--accent2) transparent; z-index:1}nav.pdoc::-webkit-scrollbar{width:.4rem; }nav.pdoc::-webkit-scrollbar-thumb{background-color:var(--accent2); }nav.pdoc > div{padding:var(--pad) 0;}nav.pdoc .module-list-button{display:inline-flex;align-items:center;color:var(--text);border-color:var(--muted);margin-bottom:1rem;}nav.pdoc .module-list-button:hover{border-color:var(--text);}nav.pdoc input[type=search]{display:block;outline-offset:0;width:calc(100% - var(--pad));}nav.pdoc .logo{max-width:calc(100% - var(--pad));max-height:35vh;display:block;margin:0 auto 1rem;transform:translate(calc(-.5 * var(--pad)), 0);}nav.pdoc ul{list-style:none;padding-left:0;}nav.pdoc > div > ul{margin-left:calc(0px - var(--pad));}nav.pdoc li a{padding:.2rem 0 .2rem calc(var(--pad) + var(--indent));}nav.pdoc > div > ul > li > a{padding-left:var(--pad);}nav.pdoc li{transition:all 100ms;}nav.pdoc li:hover{background-color:var(--nav-hover);}nav.pdoc a, nav.pdoc a:hover{color:var(--text);}nav.pdoc a{display:block;}nav.pdoc > h2:first-of-type{margin-top:1.5rem;}nav.pdoc .class:before{content:"class ";color:var(--muted);}nav.pdoc .function:after{content:"()";color:var(--muted);}nav.pdoc footer:before{content:"";display:block;width:calc(100% - var(--pad));border-top:solid var(--accent2) 1px;margin-top:1.5rem;padding-top:.5rem;}nav.pdoc footer{font-size:small;}</style>
+    <style>/*! content.css */.pdoc{color:var(--text);box-sizing:border-box;line-height:1.5;background:none;}.pdoc .pdoc-button{cursor:pointer;display:inline-block;border:solid black 1px;border-radius:2px;font-size:.75rem;padding:calc(0.5em - 1px) 1em;transition:100ms all;}.pdoc .alert{padding:1rem 1rem 1rem calc(1.5rem + 24px);border:1px solid transparent;border-radius:.25rem;background-repeat:no-repeat;background-position:.75rem center;margin-bottom:1rem;}.pdoc .alert > em{display:none;}.pdoc .alert > *:last-child{margin-bottom:0;}.pdoc .alert.note{color:#084298;background-color:#cfe2ff;border-color:#b6d4fe;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23084298%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8%2016A8%208%200%201%200%208%200a8%208%200%200%200%200%2016zm.93-9.412-1%204.705c-.07.34.029.533.304.533.194%200%20.487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703%200-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381%202.29-.287zM8%205.5a1%201%200%201%201%200-2%201%201%200%200%201%200%202z%22/%3E%3C/svg%3E");}.pdoc .alert.tip{color:#0a3622;background-color:#d1e7dd;border-color:#a3cfbb;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%230a3622%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%206a6%206%200%201%201%2010.174%204.31c-.203.196-.359.4-.453.619l-.762%201.769A.5.5%200%200%201%2010.5%2013a.5.5%200%200%201%200%201%20.5.5%200%200%201%200%201l-.224.447a1%201%200%200%201-.894.553H6.618a1%201%200%200%201-.894-.553L5.5%2015a.5.5%200%200%201%200-1%20.5.5%200%200%201%200-1%20.5.5%200%200%201-.46-.302l-.761-1.77a2%202%200%200%200-.453-.618A5.98%205.98%200%200%201%202%206m6-5a5%205%200%200%200-3.479%208.592c.263.254.514.564.676.941L5.83%2012h4.342l.632-1.467c.162-.377.413-.687.676-.941A5%205%200%200%200%208%201%22/%3E%3C/svg%3E");}.pdoc .alert.important{color:#055160;background-color:#cff4fc;border-color:#9eeaf9;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23055160%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M2%200a2%202%200%200%200-2%202v12a2%202%200%200%200%202%202h12a2%202%200%200%200%202-2V2a2%202%200%200%200-2-2zm6%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.warning{color:#664d03;background-color:#fff3cd;border-color:#ffecb5;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23664d03%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M8.982%201.566a1.13%201.13%200%200%200-1.96%200L.165%2013.233c-.457.778.091%201.767.98%201.767h13.713c.889%200%201.438-.99.98-1.767L8.982%201.566zM8%205c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%205.995A.905.905%200%200%201%208%205zm.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2z%22/%3E%3C/svg%3E");}.pdoc .alert.caution{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M11.46.146A.5.5%200%200%200%2011.107%200H4.893a.5.5%200%200%200-.353.146L.146%204.54A.5.5%200%200%200%200%204.893v6.214a.5.5%200%200%200%20.146.353l4.394%204.394a.5.5%200%200%200%20.353.146h6.214a.5.5%200%200%200%20.353-.146l4.394-4.394a.5.5%200%200%200%20.146-.353V4.893a.5.5%200%200%200-.146-.353zM8%204c.535%200%20.954.462.9.995l-.35%203.507a.552.552%200%200%201-1.1%200L7.1%204.995A.905.905%200%200%201%208%204m.002%206a1%201%200%201%201%200%202%201%201%200%200%201%200-2%22/%3E%3C/svg%3E");}.pdoc .alert.danger{color:#842029;background-color:#f8d7da;border-color:#f5c2c7;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20fill%3D%22%23842029%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M5.52.359A.5.5%200%200%201%206%200h4a.5.5%200%200%201%20.474.658L8.694%206H12.5a.5.5%200%200%201%20.395.807l-7%209a.5.5%200%200%201-.873-.454L6.823%209.5H3.5a.5.5%200%200%201-.48-.641l2.5-8.5z%22/%3E%3C/svg%3E");}.pdoc .visually-hidden{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0, 0, 0, 0) !important;white-space:nowrap !important;border:0 !important;}.pdoc h1, .pdoc h2, .pdoc h3{font-weight:300;margin:.3em 0;padding:.2em 0;}.pdoc > section:not(.module-info) h1{font-size:1.5rem;font-weight:500;}.pdoc > section:not(.module-info) h2{font-size:1.4rem;font-weight:500;}.pdoc > section:not(.module-info) h3{font-size:1.3rem;font-weight:500;}.pdoc > section:not(.module-info) h4{font-size:1.2rem;}.pdoc > section:not(.module-info) h5{font-size:1.1rem;}.pdoc a{text-decoration:none;color:var(--link);}.pdoc a:hover{color:var(--link-hover);}.pdoc blockquote{margin-left:2rem;}.pdoc pre{border-top:1px solid var(--accent2);border-bottom:1px solid var(--accent2);margin-top:0;margin-bottom:1em;padding:.5rem 0 .5rem .5rem;overflow-x:auto;background-color:var(--code);}.pdoc code{color:var(--text);padding:.2em .4em;margin:0;font-size:85%;background-color:var(--accent);border-radius:6px;}.pdoc a > code{color:inherit;}.pdoc pre > code{display:inline-block;font-size:inherit;background:none;border:none;padding:0;}.pdoc > section:not(.module-info){margin-bottom:1.5rem;}.pdoc .modulename{margin-top:0;font-weight:bold;}.pdoc .modulename a{color:var(--link);transition:100ms all;}.pdoc .git-button{float:right;border:solid var(--link) 1px;}.pdoc .git-button:hover{background-color:var(--link);color:var(--pdoc-background);}.view-source-toggle-state,.view-source-toggle-state ~ .pdoc-code{display:none;}.view-source-toggle-state:checked ~ .pdoc-code{display:block;}.view-source-button{display:inline-block;float:right;font-size:.75rem;line-height:1.5rem;color:var(--muted);padding:0 .4rem 0 1.3rem;cursor:pointer;text-indent:-2px;}.view-source-button > span{visibility:hidden;}.module-info .view-source-button{float:none;display:flex;justify-content:flex-end;margin:-1.2rem .4rem -.2rem 0;}.view-source-button::before{position:absolute;content:"View Source";display:list-item;list-style-type:disclosure-closed;}.view-source-toggle-state:checked ~ .attr .view-source-button::before,.view-source-toggle-state:checked ~ .view-source-button::before{list-style-type:disclosure-open;}.pdoc .docstring{margin-bottom:1.5rem;}.pdoc section:not(.module-info) .docstring{margin-left:clamp(0rem, 5vw - 2rem, 1rem);}.pdoc .docstring .pdoc-code{margin-left:1em;margin-right:1em;}.pdoc h1:target,.pdoc h2:target,.pdoc h3:target,.pdoc h4:target,.pdoc h5:target,.pdoc h6:target,.pdoc .pdoc-code > pre > span:target{background-color:var(--active);box-shadow:-1rem 0 0 0 var(--active);}.pdoc .pdoc-code > pre > span:target{display:block;}.pdoc div:target > .attr,.pdoc section:target > .attr,.pdoc dd:target > a{background-color:var(--active);}.pdoc *{scroll-margin:2rem;}.pdoc .pdoc-code .linenos{user-select:none;}.pdoc .attr:hover{filter:contrast(0.95);}.pdoc section, .pdoc .classattr{position:relative;}.pdoc .headerlink{--width:clamp(1rem, 3vw, 2rem);position:absolute;top:0;left:calc(0rem - var(--width));transition:all 100ms ease-in-out;opacity:0;}.pdoc .headerlink::before{content:"#";display:block;text-align:center;width:var(--width);height:2.3rem;line-height:2.3rem;font-size:1.5rem;}.pdoc .attr:hover ~ .headerlink,.pdoc *:target > .headerlink,.pdoc .headerlink:hover{opacity:1;}.pdoc .attr{display:block;margin:.5rem 0 .5rem;padding:.4rem .4rem .4rem 1rem;background-color:var(--accent);overflow-x:auto;}.pdoc .classattr{margin-left:2rem;}.pdoc .decorator-deprecated{color:#842029;}.pdoc .decorator-deprecated ~ span{filter:grayscale(1) opacity(0.8);}.pdoc .name{color:var(--name);font-weight:bold;}.pdoc .def{color:var(--def);font-weight:bold;}.pdoc .signature{background-color:transparent;}.pdoc .param, .pdoc .return-annotation{white-space:pre;}.pdoc .signature.multiline .param{display:block;}.pdoc .signature.condensed .param{display:inline-block;}.pdoc .annotation{color:var(--annotation);}.pdoc .view-value-toggle-state,.pdoc .view-value-toggle-state ~ .default_value{display:none;}.pdoc .view-value-toggle-state:checked ~ .default_value{display:inherit;}.pdoc .view-value-button{font-size:.5rem;vertical-align:middle;border-style:dashed;margin-top:-0.1rem;}.pdoc .view-value-button:hover{background:white;}.pdoc .view-value-button::before{content:"show";text-align:center;width:2.2em;display:inline-block;}.pdoc .view-value-toggle-state:checked ~ .view-value-button::before{content:"hide";}.pdoc .inherited{margin-left:2rem;}.pdoc .inherited dt{font-weight:700;}.pdoc .inherited dt, .pdoc .inherited dd{display:inline;margin-left:0;margin-bottom:.5rem;}.pdoc .inherited dd:not(:last-child):after{content:", ";}.pdoc .inherited .class:before{content:"class ";}.pdoc .inherited .function a:after{content:"()";}.pdoc .search-result .docstring{overflow:auto;max-height:25vh;}.pdoc .search-result.focused > .attr{background-color:var(--active);}.pdoc .attribution{margin-top:2rem;display:block;opacity:0.5;transition:all 200ms;filter:grayscale(100%);}.pdoc .attribution:hover{opacity:1;filter:grayscale(0%);}.pdoc .attribution img{margin-left:5px;height:27px;vertical-align:bottom;width:50px;transition:all 200ms;}.pdoc table{display:block;width:max-content;max-width:100%;overflow:auto;margin-bottom:1rem;}.pdoc table th{font-weight:600;}.pdoc table th, .pdoc table td{padding:6px 13px;border:1px solid var(--accent2);}</style>
+    <style>/*! custom.css */</style></head>
+<body>
+    <nav class="pdoc">
+        <label id="navtoggle" for="togglestate" class="pdoc-button"><svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'><path stroke-linecap='round' stroke="currentColor" stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/></svg></label>
+        <input id="togglestate" type="checkbox" aria-hidden="true" tabindex="-1">
+        <div>            <a class="pdoc-button module-list-button" href="../domain.html">
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0v-2z"/>
+  <path fill-rule="evenodd" d="M4.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H14.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3z"/>
+</svg>                &nbsp;src.domain</a>
+
+
+            <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
+                   pattern=".+" required>
+
+
+
+            <h2>API Documentation</h2>
+                <ul class="memberlist">
+            <li>
+                    <a class="class" href="#BaseValidator">BaseValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BaseValidator.validate">validate</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BaseValidator.validate_and_raise">validate_and_raise</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#BaseValidator.is_empty_string">is_empty_string</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#NameValidator">NameValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#NameValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#EmailValidator">EmailValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#EmailValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#PhoneValidator">PhoneValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#PhoneValidator.validate">validate</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#PhoneValidator.normalize">normalize</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#AddressValidator">AddressValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#AddressValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#BirthdayValidator">BirthdayValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#BirthdayValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#TagValidator">TagValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#TagValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#NoteTextValidator">NoteTextValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="function" href="#NoteTextValidator.validate">validate</a>
+                        </li>
+                </ul>
+
+            </li>
+            <li>
+                    <a class="class" href="#IntentValidator">IntentValidator</a>
+                            <ul class="memberlist">
+                        <li>
+                                <a class="variable" href="#IntentValidator.REQUIRED_ENTITIES">REQUIRED_ENTITIES</a>
+                        </li>
+                        <li>
+                                <a class="variable" href="#IntentValidator.OPTIONAL_ENTITIES">OPTIONAL_ENTITIES</a>
+                        </li>
+                        <li>
+                                <a class="function" href="#IntentValidator.validate_for_intent">validate_for_intent</a>
+                        </li>
+                </ul>
+
+            </li>
+    </ul>
+
+
+
+        <a class="attribution" title="pdoc: Python API documentation generator" href="https://pdoc.dev" target="_blank">
+            built with <span class="visually-hidden">pdoc</span><img
+                alt="pdoc logo"
+                src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20role%3D%22img%22%20aria-label%3D%22pdoc%20logo%22%20width%3D%22300%22%20height%3D%22160%22%20viewBox%3D%220%200%20150%2080%22%3E%3Ctitle%3Epdoc%3C/title%3E%3Cpath%20d%3D%22M132.316%2048.886c.276-4.679%202.342-6.698%204.409-7.982s4.27-1.165%206.751-1.055c1.586.07%203.044.156%204.222-.482%201.142-.619%202.026-1.932%202.162-3.739.268-3.576-1.929-5.368-5.006-5.551s-7.599.524-10.517%201.606c-4.455%201.652-8.588%206.606-9.552%208.992s-2.342%206.193-1.745%2010.873%202.664%209.221%205.878%2011.79%205.878%203.808%2010.103%204.312%203.444.229%206.062.229%205.006-2.202%204.914-4.909-2.296-5.001-4.501-4.863-3.077.505-5.281.229-7.715-2.064-7.899-9.451z%22%20fill%3D%22%23198754%22/%3E%3Ccircle%20cx%3D%22101.504%22%20cy%3D%2248.943%22%20r%3D%2214.208%22%20fill%3D%22none%22%20stroke%3D%22%23198754%22%20stroke-width%3D%229.354%22/%3E%3Cpath%20d%3D%22M87.81.002c-3.637.065-5.001.454-7.014%201.232s-3.443%201.363-6.3%204.282c-1.723%201.76-3.148%205.019-3.776%207.329-.413%201.521-.316%202.63-.316%202.63l-.195%2034.612c.065%205.774-6.755%208.305-9.612%208.37s-9.678-1.038-9.743-9.408%207.128-9.521%208.362-9.521c1.413-.13%202.526-.021%203.718-.016%202.071.009%204.157-.778%204.092-4.671s-4.157-4.736-4.157-4.736c-6.3-.843-11.43%202.206-11.43%202.206S40.917%2038.15%2041.372%2049.634%2051.568%2068.19%2061.311%2068.125s18.316-7.007%2018.445-17.193l.13-22.772c.046-2.291%202.683-3.644%204.476-4.203.745-.232%201.694-.274%201.694-.274l10.457-.13s4.871-.324%207.729-3.114%204.352-6.294%204.352-6.294.974-3.049.13-4.606-.195-1.233-2.792-3.309-8.573-4.477-8.573-4.477S91.447-.063%2087.81.002zM0%2047.169l.065%2028.417S0%2080.127%204.481%2079.997s5.072-3.866%205.049-4.152l-.113-28.482s1.624-7.656%209.937-7.721%2010.002%206.942%2010.002%208.499-.909%2010.51-9.093%2010.51c-.948%200-2.99-.567-4.145-.272-3.919%201-3.194%204.554-3.194%204.554s.065%205.061%207.404%204.996%2018.575-6.034%2018.575-19.074S26.953%2030.04%2019.549%2029.91%201.234%2035.296%200%2047.169z%22%20fill%3D%22%23198754%22/%3E%3Cg%20transform%3D%22matrix%28.325601%200%200%20.325256%20-10.32669%20-45.802786%29%22%3E%3Ccircle%20cx%3D%22297.554%22%20cy%3D%22172.286%22%20r%3D%2216.5%22%20fill%3D%22%23fff%22/%3E%3Cellipse%20cx%3D%22297.709%22%20cy%3D%22172.642%22%20rx%3D%2211.071%22%20ry%3D%2210.871%22%20fill%3D%22%23105a48%22/%3E%3Ccircle%20cx%3D%22304.104%22%20cy%3D%22167.667%22%20r%3D%224.5%22%20fill%3D%22%23fff%22/%3E%3C/g%3E%3Cpath%20d%3D%22M94.661%2017.032l.893-1.476s.99.714%201.916.925%201.575.114%202.955.114l14.565-.162c1.283-.032%203.085-.762%203.02-3.293s-.373-3.503-.373-3.503l1.283-.487s.52.503.877%201.573.309%201.995.292%202.66-.227%201.541-.227%201.541%201.564-.308%202.359-1.038.823-.779%201.489-1.508.812-.86.812-.86.552-.13.877.26.341.957.065%201.46-1.672%202.206-3.247%203.066-2.76%201.427-3.929%201.768-3.848.73-7.063.714l-10.944-.114s-2.143-.081-3.02-.373-2.241-.973-2.598-1.265z%22%20fill%3D%22%23d36d49%22/%3E%3Cg%20fill%3D%22%23105a48%22%3E%3Cellipse%20cx%3D%2293.052%22%20cy%3D%2243.567%22%20rx%3D%22.869%22%20ry%3D%221.014%22%20transform%3D%22rotate%28341.022%29%22/%3E%3Cellipse%20cx%3D%22104.3%22%20cy%3D%22-16.184%22%20rx%3D%22.865%22%20ry%3D%221.009%22%20transform%3D%22rotate%2814.786%29%22/%3E%3C/g%3E%3C/svg%3E"/>
+        </a>
+</div>
+    </nav>
+    <main class="pdoc">
+            <section class="module-info">
+                    <h1 class="modulename">
+<a href="./../../src.html">src</a><wbr>.<a href="./../domain.html">domain</a><wbr>.validators    </h1>
+
+                
+                        <input id="mod-validators-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <label class="view-source-button" for="mod-validators-view-source"><span>View Source</span></label>
+
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos"> 1</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.base_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseValidator</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos"> 2</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.name_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">NameValidator</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos"> 3</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.email_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmailValidator</span>
+</span><span id="L-4"><a href="#L-4"><span class="linenos"> 4</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.phone_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhoneValidator</span>
+</span><span id="L-5"><a href="#L-5"><span class="linenos"> 5</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.address_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">AddressValidator</span>
+</span><span id="L-6"><a href="#L-6"><span class="linenos"> 6</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.birthday_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">BirthdayValidator</span>
+</span><span id="L-7"><a href="#L-7"><span class="linenos"> 7</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.tag_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">TagValidator</span>
+</span><span id="L-8"><a href="#L-8"><span class="linenos"> 8</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.note_text_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">NoteTextValidator</span>
+</span><span id="L-9"><a href="#L-9"><span class="linenos"> 9</span></a><span class="kn">from</span><span class="w"> </span><span class="nn">.intent_validator</span><span class="w"> </span><span class="kn">import</span> <span class="n">IntentValidator</span>
+</span><span id="L-10"><a href="#L-10"><span class="linenos">10</span></a>
+</span><span id="L-11"><a href="#L-11"><span class="linenos">11</span></a><span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="L-12"><a href="#L-12"><span class="linenos">12</span></a>    <span class="s2">&quot;BaseValidator&quot;</span><span class="p">,</span>
+</span><span id="L-13"><a href="#L-13"><span class="linenos">13</span></a>    <span class="s2">&quot;NameValidator&quot;</span><span class="p">,</span>
+</span><span id="L-14"><a href="#L-14"><span class="linenos">14</span></a>    <span class="s2">&quot;EmailValidator&quot;</span><span class="p">,</span>
+</span><span id="L-15"><a href="#L-15"><span class="linenos">15</span></a>    <span class="s2">&quot;PhoneValidator&quot;</span><span class="p">,</span>
+</span><span id="L-16"><a href="#L-16"><span class="linenos">16</span></a>    <span class="s2">&quot;AddressValidator&quot;</span><span class="p">,</span>
+</span><span id="L-17"><a href="#L-17"><span class="linenos">17</span></a>    <span class="s2">&quot;BirthdayValidator&quot;</span><span class="p">,</span>
+</span><span id="L-18"><a href="#L-18"><span class="linenos">18</span></a>    <span class="s2">&quot;TagValidator&quot;</span><span class="p">,</span>
+</span><span id="L-19"><a href="#L-19"><span class="linenos">19</span></a>    <span class="s2">&quot;NoteTextValidator&quot;</span><span class="p">,</span>
+</span><span id="L-20"><a href="#L-20"><span class="linenos">20</span></a>    <span class="s2">&quot;IntentValidator&quot;</span><span class="p">,</span>
+</span><span id="L-21"><a href="#L-21"><span class="linenos">21</span></a><span class="p">]</span>
+</span></pre></div>
+
+
+            </section>
+                <section id="BaseValidator">
+                            <input id="BaseValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BaseValidator</span><wbr>(<span class="base">abc.ABC</span>):
+
+                <label class="view-source-button" for="BaseValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseValidator-6"><a href="#BaseValidator-6"><span class="linenos"> 6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BaseValidator</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+</span><span id="BaseValidator-7"><a href="#BaseValidator-7"><span class="linenos"> 7</span></a>
+</span><span id="BaseValidator-8"><a href="#BaseValidator-8"><span class="linenos"> 8</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseValidator-9"><a href="#BaseValidator-9"><span class="linenos"> 9</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseValidator-10"><a href="#BaseValidator-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="BaseValidator-11"><a href="#BaseValidator-11"><span class="linenos">11</span></a>        <span class="k">pass</span>
+</span><span id="BaseValidator-12"><a href="#BaseValidator-12"><span class="linenos">12</span></a>
+</span><span id="BaseValidator-13"><a href="#BaseValidator-13"><span class="linenos">13</span></a>    <span class="nd">@classmethod</span>
+</span><span id="BaseValidator-14"><a href="#BaseValidator-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_and_raise</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseValidator-15"><a href="#BaseValidator-15"><span class="linenos">15</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="BaseValidator-16"><a href="#BaseValidator-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="BaseValidator-17"><a href="#BaseValidator-17"><span class="linenos">17</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span><span id="BaseValidator-18"><a href="#BaseValidator-18"><span class="linenos">18</span></a>
+</span><span id="BaseValidator-19"><a href="#BaseValidator-19"><span class="linenos">19</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseValidator-20"><a href="#BaseValidator-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty_string</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+</span><span id="BaseValidator-21"><a href="#BaseValidator-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">string</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="BaseValidator.validate" class="classattr">
+                                        <input id="BaseValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+        <div class="decorator decorator-abstractmethod">@abstractmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">value</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="BaseValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseValidator.validate-8"><a href="#BaseValidator.validate-8"><span class="linenos"> 8</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseValidator.validate-9"><a href="#BaseValidator.validate-9"><span class="linenos"> 9</span></a>    <span class="nd">@abstractmethod</span>
+</span><span id="BaseValidator.validate-10"><a href="#BaseValidator.validate-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="BaseValidator.validate-11"><a href="#BaseValidator.validate-11"><span class="linenos">11</span></a>        <span class="k">pass</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BaseValidator.validate_and_raise" class="classattr">
+                                        <input id="BaseValidator.validate_and_raise-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-classmethod">@classmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate_and_raise</span><span class="signature pdoc-code condensed">(<span class="param"><span class="bp">cls</span>, </span><span class="param"><span class="n">value</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="kc">None</span>:</span></span>
+
+                <label class="view-source-button" for="BaseValidator.validate_and_raise-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseValidator.validate_and_raise"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseValidator.validate_and_raise-13"><a href="#BaseValidator.validate_and_raise-13"><span class="linenos">13</span></a>    <span class="nd">@classmethod</span>
+</span><span id="BaseValidator.validate_and_raise-14"><a href="#BaseValidator.validate_and_raise-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_and_raise</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BaseValidator.validate_and_raise-15"><a href="#BaseValidator.validate_and_raise-15"><span class="linenos">15</span></a>        <span class="n">result</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span id="BaseValidator.validate_and_raise-16"><a href="#BaseValidator.validate_and_raise-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="BaseValidator.validate_and_raise-17"><a href="#BaseValidator.validate_and_raise-17"><span class="linenos">17</span></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="BaseValidator.is_empty_string" class="classattr">
+                                        <input id="BaseValidator.is_empty_string-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">is_empty_string</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">string</span></span><span class="return-annotation">):</span></span>
+
+                <label class="view-source-button" for="BaseValidator.is_empty_string-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BaseValidator.is_empty_string"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BaseValidator.is_empty_string-19"><a href="#BaseValidator.is_empty_string-19"><span class="linenos">19</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BaseValidator.is_empty_string-20"><a href="#BaseValidator.is_empty_string-20"><span class="linenos">20</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">is_empty_string</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+</span><span id="BaseValidator.is_empty_string-21"><a href="#BaseValidator.is_empty_string-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">string</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="NameValidator">
+                            <input id="NameValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">NameValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="NameValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#NameValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NameValidator-9"><a href="#NameValidator-9"><span class="linenos"> 9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">NameValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="NameValidator-10"><a href="#NameValidator-10"><span class="linenos">10</span></a>    <span class="n">_NAME_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">RegexPatterns</span><span class="o">.</span><span class="n">VALIDATION_NAME_PATTERN</span><span class="p">)</span>
+</span><span id="NameValidator-11"><a href="#NameValidator-11"><span class="linenos">11</span></a>
+</span><span id="NameValidator-12"><a href="#NameValidator-12"><span class="linenos">12</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="NameValidator-13"><a href="#NameValidator-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="NameValidator-14"><a href="#NameValidator-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="n">BaseValidator</span><span class="o">.</span><span class="n">is_empty_string</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+</span><span id="NameValidator-15"><a href="#NameValidator-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_EMPTY</span>
+</span><span id="NameValidator-16"><a href="#NameValidator-16"><span class="linenos">16</span></a>
+</span><span id="NameValidator-17"><a href="#NameValidator-17"><span class="linenos">17</span></a>        <span class="n">trimmed_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="NameValidator-18"><a href="#NameValidator-18"><span class="linenos">18</span></a>
+</span><span id="NameValidator-19"><a href="#NameValidator-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_MIN_LENGTH</span><span class="p">:</span>
+</span><span id="NameValidator-20"><a href="#NameValidator-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_TOO_SHORT</span>
+</span><span id="NameValidator-21"><a href="#NameValidator-21"><span class="linenos">21</span></a>
+</span><span id="NameValidator-22"><a href="#NameValidator-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="NameValidator-23"><a href="#NameValidator-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_TOO_LONG</span>
+</span><span id="NameValidator-24"><a href="#NameValidator-24"><span class="linenos">24</span></a>
+</span><span id="NameValidator-25"><a href="#NameValidator-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">NameValidator</span><span class="o">.</span><span class="n">_NAME_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">):</span>
+</span><span id="NameValidator-26"><a href="#NameValidator-26"><span class="linenos">26</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_INVALID_CHARS</span>
+</span><span id="NameValidator-27"><a href="#NameValidator-27"><span class="linenos">27</span></a>
+</span><span id="NameValidator-28"><a href="#NameValidator-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="NameValidator.validate" class="classattr">
+                                        <input id="NameValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">name</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="NameValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#NameValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NameValidator.validate-12"><a href="#NameValidator.validate-12"><span class="linenos">12</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="NameValidator.validate-13"><a href="#NameValidator.validate-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="NameValidator.validate-14"><a href="#NameValidator.validate-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="n">BaseValidator</span><span class="o">.</span><span class="n">is_empty_string</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+</span><span id="NameValidator.validate-15"><a href="#NameValidator.validate-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_EMPTY</span>
+</span><span id="NameValidator.validate-16"><a href="#NameValidator.validate-16"><span class="linenos">16</span></a>
+</span><span id="NameValidator.validate-17"><a href="#NameValidator.validate-17"><span class="linenos">17</span></a>        <span class="n">trimmed_name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="NameValidator.validate-18"><a href="#NameValidator.validate-18"><span class="linenos">18</span></a>
+</span><span id="NameValidator.validate-19"><a href="#NameValidator.validate-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_MIN_LENGTH</span><span class="p">:</span>
+</span><span id="NameValidator.validate-20"><a href="#NameValidator.validate-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_TOO_SHORT</span>
+</span><span id="NameValidator.validate-21"><a href="#NameValidator.validate-21"><span class="linenos">21</span></a>
+</span><span id="NameValidator.validate-22"><a href="#NameValidator.validate-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="NameValidator.validate-23"><a href="#NameValidator.validate-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_TOO_LONG</span>
+</span><span id="NameValidator.validate-24"><a href="#NameValidator.validate-24"><span class="linenos">24</span></a>
+</span><span id="NameValidator.validate-25"><a href="#NameValidator.validate-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">NameValidator</span><span class="o">.</span><span class="n">_NAME_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_name</span><span class="p">):</span>
+</span><span id="NameValidator.validate-26"><a href="#NameValidator.validate-26"><span class="linenos">26</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NAME_ERROR_INVALID_CHARS</span>
+</span><span id="NameValidator.validate-27"><a href="#NameValidator.validate-27"><span class="linenos">27</span></a>
+</span><span id="NameValidator.validate-28"><a href="#NameValidator.validate-28"><span class="linenos">28</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="EmailValidator">
+                            <input id="EmailValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">EmailValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="EmailValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EmailValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EmailValidator-9"><a href="#EmailValidator-9"><span class="linenos"> 9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">EmailValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="EmailValidator-10"><a href="#EmailValidator-10"><span class="linenos">10</span></a>    <span class="n">_EMAIL_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">RegexPatterns</span><span class="o">.</span><span class="n">VALIDATION_EMAIL_PATTERN</span><span class="p">)</span>
+</span><span id="EmailValidator-11"><a href="#EmailValidator-11"><span class="linenos">11</span></a>
+</span><span id="EmailValidator-12"><a href="#EmailValidator-12"><span class="linenos">12</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="EmailValidator-13"><a href="#EmailValidator-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="EmailValidator-14"><a href="#EmailValidator-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">email</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="EmailValidator-15"><a href="#EmailValidator-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_EMPTY</span>
+</span><span id="EmailValidator-16"><a href="#EmailValidator-16"><span class="linenos">16</span></a>
+</span><span id="EmailValidator-17"><a href="#EmailValidator-17"><span class="linenos">17</span></a>        <span class="n">trimmed_email</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span id="EmailValidator-18"><a href="#EmailValidator-18"><span class="linenos">18</span></a>
+</span><span id="EmailValidator-19"><a href="#EmailValidator-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_email</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="EmailValidator-20"><a href="#EmailValidator-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_TOO_LONG</span>
+</span><span id="EmailValidator-21"><a href="#EmailValidator-21"><span class="linenos">21</span></a>
+</span><span id="EmailValidator-22"><a href="#EmailValidator-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">EmailValidator</span><span class="o">.</span><span class="n">_EMAIL_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_email</span><span class="p">):</span>
+</span><span id="EmailValidator-23"><a href="#EmailValidator-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_INVALID_FORMAT</span>
+</span><span id="EmailValidator-24"><a href="#EmailValidator-24"><span class="linenos">24</span></a>
+</span><span id="EmailValidator-25"><a href="#EmailValidator-25"><span class="linenos">25</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="EmailValidator.validate" class="classattr">
+                                        <input id="EmailValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">email</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="EmailValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#EmailValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="EmailValidator.validate-12"><a href="#EmailValidator.validate-12"><span class="linenos">12</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="EmailValidator.validate-13"><a href="#EmailValidator.validate-13"><span class="linenos">13</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">email</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="EmailValidator.validate-14"><a href="#EmailValidator.validate-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">email</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="EmailValidator.validate-15"><a href="#EmailValidator.validate-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_EMPTY</span>
+</span><span id="EmailValidator.validate-16"><a href="#EmailValidator.validate-16"><span class="linenos">16</span></a>
+</span><span id="EmailValidator.validate-17"><a href="#EmailValidator.validate-17"><span class="linenos">17</span></a>        <span class="n">trimmed_email</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</span><span id="EmailValidator.validate-18"><a href="#EmailValidator.validate-18"><span class="linenos">18</span></a>
+</span><span id="EmailValidator.validate-19"><a href="#EmailValidator.validate-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_email</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="EmailValidator.validate-20"><a href="#EmailValidator.validate-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_TOO_LONG</span>
+</span><span id="EmailValidator.validate-21"><a href="#EmailValidator.validate-21"><span class="linenos">21</span></a>
+</span><span id="EmailValidator.validate-22"><a href="#EmailValidator.validate-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">EmailValidator</span><span class="o">.</span><span class="n">_EMAIL_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_email</span><span class="p">):</span>
+</span><span id="EmailValidator.validate-23"><a href="#EmailValidator.validate-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">EMAIL_ERROR_INVALID_FORMAT</span>
+</span><span id="EmailValidator.validate-24"><a href="#EmailValidator.validate-24"><span class="linenos">24</span></a>
+</span><span id="EmailValidator.validate-25"><a href="#EmailValidator.validate-25"><span class="linenos">25</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="PhoneValidator">
+                            <input id="PhoneValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">PhoneValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="PhoneValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#PhoneValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PhoneValidator-8"><a href="#PhoneValidator-8"><span class="linenos"> 8</span></a><span class="k">class</span><span class="w"> </span><span class="nc">PhoneValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="PhoneValidator-9"><a href="#PhoneValidator-9"><span class="linenos"> 9</span></a>
+</span><span id="PhoneValidator-10"><a href="#PhoneValidator-10"><span class="linenos">10</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="PhoneValidator-11"><a href="#PhoneValidator-11"><span class="linenos">11</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="PhoneValidator-12"><a href="#PhoneValidator-12"><span class="linenos">12</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="PhoneValidator-13"><a href="#PhoneValidator-13"><span class="linenos">13</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_NOT_STRING</span>
+</span><span id="PhoneValidator-14"><a href="#PhoneValidator-14"><span class="linenos">14</span></a>
+</span><span id="PhoneValidator-15"><a href="#PhoneValidator-15"><span class="linenos">15</span></a>        <span class="c1"># Phone can start with + or a digit</span>
+</span><span id="PhoneValidator-16"><a href="#PhoneValidator-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">phone</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">phone</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="PhoneValidator-17"><a href="#PhoneValidator-17"><span class="linenos">17</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_EMPTY</span>
+</span><span id="PhoneValidator-18"><a href="#PhoneValidator-18"><span class="linenos">18</span></a>
+</span><span id="PhoneValidator-19"><a href="#PhoneValidator-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="n">phone</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+</span><span id="PhoneValidator-20"><a href="#PhoneValidator-20"><span class="linenos">20</span></a>            <span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="PhoneValidator-21"><a href="#PhoneValidator-21"><span class="linenos">21</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phone</span><span class="p">)):</span>
+</span><span id="PhoneValidator-22"><a href="#PhoneValidator-22"><span class="linenos">22</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_INVALID_FORMAT</span>
+</span><span id="PhoneValidator-23"><a href="#PhoneValidator-23"><span class="linenos">23</span></a>
+</span><span id="PhoneValidator-24"><a href="#PhoneValidator-24"><span class="linenos">24</span></a>        <span class="c1"># Extract digits only (skip the + if present)</span>
+</span><span id="PhoneValidator-25"><a href="#PhoneValidator-25"><span class="linenos">25</span></a>        <span class="n">digits</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phone</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">())</span>
+</span><span id="PhoneValidator-26"><a href="#PhoneValidator-26"><span class="linenos">26</span></a>
+</span><span id="PhoneValidator-27"><a href="#PhoneValidator-27"><span class="linenos">27</span></a>        <span class="c1"># Check length is between 8 and 15 digits</span>
+</span><span id="PhoneValidator-28"><a href="#PhoneValidator-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="PhoneValidator-29"><a href="#PhoneValidator-29"><span class="linenos">29</span></a>            <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_MIN_DIGITS</span>
+</span><span id="PhoneValidator-30"><a href="#PhoneValidator-30"><span class="linenos">30</span></a>            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_MAX_DIGITS</span>
+</span><span id="PhoneValidator-31"><a href="#PhoneValidator-31"><span class="linenos">31</span></a>        <span class="p">):</span>
+</span><span id="PhoneValidator-32"><a href="#PhoneValidator-32"><span class="linenos">32</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_INVALID_LENGTH</span>
+</span><span id="PhoneValidator-33"><a href="#PhoneValidator-33"><span class="linenos">33</span></a>
+</span><span id="PhoneValidator-34"><a href="#PhoneValidator-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span><span id="PhoneValidator-35"><a href="#PhoneValidator-35"><span class="linenos">35</span></a>
+</span><span id="PhoneValidator-36"><a href="#PhoneValidator-36"><span class="linenos">36</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="PhoneValidator-37"><a href="#PhoneValidator-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PhoneValidator-38"><a href="#PhoneValidator-38"><span class="linenos">38</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
+</span><span id="PhoneValidator-39"><a href="#PhoneValidator-39"><span class="linenos">39</span></a>            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span id="PhoneValidator-40"><a href="#PhoneValidator-40"><span class="linenos">40</span></a>        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">):</span>
+</span><span id="PhoneValidator-41"><a href="#PhoneValidator-41"><span class="linenos">41</span></a>            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</span><span id="PhoneValidator-42"><a href="#PhoneValidator-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="PhoneValidator.validate" class="classattr">
+                                        <input id="PhoneValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="PhoneValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#PhoneValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PhoneValidator.validate-10"><a href="#PhoneValidator.validate-10"><span class="linenos">10</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="PhoneValidator.validate-11"><a href="#PhoneValidator.validate-11"><span class="linenos">11</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">phone</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="PhoneValidator.validate-12"><a href="#PhoneValidator.validate-12"><span class="linenos">12</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phone</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="PhoneValidator.validate-13"><a href="#PhoneValidator.validate-13"><span class="linenos">13</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_NOT_STRING</span>
+</span><span id="PhoneValidator.validate-14"><a href="#PhoneValidator.validate-14"><span class="linenos">14</span></a>
+</span><span id="PhoneValidator.validate-15"><a href="#PhoneValidator.validate-15"><span class="linenos">15</span></a>        <span class="c1"># Phone can start with + or a digit</span>
+</span><span id="PhoneValidator.validate-16"><a href="#PhoneValidator.validate-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">phone</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">phone</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="PhoneValidator.validate-17"><a href="#PhoneValidator.validate-17"><span class="linenos">17</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_EMPTY</span>
+</span><span id="PhoneValidator.validate-18"><a href="#PhoneValidator.validate-18"><span class="linenos">18</span></a>
+</span><span id="PhoneValidator.validate-19"><a href="#PhoneValidator.validate-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="n">phone</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;+&quot;</span><span class="p">:</span>
+</span><span id="PhoneValidator.validate-20"><a href="#PhoneValidator.validate-20"><span class="linenos">20</span></a>            <span class="n">phone</span> <span class="o">=</span> <span class="n">phone</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+</span><span id="PhoneValidator.validate-21"><a href="#PhoneValidator.validate-21"><span class="linenos">21</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phone</span><span class="p">)):</span>
+</span><span id="PhoneValidator.validate-22"><a href="#PhoneValidator.validate-22"><span class="linenos">22</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_INVALID_FORMAT</span>
+</span><span id="PhoneValidator.validate-23"><a href="#PhoneValidator.validate-23"><span class="linenos">23</span></a>
+</span><span id="PhoneValidator.validate-24"><a href="#PhoneValidator.validate-24"><span class="linenos">24</span></a>        <span class="c1"># Extract digits only (skip the + if present)</span>
+</span><span id="PhoneValidator.validate-25"><a href="#PhoneValidator.validate-25"><span class="linenos">25</span></a>        <span class="n">digits</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">phone</span> <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">isdigit</span><span class="p">())</span>
+</span><span id="PhoneValidator.validate-26"><a href="#PhoneValidator.validate-26"><span class="linenos">26</span></a>
+</span><span id="PhoneValidator.validate-27"><a href="#PhoneValidator.validate-27"><span class="linenos">27</span></a>        <span class="c1"># Check length is between 8 and 15 digits</span>
+</span><span id="PhoneValidator.validate-28"><a href="#PhoneValidator.validate-28"><span class="linenos">28</span></a>        <span class="k">if</span> <span class="p">(</span>
+</span><span id="PhoneValidator.validate-29"><a href="#PhoneValidator.validate-29"><span class="linenos">29</span></a>            <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_MIN_DIGITS</span>
+</span><span id="PhoneValidator.validate-30"><a href="#PhoneValidator.validate-30"><span class="linenos">30</span></a>            <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_MAX_DIGITS</span>
+</span><span id="PhoneValidator.validate-31"><a href="#PhoneValidator.validate-31"><span class="linenos">31</span></a>        <span class="p">):</span>
+</span><span id="PhoneValidator.validate-32"><a href="#PhoneValidator.validate-32"><span class="linenos">32</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">PHONE_ERROR_INVALID_LENGTH</span>
+</span><span id="PhoneValidator.validate-33"><a href="#PhoneValidator.validate-33"><span class="linenos">33</span></a>
+</span><span id="PhoneValidator.validate-34"><a href="#PhoneValidator.validate-34"><span class="linenos">34</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                            <div id="PhoneValidator.normalize" class="classattr">
+                                        <input id="PhoneValidator.normalize-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">normalize</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">raw</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="nb">str</span>:</span></span>
+
+                <label class="view-source-button" for="PhoneValidator.normalize-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#PhoneValidator.normalize"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="PhoneValidator.normalize-36"><a href="#PhoneValidator.normalize-36"><span class="linenos">36</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="PhoneValidator.normalize-37"><a href="#PhoneValidator.normalize-37"><span class="linenos">37</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">normalize</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="PhoneValidator.normalize-38"><a href="#PhoneValidator.normalize-38"><span class="linenos">38</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">raw</span><span class="p">:</span>
+</span><span id="PhoneValidator.normalize-39"><a href="#PhoneValidator.normalize-39"><span class="linenos">39</span></a>            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</span><span id="PhoneValidator.normalize-40"><a href="#PhoneValidator.normalize-40"><span class="linenos">40</span></a>        <span class="k">if</span> <span class="n">raw</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;+&quot;</span><span class="p">):</span>
+</span><span id="PhoneValidator.normalize-41"><a href="#PhoneValidator.normalize-41"><span class="linenos">41</span></a>            <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+</span><span id="PhoneValidator.normalize-42"><a href="#PhoneValidator.normalize-42"><span class="linenos">42</span></a>        <span class="k">return</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\D+&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">raw</span><span class="p">)</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="AddressValidator">
+                            <input id="AddressValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">AddressValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="AddressValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#AddressValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AddressValidator-9"><a href="#AddressValidator-9"><span class="linenos"> 9</span></a><span class="k">class</span><span class="w"> </span><span class="nc">AddressValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="AddressValidator-10"><a href="#AddressValidator-10"><span class="linenos">10</span></a>    <span class="n">_ADDRESS_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">RegexPatterns</span><span class="o">.</span><span class="n">VALIDATION_ADDRESS_PATTERN</span><span class="p">)</span>
+</span><span id="AddressValidator-11"><a href="#AddressValidator-11"><span class="linenos">11</span></a>    <span class="n">_CITY_PATTERN</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">RegexPatterns</span><span class="o">.</span><span class="n">ADDRESS_CITY_PATTERN</span><span class="p">)</span>
+</span><span id="AddressValidator-12"><a href="#AddressValidator-12"><span class="linenos">12</span></a>
+</span><span id="AddressValidator-13"><a href="#AddressValidator-13"><span class="linenos">13</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="AddressValidator-14"><a href="#AddressValidator-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="AddressValidator-15"><a href="#AddressValidator-15"><span class="linenos">15</span></a>        <span class="k">if</span> <span class="n">BaseValidator</span><span class="o">.</span><span class="n">is_empty_string</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+</span><span id="AddressValidator-16"><a href="#AddressValidator-16"><span class="linenos">16</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_EMPTY</span>
+</span><span id="AddressValidator-17"><a href="#AddressValidator-17"><span class="linenos">17</span></a>
+</span><span id="AddressValidator-18"><a href="#AddressValidator-18"><span class="linenos">18</span></a>        <span class="n">trimmed_address</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="AddressValidator-19"><a href="#AddressValidator-19"><span class="linenos">19</span></a>
+</span><span id="AddressValidator-20"><a href="#AddressValidator-20"><span class="linenos">20</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_MIN_LENGTH</span><span class="p">:</span>
+</span><span id="AddressValidator-21"><a href="#AddressValidator-21"><span class="linenos">21</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_TOO_SHORT</span>
+</span><span id="AddressValidator-22"><a href="#AddressValidator-22"><span class="linenos">22</span></a>
+</span><span id="AddressValidator-23"><a href="#AddressValidator-23"><span class="linenos">23</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="AddressValidator-24"><a href="#AddressValidator-24"><span class="linenos">24</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_TOO_LONG</span>
+</span><span id="AddressValidator-25"><a href="#AddressValidator-25"><span class="linenos">25</span></a>
+</span><span id="AddressValidator-26"><a href="#AddressValidator-26"><span class="linenos">26</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">AddressValidator</span><span class="o">.</span><span class="n">_ADDRESS_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">):</span>
+</span><span id="AddressValidator-27"><a href="#AddressValidator-27"><span class="linenos">27</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_INVALID_FORMAT</span>
+</span><span id="AddressValidator-28"><a href="#AddressValidator-28"><span class="linenos">28</span></a>
+</span><span id="AddressValidator-29"><a href="#AddressValidator-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="AddressValidator.validate" class="classattr">
+                                        <input id="AddressValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">address</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="AddressValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#AddressValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="AddressValidator.validate-13"><a href="#AddressValidator.validate-13"><span class="linenos">13</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="AddressValidator.validate-14"><a href="#AddressValidator.validate-14"><span class="linenos">14</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="AddressValidator.validate-15"><a href="#AddressValidator.validate-15"><span class="linenos">15</span></a>        <span class="k">if</span> <span class="n">BaseValidator</span><span class="o">.</span><span class="n">is_empty_string</span><span class="p">(</span><span class="n">address</span><span class="p">):</span>
+</span><span id="AddressValidator.validate-16"><a href="#AddressValidator.validate-16"><span class="linenos">16</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_EMPTY</span>
+</span><span id="AddressValidator.validate-17"><a href="#AddressValidator.validate-17"><span class="linenos">17</span></a>
+</span><span id="AddressValidator.validate-18"><a href="#AddressValidator.validate-18"><span class="linenos">18</span></a>        <span class="n">trimmed_address</span> <span class="o">=</span> <span class="n">address</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="AddressValidator.validate-19"><a href="#AddressValidator.validate-19"><span class="linenos">19</span></a>
+</span><span id="AddressValidator.validate-20"><a href="#AddressValidator.validate-20"><span class="linenos">20</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_MIN_LENGTH</span><span class="p">:</span>
+</span><span id="AddressValidator.validate-21"><a href="#AddressValidator.validate-21"><span class="linenos">21</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_TOO_SHORT</span>
+</span><span id="AddressValidator.validate-22"><a href="#AddressValidator.validate-22"><span class="linenos">22</span></a>
+</span><span id="AddressValidator.validate-23"><a href="#AddressValidator.validate-23"><span class="linenos">23</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="AddressValidator.validate-24"><a href="#AddressValidator.validate-24"><span class="linenos">24</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_TOO_LONG</span>
+</span><span id="AddressValidator.validate-25"><a href="#AddressValidator.validate-25"><span class="linenos">25</span></a>
+</span><span id="AddressValidator.validate-26"><a href="#AddressValidator.validate-26"><span class="linenos">26</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">AddressValidator</span><span class="o">.</span><span class="n">_ADDRESS_PATTERN</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">trimmed_address</span><span class="p">):</span>
+</span><span id="AddressValidator.validate-27"><a href="#AddressValidator.validate-27"><span class="linenos">27</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">ADDRESS_ERROR_INVALID_FORMAT</span>
+</span><span id="AddressValidator.validate-28"><a href="#AddressValidator.validate-28"><span class="linenos">28</span></a>
+</span><span id="AddressValidator.validate-29"><a href="#AddressValidator.validate-29"><span class="linenos">29</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="BirthdayValidator">
+                            <input id="BirthdayValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">BirthdayValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="BirthdayValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BirthdayValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BirthdayValidator-10"><a href="#BirthdayValidator-10"><span class="linenos">10</span></a><span class="k">class</span><span class="w"> </span><span class="nc">BirthdayValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="BirthdayValidator-11"><a href="#BirthdayValidator-11"><span class="linenos">11</span></a>
+</span><span id="BirthdayValidator-12"><a href="#BirthdayValidator-12"><span class="linenos">12</span></a>    <span class="n">_pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">RegexPatterns</span><span class="o">.</span><span class="n">BIRTHDAY_STRICT_PATTERN</span><span class="p">)</span>
+</span><span id="BirthdayValidator-13"><a href="#BirthdayValidator-13"><span class="linenos">13</span></a>
+</span><span id="BirthdayValidator-14"><a href="#BirthdayValidator-14"><span class="linenos">14</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BirthdayValidator-15"><a href="#BirthdayValidator-15"><span class="linenos">15</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">birthday</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="BirthdayValidator-16"><a href="#BirthdayValidator-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="n">date_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BirthdayValidator-17"><a href="#BirthdayValidator-17"><span class="linenos">17</span></a>            <span class="n">date_format</span> <span class="o">=</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">PRIMARY_DATE_FORMAT</span>
+</span><span id="BirthdayValidator-18"><a href="#BirthdayValidator-18"><span class="linenos">18</span></a>
+</span><span id="BirthdayValidator-19"><a href="#BirthdayValidator-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="BirthdayValidator-20"><a href="#BirthdayValidator-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_NOT_STRING</span>
+</span><span id="BirthdayValidator-21"><a href="#BirthdayValidator-21"><span class="linenos">21</span></a>
+</span><span id="BirthdayValidator-22"><a href="#BirthdayValidator-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">birthday</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">birthday</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="BirthdayValidator-23"><a href="#BirthdayValidator-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_EMPTY</span>
+</span><span id="BirthdayValidator-24"><a href="#BirthdayValidator-24"><span class="linenos">24</span></a>
+</span><span id="BirthdayValidator-25"><a href="#BirthdayValidator-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="n">date_format</span> <span class="o">==</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">PRIMARY_DATE_FORMAT</span><span class="p">:</span>
+</span><span id="BirthdayValidator-26"><a href="#BirthdayValidator-26"><span class="linenos">26</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">BirthdayValidator</span><span class="o">.</span><span class="n">_pattern</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">birthday</span><span class="p">):</span>
+</span><span id="BirthdayValidator-27"><a href="#BirthdayValidator-27"><span class="linenos">27</span></a>                <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_FORMAT</span>
+</span><span id="BirthdayValidator-28"><a href="#BirthdayValidator-28"><span class="linenos">28</span></a>
+</span><span id="BirthdayValidator-29"><a href="#BirthdayValidator-29"><span class="linenos">29</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="BirthdayValidator-30"><a href="#BirthdayValidator-30"><span class="linenos">30</span></a>            <span class="n">birthday_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
+</span><span id="BirthdayValidator-31"><a href="#BirthdayValidator-31"><span class="linenos">31</span></a>            <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+</span><span id="BirthdayValidator-32"><a href="#BirthdayValidator-32"><span class="linenos">32</span></a>
+</span><span id="BirthdayValidator-33"><a href="#BirthdayValidator-33"><span class="linenos">33</span></a>            <span class="k">if</span> <span class="n">birthday_date</span> <span class="o">&gt;</span> <span class="n">today</span><span class="p">:</span>
+</span><span id="BirthdayValidator-34"><a href="#BirthdayValidator-34"><span class="linenos">34</span></a>                <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_FUTURE_DATE</span>
+</span><span id="BirthdayValidator-35"><a href="#BirthdayValidator-35"><span class="linenos">35</span></a>
+</span><span id="BirthdayValidator-36"><a href="#BirthdayValidator-36"><span class="linenos">36</span></a>            <span class="k">if</span> <span class="n">birthday_date</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">MIN_BIRTHDAY_YEAR</span><span class="p">:</span>
+</span><span id="BirthdayValidator-37"><a href="#BirthdayValidator-37"><span class="linenos">37</span></a>                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_YEAR</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday_date</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2"> (must be from </span><span class="si">{</span><span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">MIN_BIRTHDAY_YEAR</span><span class="si">}</span><span class="s2"> onwards)&quot;</span>
+</span><span id="BirthdayValidator-38"><a href="#BirthdayValidator-38"><span class="linenos">38</span></a>
+</span><span id="BirthdayValidator-39"><a href="#BirthdayValidator-39"><span class="linenos">39</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">birthday_date</span><span class="o">.</span><span class="n">month</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">):</span>
+</span><span id="BirthdayValidator-40"><a href="#BirthdayValidator-40"><span class="linenos">40</span></a>                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_MONTH</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday_date</span><span class="o">.</span><span class="n">month</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="BirthdayValidator-41"><a href="#BirthdayValidator-41"><span class="linenos">41</span></a>
+</span><span id="BirthdayValidator-42"><a href="#BirthdayValidator-42"><span class="linenos">42</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="BirthdayValidator-43"><a href="#BirthdayValidator-43"><span class="linenos">43</span></a>        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="BirthdayValidator-44"><a href="#BirthdayValidator-44"><span class="linenos">44</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_DATE</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday</span><span class="si">}</span><span class="s2">&quot;</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="BirthdayValidator.validate" class="classattr">
+                                        <input id="BirthdayValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">birthday</span><span class="p">:</span> <span class="nb">str</span>, </span><span class="param"><span class="n">date_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="BirthdayValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#BirthdayValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="BirthdayValidator.validate-14"><a href="#BirthdayValidator.validate-14"><span class="linenos">14</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="BirthdayValidator.validate-15"><a href="#BirthdayValidator.validate-15"><span class="linenos">15</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">birthday</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">date_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="BirthdayValidator.validate-16"><a href="#BirthdayValidator.validate-16"><span class="linenos">16</span></a>        <span class="k">if</span> <span class="n">date_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-17"><a href="#BirthdayValidator.validate-17"><span class="linenos">17</span></a>            <span class="n">date_format</span> <span class="o">=</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">PRIMARY_DATE_FORMAT</span>
+</span><span id="BirthdayValidator.validate-18"><a href="#BirthdayValidator.validate-18"><span class="linenos">18</span></a>
+</span><span id="BirthdayValidator.validate-19"><a href="#BirthdayValidator.validate-19"><span class="linenos">19</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="BirthdayValidator.validate-20"><a href="#BirthdayValidator.validate-20"><span class="linenos">20</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_NOT_STRING</span>
+</span><span id="BirthdayValidator.validate-21"><a href="#BirthdayValidator.validate-21"><span class="linenos">21</span></a>
+</span><span id="BirthdayValidator.validate-22"><a href="#BirthdayValidator.validate-22"><span class="linenos">22</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">birthday</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">birthday</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-23"><a href="#BirthdayValidator.validate-23"><span class="linenos">23</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_EMPTY</span>
+</span><span id="BirthdayValidator.validate-24"><a href="#BirthdayValidator.validate-24"><span class="linenos">24</span></a>
+</span><span id="BirthdayValidator.validate-25"><a href="#BirthdayValidator.validate-25"><span class="linenos">25</span></a>        <span class="k">if</span> <span class="n">date_format</span> <span class="o">==</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">PRIMARY_DATE_FORMAT</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-26"><a href="#BirthdayValidator.validate-26"><span class="linenos">26</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="n">BirthdayValidator</span><span class="o">.</span><span class="n">_pattern</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">birthday</span><span class="p">):</span>
+</span><span id="BirthdayValidator.validate-27"><a href="#BirthdayValidator.validate-27"><span class="linenos">27</span></a>                <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_FORMAT</span>
+</span><span id="BirthdayValidator.validate-28"><a href="#BirthdayValidator.validate-28"><span class="linenos">28</span></a>
+</span><span id="BirthdayValidator.validate-29"><a href="#BirthdayValidator.validate-29"><span class="linenos">29</span></a>        <span class="k">try</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-30"><a href="#BirthdayValidator.validate-30"><span class="linenos">30</span></a>            <span class="n">birthday_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">birthday</span><span class="p">,</span> <span class="n">date_format</span><span class="p">)</span>
+</span><span id="BirthdayValidator.validate-31"><a href="#BirthdayValidator.validate-31"><span class="linenos">31</span></a>            <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+</span><span id="BirthdayValidator.validate-32"><a href="#BirthdayValidator.validate-32"><span class="linenos">32</span></a>
+</span><span id="BirthdayValidator.validate-33"><a href="#BirthdayValidator.validate-33"><span class="linenos">33</span></a>            <span class="k">if</span> <span class="n">birthday_date</span> <span class="o">&gt;</span> <span class="n">today</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-34"><a href="#BirthdayValidator.validate-34"><span class="linenos">34</span></a>                <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_FUTURE_DATE</span>
+</span><span id="BirthdayValidator.validate-35"><a href="#BirthdayValidator.validate-35"><span class="linenos">35</span></a>
+</span><span id="BirthdayValidator.validate-36"><a href="#BirthdayValidator.validate-36"><span class="linenos">36</span></a>            <span class="k">if</span> <span class="n">birthday_date</span><span class="o">.</span><span class="n">year</span> <span class="o">&lt;</span> <span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">MIN_BIRTHDAY_YEAR</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-37"><a href="#BirthdayValidator.validate-37"><span class="linenos">37</span></a>                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_YEAR</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday_date</span><span class="o">.</span><span class="n">year</span><span class="si">}</span><span class="s2"> (must be from </span><span class="si">{</span><span class="n">DateFormatConfig</span><span class="o">.</span><span class="n">MIN_BIRTHDAY_YEAR</span><span class="si">}</span><span class="s2"> onwards)&quot;</span>
+</span><span id="BirthdayValidator.validate-38"><a href="#BirthdayValidator.validate-38"><span class="linenos">38</span></a>
+</span><span id="BirthdayValidator.validate-39"><a href="#BirthdayValidator.validate-39"><span class="linenos">39</span></a>            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">birthday_date</span><span class="o">.</span><span class="n">month</span> <span class="o">&lt;=</span> <span class="mi">12</span><span class="p">):</span>
+</span><span id="BirthdayValidator.validate-40"><a href="#BirthdayValidator.validate-40"><span class="linenos">40</span></a>                <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_MONTH</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday_date</span><span class="o">.</span><span class="n">month</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span id="BirthdayValidator.validate-41"><a href="#BirthdayValidator.validate-41"><span class="linenos">41</span></a>
+</span><span id="BirthdayValidator.validate-42"><a href="#BirthdayValidator.validate-42"><span class="linenos">42</span></a>            <span class="k">return</span> <span class="kc">True</span>
+</span><span id="BirthdayValidator.validate-43"><a href="#BirthdayValidator.validate-43"><span class="linenos">43</span></a>        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+</span><span id="BirthdayValidator.validate-44"><a href="#BirthdayValidator.validate-44"><span class="linenos">44</span></a>            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ValidationConfig</span><span class="o">.</span><span class="n">BIRTHDAY_ERROR_INVALID_DATE</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">birthday</span><span class="si">}</span><span class="s2">&quot;</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="TagValidator">
+                            <input id="TagValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">TagValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="TagValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#TagValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TagValidator-7"><a href="#TagValidator-7"><span class="linenos"> 7</span></a><span class="k">class</span><span class="w"> </span><span class="nc">TagValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="TagValidator-8"><a href="#TagValidator-8"><span class="linenos"> 8</span></a>
+</span><span id="TagValidator-9"><a href="#TagValidator-9"><span class="linenos"> 9</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="TagValidator-10"><a href="#TagValidator-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="TagValidator-11"><a href="#TagValidator-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="TagValidator-12"><a href="#TagValidator-12"><span class="linenos">12</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_NOT_STRING</span>
+</span><span id="TagValidator-13"><a href="#TagValidator-13"><span class="linenos">13</span></a>
+</span><span id="TagValidator-14"><a href="#TagValidator-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="TagValidator-15"><a href="#TagValidator-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_EMPTY</span>
+</span><span id="TagValidator-16"><a href="#TagValidator-16"><span class="linenos">16</span></a>
+</span><span id="TagValidator-17"><a href="#TagValidator-17"><span class="linenos">17</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="TagValidator-18"><a href="#TagValidator-18"><span class="linenos">18</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_TOO_LONG</span>
+</span><span id="TagValidator-19"><a href="#TagValidator-19"><span class="linenos">19</span></a>
+</span><span id="TagValidator-20"><a href="#TagValidator-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="TagValidator.validate" class="classattr">
+                                        <input id="TagValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">value</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="TagValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#TagValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="TagValidator.validate-9"><a href="#TagValidator.validate-9"><span class="linenos"> 9</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="TagValidator.validate-10"><a href="#TagValidator.validate-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="TagValidator.validate-11"><a href="#TagValidator.validate-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="TagValidator.validate-12"><a href="#TagValidator.validate-12"><span class="linenos">12</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_NOT_STRING</span>
+</span><span id="TagValidator.validate-13"><a href="#TagValidator.validate-13"><span class="linenos">13</span></a>
+</span><span id="TagValidator.validate-14"><a href="#TagValidator.validate-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">value</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="TagValidator.validate-15"><a href="#TagValidator.validate-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_EMPTY</span>
+</span><span id="TagValidator.validate-16"><a href="#TagValidator.validate-16"><span class="linenos">16</span></a>
+</span><span id="TagValidator.validate-17"><a href="#TagValidator.validate-17"><span class="linenos">17</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_MAX_LENGTH</span><span class="p">:</span>
+</span><span id="TagValidator.validate-18"><a href="#TagValidator.validate-18"><span class="linenos">18</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">TAG_ERROR_TOO_LONG</span>
+</span><span id="TagValidator.validate-19"><a href="#TagValidator.validate-19"><span class="linenos">19</span></a>
+</span><span id="TagValidator.validate-20"><a href="#TagValidator.validate-20"><span class="linenos">20</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="NoteTextValidator">
+                            <input id="NoteTextValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">NoteTextValidator</span><wbr>(<span class="base"><a href="#BaseValidator">src.domain.validators.BaseValidator</a></span>):
+
+                <label class="view-source-button" for="NoteTextValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#NoteTextValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NoteTextValidator-7"><a href="#NoteTextValidator-7"><span class="linenos"> 7</span></a><span class="k">class</span><span class="w"> </span><span class="nc">NoteTextValidator</span><span class="p">(</span><span class="n">BaseValidator</span><span class="p">):</span>
+</span><span id="NoteTextValidator-8"><a href="#NoteTextValidator-8"><span class="linenos"> 8</span></a>
+</span><span id="NoteTextValidator-9"><a href="#NoteTextValidator-9"><span class="linenos"> 9</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="NoteTextValidator-10"><a href="#NoteTextValidator-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">note_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="NoteTextValidator-11"><a href="#NoteTextValidator-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">note_text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="NoteTextValidator-12"><a href="#NoteTextValidator-12"><span class="linenos">12</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_NOT_STRING</span>
+</span><span id="NoteTextValidator-13"><a href="#NoteTextValidator-13"><span class="linenos">13</span></a>
+</span><span id="NoteTextValidator-14"><a href="#NoteTextValidator-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">note_text</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">note_text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="NoteTextValidator-15"><a href="#NoteTextValidator-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_EMPTY</span>
+</span><span id="NoteTextValidator-16"><a href="#NoteTextValidator-16"><span class="linenos">16</span></a>
+</span><span id="NoteTextValidator-17"><a href="#NoteTextValidator-17"><span class="linenos">17</span></a>        <span class="n">trimmed</span> <span class="o">=</span> <span class="n">note_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="NoteTextValidator-18"><a href="#NoteTextValidator-18"><span class="linenos">18</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="NoteTextValidator-19"><a href="#NoteTextValidator-19"><span class="linenos">19</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_TOO_SHORT</span>
+</span><span id="NoteTextValidator-20"><a href="#NoteTextValidator-20"><span class="linenos">20</span></a>
+</span><span id="NoteTextValidator-21"><a href="#NoteTextValidator-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Helper class that provides a standard way to create an ABC using
+inheritance.</p>
+</div>
+
+
+                            <div id="NoteTextValidator.validate" class="classattr">
+                                        <input id="NoteTextValidator.validate-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">note_text</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span>:</span></span>
+
+                <label class="view-source-button" for="NoteTextValidator.validate-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#NoteTextValidator.validate"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="NoteTextValidator.validate-9"><a href="#NoteTextValidator.validate-9"><span class="linenos"> 9</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="NoteTextValidator.validate-10"><a href="#NoteTextValidator.validate-10"><span class="linenos">10</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate</span><span class="p">(</span><span class="n">note_text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]:</span>
+</span><span id="NoteTextValidator.validate-11"><a href="#NoteTextValidator.validate-11"><span class="linenos">11</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">note_text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="NoteTextValidator.validate-12"><a href="#NoteTextValidator.validate-12"><span class="linenos">12</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_NOT_STRING</span>
+</span><span id="NoteTextValidator.validate-13"><a href="#NoteTextValidator.validate-13"><span class="linenos">13</span></a>
+</span><span id="NoteTextValidator.validate-14"><a href="#NoteTextValidator.validate-14"><span class="linenos">14</span></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">note_text</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">note_text</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="NoteTextValidator.validate-15"><a href="#NoteTextValidator.validate-15"><span class="linenos">15</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_EMPTY</span>
+</span><span id="NoteTextValidator.validate-16"><a href="#NoteTextValidator.validate-16"><span class="linenos">16</span></a>
+</span><span id="NoteTextValidator.validate-17"><a href="#NoteTextValidator.validate-17"><span class="linenos">17</span></a>        <span class="n">trimmed</span> <span class="o">=</span> <span class="n">note_text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+</span><span id="NoteTextValidator.validate-18"><a href="#NoteTextValidator.validate-18"><span class="linenos">18</span></a>        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trimmed</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="NoteTextValidator.validate-19"><a href="#NoteTextValidator.validate-19"><span class="linenos">19</span></a>            <span class="k">return</span> <span class="n">ValidationConfig</span><span class="o">.</span><span class="n">NOTE_ERROR_TOO_SHORT</span>
+</span><span id="NoteTextValidator.validate-20"><a href="#NoteTextValidator.validate-20"><span class="linenos">20</span></a>
+</span><span id="NoteTextValidator.validate-21"><a href="#NoteTextValidator.validate-21"><span class="linenos">21</span></a>        <span class="k">return</span> <span class="kc">True</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+                <section id="IntentValidator">
+                            <input id="IntentValidator-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr class">
+            
+    <span class="def">class</span>
+    <span class="name">IntentValidator</span>:
+
+                <label class="view-source-button" for="IntentValidator-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#IntentValidator"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="IntentValidator-6"><a href="#IntentValidator-6"><span class="linenos"> 6</span></a><span class="k">class</span><span class="w"> </span><span class="nc">IntentValidator</span><span class="p">:</span>
+</span><span id="IntentValidator-7"><a href="#IntentValidator-7"><span class="linenos"> 7</span></a>
+</span><span id="IntentValidator-8"><a href="#IntentValidator-8"><span class="linenos"> 8</span></a>    <span class="c1"># Get required/optional entities from config</span>
+</span><span id="IntentValidator-9"><a href="#IntentValidator-9"><span class="linenos"> 9</span></a>    <span class="c1"># Extract from INTENT_REQUIREMENTS</span>
+</span><span id="IntentValidator-10"><a href="#IntentValidator-10"><span class="linenos">10</span></a>    <span class="n">REQUIRED_ENTITIES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="IntentValidator-11"><a href="#IntentValidator-11"><span class="linenos">11</span></a>        <span class="n">intent</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;required&quot;</span><span class="p">]</span>
+</span><span id="IntentValidator-12"><a href="#IntentValidator-12"><span class="linenos">12</span></a>        <span class="k">for</span> <span class="n">intent</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">IntentConfig</span><span class="o">.</span><span class="n">INTENT_REQUIREMENTS</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="IntentValidator-13"><a href="#IntentValidator-13"><span class="linenos">13</span></a>    <span class="p">}</span>
+</span><span id="IntentValidator-14"><a href="#IntentValidator-14"><span class="linenos">14</span></a>
+</span><span id="IntentValidator-15"><a href="#IntentValidator-15"><span class="linenos">15</span></a>    <span class="n">OPTIONAL_ENTITIES</span> <span class="o">=</span> <span class="p">{</span>
+</span><span id="IntentValidator-16"><a href="#IntentValidator-16"><span class="linenos">16</span></a>        <span class="n">intent</span><span class="p">:</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span>
+</span><span id="IntentValidator-17"><a href="#IntentValidator-17"><span class="linenos">17</span></a>        <span class="k">for</span> <span class="n">intent</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">IntentConfig</span><span class="o">.</span><span class="n">INTENT_REQUIREMENTS</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+</span><span id="IntentValidator-18"><a href="#IntentValidator-18"><span class="linenos">18</span></a>        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;optional&quot;</span><span class="p">]</span>  <span class="c1"># Only include if there are optional entities</span>
+</span><span id="IntentValidator-19"><a href="#IntentValidator-19"><span class="linenos">19</span></a>    <span class="p">}</span>
+</span><span id="IntentValidator-20"><a href="#IntentValidator-20"><span class="linenos">20</span></a>
+</span><span id="IntentValidator-21"><a href="#IntentValidator-21"><span class="linenos">21</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="IntentValidator-22"><a href="#IntentValidator-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_for_intent</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="IntentValidator-23"><a href="#IntentValidator-23"><span class="linenos">23</span></a>        <span class="n">required</span> <span class="o">=</span> <span class="n">IntentValidator</span><span class="o">.</span><span class="n">REQUIRED_ENTITIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="IntentValidator-24"><a href="#IntentValidator-24"><span class="linenos">24</span></a>        <span class="n">optional</span> <span class="o">=</span> <span class="n">IntentValidator</span><span class="o">.</span><span class="n">OPTIONAL_ENTITIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="IntentValidator-25"><a href="#IntentValidator-25"><span class="linenos">25</span></a>        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="IntentValidator-26"><a href="#IntentValidator-26"><span class="linenos">26</span></a>            <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entities</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">entities</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+</span><span id="IntentValidator-27"><a href="#IntentValidator-27"><span class="linenos">27</span></a>        <span class="p">]</span>
+</span><span id="IntentValidator-28"><a href="#IntentValidator-28"><span class="linenos">28</span></a>
+</span><span id="IntentValidator-29"><a href="#IntentValidator-29"><span class="linenos">29</span></a>        <span class="c1"># Count how many optional entities are present</span>
+</span><span id="IntentValidator-30"><a href="#IntentValidator-30"><span class="linenos">30</span></a>        <span class="n">optional_present</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="IntentValidator-31"><a href="#IntentValidator-31"><span class="linenos">31</span></a>            <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">optional</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">entities</span> <span class="ow">and</span> <span class="n">entities</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+</span><span id="IntentValidator-32"><a href="#IntentValidator-32"><span class="linenos">32</span></a>        <span class="p">]</span>
+</span><span id="IntentValidator-33"><a href="#IntentValidator-33"><span class="linenos">33</span></a>
+</span><span id="IntentValidator-34"><a href="#IntentValidator-34"><span class="linenos">34</span></a>        <span class="c1"># Check for format errors (e.g., invalid phone number format)</span>
+</span><span id="IntentValidator-35"><a href="#IntentValidator-35"><span class="linenos">35</span></a>        <span class="n">has_format_errors</span> <span class="o">=</span> <span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_phone_format_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</span><span id="IntentValidator-36"><a href="#IntentValidator-36"><span class="linenos">36</span></a>
+</span><span id="IntentValidator-37"><a href="#IntentValidator-37"><span class="linenos">37</span></a>        <span class="c1"># Validation is invalid if there are missing fields OR format errors</span>
+</span><span id="IntentValidator-38"><a href="#IntentValidator-38"><span class="linenos">38</span></a>        <span class="n">is_valid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_format_errors</span>
+</span><span id="IntentValidator-39"><a href="#IntentValidator-39"><span class="linenos">39</span></a>
+</span><span id="IntentValidator-40"><a href="#IntentValidator-40"><span class="linenos">40</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="IntentValidator-41"><a href="#IntentValidator-41"><span class="linenos">41</span></a>            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">is_valid</span><span class="p">,</span>
+</span><span id="IntentValidator-42"><a href="#IntentValidator-42"><span class="linenos">42</span></a>            <span class="s2">&quot;missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
+</span><span id="IntentValidator-43"><a href="#IntentValidator-43"><span class="linenos">43</span></a>            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="n">required</span><span class="p">,</span>
+</span><span id="IntentValidator-44"><a href="#IntentValidator-44"><span class="linenos">44</span></a>            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="n">optional</span><span class="p">,</span>
+</span><span id="IntentValidator-45"><a href="#IntentValidator-45"><span class="linenos">45</span></a>            <span class="s2">&quot;optional_present&quot;</span><span class="p">:</span> <span class="n">optional_present</span><span class="p">,</span>
+</span><span id="IntentValidator-46"><a href="#IntentValidator-46"><span class="linenos">46</span></a>            <span class="s2">&quot;has_optional&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">optional_present</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="IntentValidator-47"><a href="#IntentValidator-47"><span class="linenos">47</span></a>        <span class="p">}</span>
+</span></pre></div>
+
+
+    
+
+                            <div id="IntentValidator.REQUIRED_ENTITIES" class="classattr">
+                                <div class="attr variable">
+            <span class="name">REQUIRED_ENTITIES</span>        =
+<input id="IntentValidator.REQUIRED_ENTITIES-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="IntentValidator.REQUIRED_ENTITIES-view-value"></label><span class="default_value">{&#39;add_contact&#39;: [&#39;name&#39;, &#39;phone&#39;], &#39;add_phone&#39;: [&#39;name&#39;, &#39;phone&#39;], &#39;edit_phone&#39;: [&#39;name&#39;, &#39;old_phone&#39;, &#39;new_phone&#39;], &#39;remove_phone&#39;: [&#39;name&#39;, &#39;phone&#39;], &#39;edit_email&#39;: [&#39;name&#39;, &#39;email&#39;], &#39;edit_address&#39;: [&#39;name&#39;, &#39;address&#39;], &#39;delete_contact&#39;: [&#39;name&#39;], &#39;list_all_contacts&#39;: [], &#39;search_contacts&#39;: [], &#39;add_birthday&#39;: [&#39;name&#39;, &#39;birthday&#39;], &#39;list_birthdays&#39;: [], &#39;add_note&#39;: [&#39;note_text&#39;], &#39;edit_note&#39;: [&#39;id&#39;, &#39;note_text&#39;], &#39;remove_note&#39;: [&#39;id&#39;], &#39;show_notes&#39;: [], &#39;show_note&#39;: [&#39;id&#39;], &#39;add_note_tag&#39;: [&#39;id&#39;, &#39;tag&#39;], &#39;remove_note_tag&#39;: [&#39;id&#39;, &#39;tag&#39;], &#39;search_notes_text&#39;: [&#39;note_text&#39;], &#39;search_notes_by_tag&#39;: [&#39;tag&#39;], &#39;hello&#39;: [], &#39;help&#39;: [], &#39;exit&#39;: [], &#39;show_phone&#39;: [&#39;name&#39;], &#39;add_email&#39;: [&#39;name&#39;, &#39;email&#39;], &#39;remove_email&#39;: [&#39;name&#39;], &#39;add_address&#39;: [&#39;name&#39;, &#39;address&#39;], &#39;remove_address&#39;: [&#39;name&#39;], &#39;show_birthday&#39;: [&#39;name&#39;], &#39;clear&#39;: [], &#39;save&#39;: [&#39;filename&#39;], &#39;load&#39;: [&#39;filename&#39;], &#39;list_note_tags&#39;: []}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#IntentValidator.REQUIRED_ENTITIES"></a>
+    
+    
+
+                            </div>
+                            <div id="IntentValidator.OPTIONAL_ENTITIES" class="classattr">
+                                <div class="attr variable">
+            <span class="name">OPTIONAL_ENTITIES</span>        =
+<input id="IntentValidator.OPTIONAL_ENTITIES-view-value" class="view-value-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+            <label class="view-value-button pdoc-button" for="IntentValidator.OPTIONAL_ENTITIES-view-value"></label><span class="default_value">{&#39;add_contact&#39;: [&#39;email&#39;, &#39;address&#39;, &#39;birthday&#39;], &#39;search_contacts&#39;: [&#39;name&#39;, &#39;phone&#39;, &#39;email&#39;], &#39;list_birthdays&#39;: [&#39;days&#39;], &#39;add_note&#39;: [&#39;tag&#39;], &#39;search_notes_text&#39;: [&#39;name&#39;], &#39;search_notes_by_tag&#39;: [&#39;name&#39;]}</span>
+
+        
+    </div>
+    <a class="headerlink" href="#IntentValidator.OPTIONAL_ENTITIES"></a>
+    
+    
+
+                            </div>
+                            <div id="IntentValidator.validate_for_intent" class="classattr">
+                                        <input id="IntentValidator.validate_for_intent-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+                    <div class="decorator decorator-staticmethod">@staticmethod</div>
+
+        <span class="def">def</span>
+        <span class="name">validate_for_intent</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">entities</span><span class="p">:</span> <span class="n">Dict</span>, </span><span class="param"><span class="n">intent</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">Dict</span>:</span></span>
+
+                <label class="view-source-button" for="IntentValidator.validate_for_intent-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#IntentValidator.validate_for_intent"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="IntentValidator.validate_for_intent-21"><a href="#IntentValidator.validate_for_intent-21"><span class="linenos">21</span></a>    <span class="nd">@staticmethod</span>
+</span><span id="IntentValidator.validate_for_intent-22"><a href="#IntentValidator.validate_for_intent-22"><span class="linenos">22</span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">validate_for_intent</span><span class="p">(</span><span class="n">entities</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">intent</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+</span><span id="IntentValidator.validate_for_intent-23"><a href="#IntentValidator.validate_for_intent-23"><span class="linenos">23</span></a>        <span class="n">required</span> <span class="o">=</span> <span class="n">IntentValidator</span><span class="o">.</span><span class="n">REQUIRED_ENTITIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="IntentValidator.validate_for_intent-24"><a href="#IntentValidator.validate_for_intent-24"><span class="linenos">24</span></a>        <span class="n">optional</span> <span class="o">=</span> <span class="n">IntentValidator</span><span class="o">.</span><span class="n">OPTIONAL_ENTITIES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">intent</span><span class="p">,</span> <span class="p">[])</span>
+</span><span id="IntentValidator.validate_for_intent-25"><a href="#IntentValidator.validate_for_intent-25"><span class="linenos">25</span></a>        <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="IntentValidator.validate_for_intent-26"><a href="#IntentValidator.validate_for_intent-26"><span class="linenos">26</span></a>            <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">required</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">entities</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">entities</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+</span><span id="IntentValidator.validate_for_intent-27"><a href="#IntentValidator.validate_for_intent-27"><span class="linenos">27</span></a>        <span class="p">]</span>
+</span><span id="IntentValidator.validate_for_intent-28"><a href="#IntentValidator.validate_for_intent-28"><span class="linenos">28</span></a>
+</span><span id="IntentValidator.validate_for_intent-29"><a href="#IntentValidator.validate_for_intent-29"><span class="linenos">29</span></a>        <span class="c1"># Count how many optional entities are present</span>
+</span><span id="IntentValidator.validate_for_intent-30"><a href="#IntentValidator.validate_for_intent-30"><span class="linenos">30</span></a>        <span class="n">optional_present</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="IntentValidator.validate_for_intent-31"><a href="#IntentValidator.validate_for_intent-31"><span class="linenos">31</span></a>            <span class="n">field</span> <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">optional</span> <span class="k">if</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">entities</span> <span class="ow">and</span> <span class="n">entities</span><span class="p">[</span><span class="n">field</span><span class="p">]</span>
+</span><span id="IntentValidator.validate_for_intent-32"><a href="#IntentValidator.validate_for_intent-32"><span class="linenos">32</span></a>        <span class="p">]</span>
+</span><span id="IntentValidator.validate_for_intent-33"><a href="#IntentValidator.validate_for_intent-33"><span class="linenos">33</span></a>
+</span><span id="IntentValidator.validate_for_intent-34"><a href="#IntentValidator.validate_for_intent-34"><span class="linenos">34</span></a>        <span class="c1"># Check for format errors (e.g., invalid phone number format)</span>
+</span><span id="IntentValidator.validate_for_intent-35"><a href="#IntentValidator.validate_for_intent-35"><span class="linenos">35</span></a>        <span class="n">has_format_errors</span> <span class="o">=</span> <span class="n">entities</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;_phone_format_error&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+</span><span id="IntentValidator.validate_for_intent-36"><a href="#IntentValidator.validate_for_intent-36"><span class="linenos">36</span></a>
+</span><span id="IntentValidator.validate_for_intent-37"><a href="#IntentValidator.validate_for_intent-37"><span class="linenos">37</span></a>        <span class="c1"># Validation is invalid if there are missing fields OR format errors</span>
+</span><span id="IntentValidator.validate_for_intent-38"><a href="#IntentValidator.validate_for_intent-38"><span class="linenos">38</span></a>        <span class="n">is_valid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_format_errors</span>
+</span><span id="IntentValidator.validate_for_intent-39"><a href="#IntentValidator.validate_for_intent-39"><span class="linenos">39</span></a>
+</span><span id="IntentValidator.validate_for_intent-40"><a href="#IntentValidator.validate_for_intent-40"><span class="linenos">40</span></a>        <span class="k">return</span> <span class="p">{</span>
+</span><span id="IntentValidator.validate_for_intent-41"><a href="#IntentValidator.validate_for_intent-41"><span class="linenos">41</span></a>            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">is_valid</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-42"><a href="#IntentValidator.validate_for_intent-42"><span class="linenos">42</span></a>            <span class="s2">&quot;missing&quot;</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-43"><a href="#IntentValidator.validate_for_intent-43"><span class="linenos">43</span></a>            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="n">required</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-44"><a href="#IntentValidator.validate_for_intent-44"><span class="linenos">44</span></a>            <span class="s2">&quot;optional&quot;</span><span class="p">:</span> <span class="n">optional</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-45"><a href="#IntentValidator.validate_for_intent-45"><span class="linenos">45</span></a>            <span class="s2">&quot;optional_present&quot;</span><span class="p">:</span> <span class="n">optional_present</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-46"><a href="#IntentValidator.validate_for_intent-46"><span class="linenos">46</span></a>            <span class="s2">&quot;has_optional&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">optional_present</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span>
+</span><span id="IntentValidator.validate_for_intent-47"><a href="#IntentValidator.validate_for_intent-47"><span class="linenos">47</span></a>        <span class="p">}</span>
+</span></pre></div>
+
+
+    
+
+                            </div>
+                </section>
+    </main>
+<script>
+    function escapeHTML(html) {
+        return document.createElement('div').appendChild(document.createTextNode(html)).parentNode.innerHTML;
+    }
+
+    const originalContent = document.querySelector("main.pdoc");
+    let currentContent = originalContent;
+
+    function setContent(innerHTML) {
+        let elem;
+        if (innerHTML) {
+            elem = document.createElement("main");
+            elem.classList.add("pdoc");
+            elem.innerHTML = innerHTML;
+        } else {
+            elem = originalContent;
+        }
+        if (currentContent !== elem) {
+            currentContent.replaceWith(elem);
+            currentContent = elem;
+        }
+    }
+
+    function getSearchTerm() {
+        return (new URL(window.location)).searchParams.get("search");
+    }
+
+    const searchBox = document.querySelector(".pdoc input[type=search]");
+    searchBox.addEventListener("input", function () {
+        let url = new URL(window.location);
+        if (searchBox.value.trim()) {
+            url.hash = "";
+            url.searchParams.set("search", searchBox.value);
+        } else {
+            url.searchParams.delete("search");
+        }
+        history.replaceState("", "", url.toString());
+        onInput();
+    });
+    window.addEventListener("popstate", onInput);
+
+
+    let search, searchErr;
+
+    async function initialize() {
+        try {
+            search = await new Promise((resolve, reject) => {
+                const script = document.createElement("script");
+                script.type = "text/javascript";
+                script.async = true;
+                script.onload = () => resolve(window.pdocSearch);
+                script.onerror = (e) => reject(e);
+                script.src = "../../search.js";
+                document.getElementsByTagName("head")[0].appendChild(script);
+            });
+        } catch (e) {
+            console.error("Cannot fetch pdoc search index");
+            searchErr = "Cannot fetch search index.";
+        }
+        onInput();
+
+        document.querySelector("nav.pdoc").addEventListener("click", e => {
+            if (e.target.hash) {
+                searchBox.value = "";
+                searchBox.dispatchEvent(new Event("input"));
+            }
+        });
+    }
+
+    function onInput() {
+        setContent((() => {
+            const term = getSearchTerm();
+            if (!term) {
+                return null
+            }
+            if (searchErr) {
+                return `<h3>Error: ${searchErr}</h3>`
+            }
+            if (!search) {
+                return "<h3>Searching...</h3>"
+            }
+
+            window.scrollTo({top: 0, left: 0, behavior: 'auto'});
+
+            const results = search(term);
+
+            let html;
+            if (results.length === 0) {
+                html = `No search results for '${escapeHTML(term)}'.`
+            } else {
+                html = `<h4>${results.length} search result${results.length > 1 ? "s" : ""} for '${escapeHTML(term)}'.</h4>`;
+            }
+            for (let result of results.slice(0, 10)) {
+                let doc = result.doc;
+                let url = `../../${doc.modulename.replaceAll(".", "/")}.html`;
+                if (doc.qualname) {
+                    url += `#${doc.qualname}`;
+                }
+
+                let heading;
+                switch (result.doc.kind) {
+                    case "function":
+                        if (doc.fullname.endsWith(".__init__")) {
+                            heading = `<span class="name">${doc.fullname.replace(/\.__init__$/, "")}</span>${doc.signature}`;
+                        } else {
+                            heading = `<span class="def">${doc.funcdef}</span> <span class="name">${doc.fullname}</span>${doc.signature}`;
+                        }
+                        break;
+                    case "class":
+                        heading = `<span class="def">class</span> <span class="name">${doc.fullname}</span>`;
+                        if (doc.bases)
+                            heading += `<wbr>(<span class="base">${doc.bases}</span>)`;
+                        heading += `:`;
+                        break;
+                    case "variable":
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        if (doc.annotation)
+                            heading += `<span class="annotation">${doc.annotation}</span>`;
+                        if (doc.default_value)
+                            heading += `<span class="default_value"> = ${doc.default_value}</span>`;
+                        break;
+                    default:
+                        heading = `<span class="name">${doc.fullname}</span>`;
+                        break;
+                }
+                html += `
+                        <section class="search-result">
+                        <a href="${url}" class="attr ${doc.kind}">${heading}</a>
+                        <div class="docstring">${doc.doc}</div>
+                        </section>
+                    `;
+
+            }
+            return html;
+        })());
+    }
+
+    if (getSearchTerm()) {
+        initialize();
+        searchBox.value = getSearchTerm();
+        onInput();
+    } else {
+        searchBox.addEventListener("focus", initialize, {once: true});
+    }
+
+    searchBox.addEventListener("keydown", e => {
+        if (["ArrowDown", "ArrowUp", "Enter"].includes(e.key)) {
+            let focused = currentContent.querySelector(".search-result.focused");
+            if (!focused) {
+                currentContent.querySelector(".search-result").classList.add("focused");
+            } else if (
+                e.key === "ArrowDown"
+                && focused.nextElementSibling
+                && focused.nextElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.nextElementSibling.classList.add("focused");
+                focused.nextElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "ArrowUp"
+                && focused.previousElementSibling
+                && focused.previousElementSibling.classList.contains("search-result")
+            ) {
+                focused.classList.remove("focused");
+                focused.previousElementSibling.classList.add("focused");
+                focused.previousElementSibling.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest",
+                    inline: "nearest"
+                });
+            } else if (
+                e.key === "Enter"
+            ) {
+                focused.querySelector("a").click();
+            }
+        }
+    });
+</script></body>
+</html>

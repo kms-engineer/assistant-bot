@@ -7,23 +7,26 @@ class TestCommandArgsConfig:
 
     def test_get_fields(self):
         """Test the _get_fields static method."""
-        entities = {'name': 'John', 'phone': '123', 'email': 'a@b.com'}
-        assert CommandArgsConfig._get_fields(entities, 'name', 'phone') == ['John', '123']
-        assert CommandArgsConfig._get_fields(entities, 'name', 'address') == ['John']
+        entities = {"name": "John", "phone": "123", "email": "a@b.com"}
+        assert CommandArgsConfig._get_fields(entities, "name", "phone") == [
+            "John",
+            "123",
+        ]
+        assert CommandArgsConfig._get_fields(entities, "name", "address") == ["John"]
         assert CommandArgsConfig._get_fields(entities) == []
 
     def test_get_first(self):
         """Test the _get_first static method."""
-        entities = {'name': 'John', 'phone': '123', 'email': 'a@b.com'}
-        assert CommandArgsConfig._get_first(entities, 'name', 'phone') == ['John']
-        assert CommandArgsConfig._get_first(entities, 'address', 'email') == ['a@b.com']
-        assert CommandArgsConfig._get_first(entities, 'address', 'city') == []
+        entities = {"name": "John", "phone": "123", "email": "a@b.com"}
+        assert CommandArgsConfig._get_first(entities, "name", "phone") == ["John"]
+        assert CommandArgsConfig._get_first(entities, "address", "email") == ["a@b.com"]
+        assert CommandArgsConfig._get_first(entities, "address", "city") == []
 
     def test_with_default(self):
         """Test the _with_default static method."""
-        entities = {'days': '10', 'format': 'list'}
-        assert CommandArgsConfig._with_default(entities, 'days', '7') == ['10']
-        assert CommandArgsConfig._with_default(entities, 'sort', 'date') == ['date']
+        entities = {"days": "10", "format": "list"}
+        assert CommandArgsConfig._with_default(entities, "days", "7") == ["10"]
+        assert CommandArgsConfig._with_default(entities, "sort", "date") == ["date"]
 
     def test_intent_arg_builders(self):
         """Test the INTENT_ARG_BUILDERS dictionary."""

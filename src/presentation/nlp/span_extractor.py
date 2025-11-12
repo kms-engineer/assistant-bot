@@ -1,11 +1,6 @@
 from typing import Dict, List, Tuple, Optional, Set
 
-from .extractors import (
-    Entity,
-    LibraryExtractor,
-    RegexExtractor,
-    HeuristicExtractor
-)
+from .extractors import Entity, LibraryExtractor, RegexExtractor, HeuristicExtractor
 from src.config.intent_requirements import INTENT_REQUIREMENTS
 
 
@@ -15,9 +10,7 @@ class SpanExtractor:
         self.regex_extractor = RegexExtractor()
 
     def extract(
-        self,
-        text: str,
-        intent: Optional[str] = None
+        self, text: str, intent: Optional[str] = None
     ) -> Tuple[Dict[str, str], List[Dict], Dict[str, float]]:
         # Get allowed entities for this intent
         allowed_entities = self._get_allowed_entities(intent) if intent else None
@@ -31,8 +24,7 @@ class SpanExtractor:
         # Filter by allowed entities if intent provided
         if allowed_entities:
             all_entities = [
-                e for e in all_entities
-                if e.entity_type in allowed_entities
+                e for e in all_entities if e.entity_type in allowed_entities
             ]
 
         resolved_entities = self._resolve_conflicts(all_entities)
@@ -44,14 +36,16 @@ class SpanExtractor:
         for entity in resolved_entities:
             entities[entity.entity_type] = entity.text
             probabilities[entity.entity_type] = entity.confidence
-            raw_spans.append({
-                'type': entity.entity_type,
-                'text': entity.text,
-                'start': entity.start,
-                'end': entity.end,
-                'confidence': entity.confidence,
-                'strategy': entity.strategy.value
-            })
+            raw_spans.append(
+                {
+                    "type": entity.entity_type,
+                    "text": entity.text,
+                    "start": entity.start,
+                    "end": entity.end,
+                    "confidence": entity.confidence,
+                    "strategy": entity.strategy.value,
+                }
+            )
 
         return entities, raw_spans, probabilities
 
@@ -61,8 +55,8 @@ class SpanExtractor:
         if not intent_req:
             return None
 
-        allowed = set(intent_req.get('required', []))
-        allowed.update(intent_req.get('optional', []))
+        allowed = set(intent_req.get("required", []))
+        allowed.update(intent_req.get("optional", []))
 
         return allowed if allowed else None
 

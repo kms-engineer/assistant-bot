@@ -16,7 +16,7 @@ class JsonStorage(Storage):
 
     @property
     def file_extension(self) -> str:
-        return '.json'
+        return ".json"
 
     @property
     def storage_type(self) -> StorageType:
@@ -24,18 +24,18 @@ class JsonStorage(Storage):
 
     def save(self, data: Any, filename: str, **kwargs) -> str:
         filename = self.resolver.ensure_json_suffix(filename)
-        self.resolver.validate_filename(filename, allowed_extensions=('.json',))
+        self.resolver.validate_filename(filename, allowed_extensions=(".json",))
         filepath = self.resolver.get_full_path(filename)
 
         tmp_file = None
         try:
             with tempfile.NamedTemporaryFile(
-                mode='w',
+                mode="w",
                 delete=False,
                 dir=str(self.resolver.data_dir),
-                prefix=Path(filename).stem + '_',
-                suffix='.tmp',
-                encoding='utf-8'
+                prefix=Path(filename).stem + "_",
+                suffix=".tmp",
+                encoding="utf-8",
             ) as tmp:
                 tmp_file = Path(tmp.name)
                 json.dump(data, tmp, ensure_ascii=False, indent=2)
@@ -60,9 +60,9 @@ class JsonStorage(Storage):
             raise IOError(f"Failed to save data to {filename}: {e}") from e
 
     def load(self, filename: str, **kwargs) -> Optional[Any]:
-        default = kwargs.get('default', None)
+        default = kwargs.get("default", None)
         filename = self.resolver.ensure_json_suffix(filename)
-        self.resolver.validate_filename(filename, allowed_extensions=('.json',))
+        self.resolver.validate_filename(filename, allowed_extensions=(".json",))
         filepath = self.resolver.get_full_path(filename)
 
         if not filepath.exists():
@@ -75,7 +75,7 @@ class JsonStorage(Storage):
             return default
 
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, "r", encoding="utf-8") as f:
                 return json.load(f)
         except (OSError, json.JSONDecodeError, ValueError) as e:
             raise IOError(f"Failed to load data from {filename}: {e}") from e

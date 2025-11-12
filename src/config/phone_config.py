@@ -1,4 +1,3 @@
-
 class PhoneConfig:
 
     # Exact phone length for validation

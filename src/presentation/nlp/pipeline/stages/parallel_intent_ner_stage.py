@@ -16,7 +16,7 @@ class ParallelIntentNERStage(PipelineStage):
         ner_model: NERModel,
         use_parallel: bool = True,
         use_category_validation: bool = True,
-        use_keyword_matcher: bool = True
+        use_keyword_matcher: bool = True,
     ):
         super().__init__("intent_ner")
         self.intent_classifier = intent_classifier
@@ -43,20 +43,19 @@ class ParallelIntentNERStage(PipelineStage):
         else:
             return self._execute_classifier_only(context, user_text)
 
-    def _execute_classifier_only(self, context: NLPContext, user_text: str) -> NLPContext:
+    def _execute_classifier_only(
+        self, context: NLPContext, user_text: str
+    ) -> NLPContext:
         if self.executor:
             # Parallel: intent + category + NER
             intent_future = self.executor.submit(
-                self.intent_classifier.predict,
-                user_text
+                self.intent_classifier.predict, user_text
             )
             category_future = self.executor.submit(
-                self.category_detector.detect,
-                user_text
+                self.category_detector.detect, user_text
             )
             ner_future = self.executor.submit(
-                self.ner_model.extract_entities,
-                user_text
+                self.ner_model.extract_entities, user_text
             )
 
             # Get results
@@ -93,17 +92,12 @@ class ParallelIntentNERStage(PipelineStage):
         if self.executor:
             # Parallel: intent + category + keyword
             intent_future = self.executor.submit(
-                self.intent_classifier.predict,
-                user_text
+                self.intent_classifier.predict, user_text
             )
             category_future = self.executor.submit(
-                self.category_detector.detect,
-                user_text
+                self.category_detector.detect, user_text
             )
-            keyword_future = self.executor.submit(
-                self._keyword_match,
-                user_text
-            )
+            keyword_future = self.executor.submit(self._keyword_match, user_text)
 
             # Get results
             ml_intent, ml_conf = intent_future.result()
@@ -117,16 +111,12 @@ class ParallelIntentNERStage(PipelineStage):
 
         # Select best intent with category validation
         final_intent, final_confidence, source = self._select_best_intent(
-            user_text,
-            ml_intent, ml_conf,
-            keyword_result,
-            category
+            user_text, ml_intent, ml_conf, keyword_result, category
         )
 
         # Run NER with intent guidance
         entities, entity_confidences = self.ner_model.extract_entities(
-            user_text,
-            intent=final_intent
+            user_text, intent=final_intent
         )
 
         # Update context
@@ -149,11 +139,7 @@ class ParallelIntentNERStage(PipelineStage):
         return context
 
     def _validate_and_correct_intent(
-        self,
-        user_text: str,
-        ml_intent: str,
-        ml_conf: float,
-        category: Optional[str]
+        self, user_text: str, ml_intent: str, ml_conf: float, category: Optional[str]
     ) -> Tuple[str, float, str]:
         if not self.use_category_validation or not category:
             return ml_intent, ml_conf, "ml_classifier"
@@ -181,7 +167,7 @@ class ParallelIntentNERStage(PipelineStage):
         ml_intent: str,
         ml_confidence: float,
         keyword_result: Optional[Tuple[str, float]],
-        category: Optional[str]
+        category: Optional[str],
     ) -> Tuple[str, float, str]:
         # Get allowed intents for category
         allowed_intents = None
@@ -189,10 +175,7 @@ class ParallelIntentNERStage(PipelineStage):
             allowed_intents = self.category_detector.get_allowed_intents(category)
 
         # Check if ML intent matches category
-        ml_matches_category = (
-            not allowed_intents or
-            ml_intent in allowed_intents
-        )
+        ml_matches_category = not allowed_intents or ml_intent in allowed_intents
 
         # No keyword result - validate and return ML
         if not keyword_result:
@@ -201,7 +184,9 @@ class ParallelIntentNERStage(PipelineStage):
             else:
                 # Try to find better match in category
                 if self.keyword_matcher and allowed_intents:
-                    category_match = self._keyword_match_in_category(user_text, allowed_intents)
+                    category_match = self._keyword_match_in_category(
+                        user_text, allowed_intents
+                    )
                     if category_match:
                         return category_match[0], category_match[1], "keyword_corrected"
                 # No better option
@@ -211,8 +196,7 @@ class ParallelIntentNERStage(PipelineStage):
 
         # Check if keyword intent matches category
         keyword_matches_category = (
-            not allowed_intents or
-            keyword_intent in allowed_intents
+            not allowed_intents or keyword_intent in allowed_intents
         )
 
         # Case 1: Both match category - choose by confidence
@@ -228,8 +212,10 @@ class ParallelIntentNERStage(PipelineStage):
             confidence_diff = keyword_confidence - ml_confidence
 
             # If keyword has significantly higher confidence, trust keyword
-            if (keyword_confidence >= NLPConfig.KEYWORD_HIGH_CONFIDENCE_THRESHOLD and
-                confidence_diff > 0):
+            if (
+                keyword_confidence >= NLPConfig.KEYWORD_HIGH_CONFIDENCE_THRESHOLD
+                and confidence_diff > 0
+            ):
                 return keyword_intent, keyword_confidence, "keyword"
 
             # If ML has significantly higher confidence, trust ML
@@ -266,9 +252,7 @@ class ParallelIntentNERStage(PipelineStage):
         return self.keyword_matcher.match(text)
 
     def _keyword_match_in_category(
-        self,
-        text: str,
-        allowed_intents: list
+        self, text: str, allowed_intents: list
     ) -> Optional[Tuple[str, float]]:
         if not self.keyword_matcher:
             return None

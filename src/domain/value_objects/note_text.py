@@ -9,5 +9,5 @@ class NoteText(Field):
     def __init__(self, value: str):
         NoteTextValidator.validate_and_raise(value)
         # Normalize: strip and remove extra whitespace
-        normalized = ' '.join(value.split())
+        normalized = " ".join(value.split())
         super().__init__(normalized)

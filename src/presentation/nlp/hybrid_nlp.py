@@ -7,8 +7,11 @@ from .post_rules import PostProcessingRules
 from .validation_adapter import ValidationAdapter
 from .pipeline.executor import NLPPipeline
 from .pipeline.stages import (
-    ParallelIntentNERStage, ValidationStage,
-    RegexFallbackStage, TemplateFallbackStage, PostProcessStage
+    ParallelIntentNERStage,
+    ValidationStage,
+    RegexFallbackStage,
+    TemplateFallbackStage,
+    PostProcessStage,
 )
 from src.config import IntentConfig
 from src.config.command_args_config import CommandArgsConfig
@@ -23,7 +26,7 @@ class HybridNLP:
         default_region: str = "US",
         use_parallel: bool = True,
         use_category_validation: bool = True,
-        use_keyword_matcher: bool = True
+        use_keyword_matcher: bool = True,
     ):
         # Initialize models
         intent_classifier = IntentClassifier(model_path=intent_model_path)
@@ -37,10 +40,11 @@ class HybridNLP:
         stages = [
             # Stage 1: Intent+NER (with category validation and keyword fallback)
             ParallelIntentNERStage(
-                intent_classifier, ner_model,
+                intent_classifier,
+                ner_model,
                 use_parallel=use_parallel,
                 use_category_validation=use_category_validation,
-                use_keyword_matcher=use_keyword_matcher
+                use_keyword_matcher=use_keyword_matcher,
             ),
             # Stage 2: Validation
             ValidationStage(validator),
@@ -49,7 +53,7 @@ class HybridNLP:
             # Stage 4: Template Fallback
             TemplateFallbackStage(template_parser),
             # Stage 5: Post-Processing
-            PostProcessStage(post_processor)
+            PostProcessStage(post_processor),
         ]
 
         self.pipeline = NLPPipeline(stages)
@@ -58,15 +62,16 @@ class HybridNLP:
         return self.pipeline.execute(user_text)
 
     def shutdown(self):
-        self.pipeline.shutdown()
+        if self.pipeline:
+            self.pipeline.shutdown()
 
     def __del__(self):
         self.shutdown()
 
     @staticmethod
     def get_command_args(nlp_result: Dict) -> Tuple[str, List]:
-        intent = nlp_result['intent']
-        entities = nlp_result['entities']
+        intent = nlp_result["intent"]
+        entities = nlp_result["entities"]
 
         # Map intent to command name
         command = IntentConfig.INTENT_TO_COMMAND_MAP.get(intent, intent)

@@ -9,7 +9,7 @@ class TemplateFallbackStage(PipelineStage):
         self.parser = template_parser
 
     def should_skip(self, context: NLPContext) -> bool:
-        is_valid = context.validation.get('valid', False)
+        is_valid = context.validation.get("valid", False)
         high_conf = context.intent_confidence >= NLPConfig.INTENT_CONFIDENCE_THRESHOLD
         return is_valid or high_conf
 
@@ -17,13 +17,13 @@ class TemplateFallbackStage(PipelineStage):
         result = self.parser.generate_structured_output(
             context.user_text,
             intent_hint=context.intent,
-            entities_hint=context.entities
+            entities_hint=context.entities,
         )
 
-        if result.get('confidence', 0) >= EntityConfig.ENTITY_MERGE_THRESHOLD:
-            context.intent = result['intent']
-            context.intent_confidence = result['confidence']
-            context.entities = result['entities']
+        if result.get("confidence", 0) >= EntityConfig.ENTITY_MERGE_THRESHOLD:
+            context.intent = result["intent"]
+            context.intent_confidence = result["confidence"]
+            context.entities = result["entities"]
             context.source = "template"
 
         return context

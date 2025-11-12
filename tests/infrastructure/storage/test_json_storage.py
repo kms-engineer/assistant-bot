@@ -27,7 +27,7 @@ def test_initialization(tmp_path: Path):
 
 def test_properties(storage: JsonStorage):
     """Tests the file_extension and storage_type properties."""
-    assert storage.file_extension == '.json'
+    assert storage.file_extension == ".json"
     assert storage.storage_type == StorageType.JSON
 
 
@@ -127,11 +127,11 @@ def test_overwrite_existing_file(storage: JsonStorage):
     storage.save(new_data, filename)
     assert storage.load(filename) == new_data
 
-@pytest.mark.parametrize("invalid_filename", [
-    "../invalid.json",
-    "data/storage.json",
-    "another\\bad\\name.json"
-])
+
+@pytest.mark.parametrize(
+    "invalid_filename",
+    ["../invalid.json", "data/storage.json", "another\\bad\\name.json"],
+)
 def test_save_with_invalid_filename(storage: JsonStorage, invalid_filename: str):
     """Tests that attempting to save with a malicious filename raises an error."""
     with pytest.raises(ValueError, match="Filename must not contain directories"):

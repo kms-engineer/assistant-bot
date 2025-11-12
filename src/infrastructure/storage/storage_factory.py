@@ -11,7 +11,6 @@ from ...domain.models.dbbase import DBBase
 
 class StorageFactory:
 
-
     @staticmethod
     def create_storage(storage_type: StorageType) -> Storage:
         if not storage_type:
@@ -26,16 +25,21 @@ class StorageFactory:
             case _:
                 raise ValueError(f"Unsupported storage type: {storage_type}")
 
-
     @staticmethod
     def get_storage(filepath: str) -> Storage:
         DataPathResolver.validate_filename(filepath)
         filepath = Path(filepath.lower())
-        if filepath.suffix.endswith('.json'):
+        if filepath.suffix.endswith(".json"):
             return JsonStorage(filepath)
-        elif filepath.suffix.endswith('.pkl') or filepath.suffix.endswith('.pickle'):
+        elif filepath.suffix.endswith(".pkl") or filepath.suffix.endswith(".pickle"):
             return PickleStorage(filepath)
-        elif filepath.suffix.endswith('.db') or filepath.suffix.endswith('.sqlite') or filepath.suffix.endswith('.sqlite3'):
+        elif (
+            filepath.suffix.endswith(".db")
+            or filepath.suffix.endswith(".sqlite")
+            or filepath.suffix.endswith(".sqlite3")
+        ):
             return SQLiteStorage(DBBase, filepath)
         else:
-            raise ValueError(f"Unsupported filetype: {filepath}.\nSupported extensions: .json, .pkl, .pickle, .db, .sqlite, .sqlite3")
+            raise ValueError(
+                f"Unsupported filetype: {filepath}.\nSupported extensions: .json, .pkl, .pickle, .db, .sqlite, .sqlite3"
+            )
