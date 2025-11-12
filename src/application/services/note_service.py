@@ -1,4 +1,4 @@
-from typing import Optional, Set
+from typing import Optional, Set, Any
 
 from ...domain.entities.note import Note
 from ...domain.utils.id_generator import IDGenerator
@@ -19,7 +19,7 @@ class NoteService:
     def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notes = {}
+        self.notes : dict[Any, Any] = {}
         self.raw_storage = raw_storage
         if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
@@ -34,7 +34,7 @@ class NoteService:
     def get_titles(self) -> Set[str]:
         return set([item for item in self.notes.values()])
 
-    def load_notes(self, filename: str = None) -> int:
+    def load_notes(self, filename: str | None = None) -> int:
         # Use the appropriate default based on storage type
         if filename is None:
             filename = self._default_filename

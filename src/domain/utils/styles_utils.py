@@ -7,7 +7,7 @@ def stylize_text(message: str):
     return f"{Fore.LIGHTBLUE_EX}{message}{Style.RESET_ALL}"
 
 
-def stylize_error_message(message: str, title: str = None):
+def stylize_error_message(message: str, title: str = ""):
     if title:
         return f"{Fore.RED}{title}: {message}{Style.RESET_ALL}"
 

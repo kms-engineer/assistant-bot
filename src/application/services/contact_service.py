@@ -24,7 +24,7 @@ class ContactService:
         self._current_filename = DEFAULT_CONTACTS_FILE
 
     def load_address_book(
-        self, filename: str = DEFAULT_CONTACTS_FILE, user_provided: bool = False
+        self, filename: str | None = DEFAULT_CONTACTS_FILE, user_provided: bool = False
     ) -> int:
         loaded_book, normalized_filename = self.storage.load_contacts(
             filename, user_provided=user_provided

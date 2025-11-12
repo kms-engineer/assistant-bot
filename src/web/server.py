@@ -107,7 +107,7 @@ def save_address_book(filename: Optional[str] = None):
     tags={"address book", "load"},
     description="Load an address book from a file or storage",
 )
-def load_address_book(filename: Optional[str] = None, user_provided: bool = False):
+def load_address_book(filename: Optional[str] | None = None, user_provided: bool = False):
     return contact_service.load_address_book(filename, user_provided=user_provided)
 
 
@@ -368,7 +368,7 @@ def save_notes(filename: Optional[str] = None):
     tags={"notes", "load"},
     description="Load notes from storage (optional filename)",
 )
-def load_notes(filename: Optional[str] = None):
+def load_notes(filename: Optional[str] | None = None):
     return note_service.load_notes(filename)
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 
 
 def setup_logger(
-    name: str = "assistant_bot", level: int = logging.INFO, log_file: Path = None
+    name: str = "assistant_bot", level: int = logging.INFO, log_file: Path | None = None
 ) -> logging.Logger:
     logger = logging.getLogger(name)
     logger.setLevel(level)

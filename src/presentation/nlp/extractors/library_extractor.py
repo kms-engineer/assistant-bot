@@ -89,7 +89,7 @@ class LibraryExtractor:
 
     @staticmethod
     def _extract_phones(text: str) -> List[Entity]:
-        entities = []
+        entities : List[Entity] = []
         if not phonenumbers:
             return entities
         try:
@@ -114,7 +114,7 @@ class LibraryExtractor:
 
     @staticmethod
     def _extract_emails(text: str) -> List[Entity]:
-        entities = []
+        entities : List[Entity] = []
         if not validate_email:
             return entities
         for match in re.finditer(RegexPatterns.EMAIL_PATTERN, text):
@@ -196,7 +196,7 @@ class LibraryExtractor:
 
     @staticmethod
     def _extract_names(text: str) -> List[Entity]:
-        entities = []
+        entities : List[Entity] = []
         if not nlp_spacy:
             return entities
 
@@ -260,7 +260,7 @@ class LibraryExtractor:
 
     @staticmethod
     def _extract_birthdays(text: str) -> List[Entity]:
-        entities = []
+        entities : List[Entity] = []
         if not date_parser:
             return entities
 

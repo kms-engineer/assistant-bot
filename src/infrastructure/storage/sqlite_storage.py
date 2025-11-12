@@ -34,12 +34,12 @@ class SQLiteStorage(Storage):
     def storage_type(self) -> StorageType:
         return StorageType.SQLITE
 
-    def __init__(self, base: Type[DeclarativeBase], data_dir: Path = None):
+    def __init__(self, base: Type[DeclarativeBase], data_dir: Path | None = None):
         self.resolver = DataPathResolver(data_dir) if data_dir else DataPathResolver()
         self._is_initialized = False
         self._base_class = base
         self._session_factory = None
-        self._engine = None
+        self._engine : Engine | None = None
 
     def _create_session(self) -> Session:
         if not self._is_initialized:
@@ -55,7 +55,7 @@ class SQLiteStorage(Storage):
     def initialize(self, db_name: str) -> None:
         db_path = self.resolver.get_full_path(db_name)
         print(f"Initializing SQLite database at {db_path}")
-        self._engine: Engine = create_engine(
+        self._engine = create_engine(
             f"sqlite:///{db_path}", echo=False, future=True
         )
         self._session_factory = sessionmaker(bind=self._engine, expire_on_commit=False)

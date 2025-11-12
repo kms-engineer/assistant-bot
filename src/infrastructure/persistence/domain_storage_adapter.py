@@ -8,7 +8,7 @@ from ...domain.notebook import Notebook
 
 class DomainStorageAdapter:
 
-    def __init__(self, storage: Storage, serializer: JsonSerializer = None):
+    def __init__(self, storage: Storage, serializer: JsonSerializer | None = None):
         self.storage = storage
         self.serializer = serializer if serializer else JsonSerializer()
         self.resolver = getattr(storage, "resolver", None)

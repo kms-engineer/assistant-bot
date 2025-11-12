@@ -11,8 +11,8 @@ class TemplateParser:
     def parse(
         self,
         user_text: str,
-        intent_hint: str = None,
-        entities_hint: Dict[str, str] = None,
+        intent_hint: str | None = None,
+        entities_hint: Dict[str, str] | None = None,
     ) -> Dict:
         result = self._parse_with_templates(user_text, intent_hint, entities_hint)
         result["raw"]["source"] = "template"
@@ -22,13 +22,13 @@ class TemplateParser:
     def generate_structured_output(
         self,
         user_text: str,
-        intent_hint: str = None,
-        entities_hint: Dict[str, str] = None,
+        intent_hint: str | None = None,
+        entities_hint: Dict[str, str] | None = None,
     ) -> Dict:
         return self.parse(user_text, intent_hint, entities_hint)
 
     def _parse_with_templates(
-        self, user_text: str, intent_hint: str = None, entities_hint: Dict = None
+        self, user_text: str, intent_hint: str | None, entities_hint: Dict | None
     ) -> Dict:
         # Start with entities_hint or empty dict
         entities = entities_hint.copy() if entities_hint else {}

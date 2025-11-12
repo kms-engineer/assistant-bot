@@ -7,7 +7,7 @@ from dataclasses import dataclass, field
 class NLPContext:
     user_text: str
 
-    intent: str = None
+    intent: str | None = None
     intent_confidence: float = 0.0
     entities: Dict[str, str] = field(default_factory=dict)
     entity_confidences: Dict[str, float] = field(default_factory=dict)

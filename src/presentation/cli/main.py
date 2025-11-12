@@ -26,8 +26,8 @@ from ...infrastructure.storage.sqlite_storage import SQLiteStorage
 
 def save_and_exit(
     contact_service: ContactService,
-    note_service: NoteService = None,
-    storage_type: StorageType = None,
+    note_service: NoteService | None = None,
+    storage_type: StorageType | None = None,
 ) -> None:
     print(UIMessages.SAVING)
 
