@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from src.config import NLPConfig
 
 try:
@@ -13,7 +13,7 @@ except ImportError:
 class PhoneNormalizer:
 
     @staticmethod
-    def normalize(entities: Dict, default_region: str = None) -> Dict:
+    def normalize(entities: Dict, default_region: Optional[str] = None) -> Dict:
         if default_region is None:
             default_region = NLPConfig.DEFAULT_REGION
 

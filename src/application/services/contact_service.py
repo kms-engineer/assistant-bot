@@ -17,7 +17,7 @@ from ...infrastructure.storage.storage import Storage
 
 class ContactService:
 
-    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
+    def __init__(self, storage: Optional[Storage] = None, serializer: Optional[JsonSerializer] = None):
         raw_storage = storage if storage else PickleStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.address_book = AddressBook()

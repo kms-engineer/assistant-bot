@@ -1,10 +1,9 @@
-from .mapper import Mapper
 from ..entities.note import Note
 from ..models.dbnote import DBNote
 from ..value_objects.tag import Tag
 
 
-class NoteMapper(Mapper):
+class NoteMapper:
 
     @staticmethod
     def to_dbmodel(data: Note) -> DBNote:

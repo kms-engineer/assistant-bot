@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Optional
 from src.config import IntentConfig, ConfidenceConfig, RegexPatterns, EntityConfig
 from src.config.keyword_map import GREETING_KEYWORDS
 
@@ -11,8 +11,8 @@ class TemplateParser:
     def parse(
         self,
         user_text: str,
-        intent_hint: str | None = None,
-        entities_hint: Dict[str, str] | None = None,
+        intent_hint: Optional[str] = None,
+        entities_hint: Optional[Dict[str, str]] = None,
     ) -> Dict:
         result = self._parse_with_templates(user_text, intent_hint, entities_hint)
         result["raw"]["source"] = "template"
@@ -126,7 +126,7 @@ class TemplateParser:
             if matches:
                 # Filter out command words
                 for match in matches:
-                    words = match.split()
+                    words = match.split() if match else []
                     if not any(
                         word in EntityConfig.NAME_EXCLUDED_WORDS for word in words
                     ):

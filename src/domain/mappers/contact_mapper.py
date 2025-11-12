@@ -1,4 +1,3 @@
-from .mapper import Mapper
 from ..entities.contact import Contact
 from ..models.dbcontact import DBContact
 from ..value_objects.name import Name
@@ -8,7 +7,7 @@ from ..value_objects.address import Address
 from ..value_objects.birthday import Birthday
 
 
-class ContactMapper(Mapper):
+class ContactMapper:
 
     @staticmethod
     def to_dbmodel(data: Contact) -> DBContact:

@@ -70,7 +70,7 @@ class SpanExtractor:
 
         # Keep track of used spans
         resolved = []
-        used_spans = []
+        used_spans: list[Tuple[int, int]] = []
 
         for entity in sorted_entities:
             # Check if this entity overlaps with any already selected

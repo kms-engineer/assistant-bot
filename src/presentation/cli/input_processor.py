@@ -1,4 +1,5 @@
 from difflib import get_close_matches
+from typing import Optional
 
 from .command_handler import CommandHandler
 from .command_parser import CommandParser
@@ -73,7 +74,7 @@ def process_nlp_input(
 
 
 def _get_nlp_failure_message(
-    user_input: str, handler: CommandHandler, error: str = None
+    user_input: str, handler: CommandHandler, error: Optional[str] = None
 ) -> str:
     # Get example phrases for NLP
     examples = handler.get_nlp_command_examples()

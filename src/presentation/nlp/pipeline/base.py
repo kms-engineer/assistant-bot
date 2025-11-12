@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict
+from typing import Dict, Optional
 from dataclasses import dataclass, field
 
 
@@ -9,7 +9,7 @@ class NLPContext:
 
     intent: str | None = None
     intent_confidence: float = 0.0
-    entities: Dict[str, str] = field(default_factory=dict)
+    entities: Dict[str, Optional[str]] = field(default_factory=dict)
     entity_confidences: Dict[str, float] = field(default_factory=dict)
     validation: Dict = field(default_factory=dict)
     metadata: Dict = field(default_factory=dict)

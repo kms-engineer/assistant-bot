@@ -10,7 +10,7 @@ class NERModel(BaseModel):
     LABEL2ID = {label: idx for idx, label in enumerate(EntityConfig.ENTITY_LABELS)}
     ID2LABEL = {idx: label for label, idx in LABEL2ID.items()}
 
-    def __init__(self, model_path: str = None):
+    def __init__(self, model_path: Optional[str] = None):
         super().__init__(model_path, ModelConfig.NER_MODEL_PATH)
 
         # Load the pretrained token-classification model without forcing num_labels so
