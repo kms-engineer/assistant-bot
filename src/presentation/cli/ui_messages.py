@@ -12,41 +12,59 @@ class UIMessages:
 
     # Classic mode command list (technical format)
     COMMAND_LIST = """Available commands:
+
+GENERAL:
   hello                            - Show greeting
+  help                             - Show commands list
+  clear                            - Clear the command-line interface
+  close, exit                      - Exit the bot
+
+CONTACTS:
   add <name> <phone>               - Add new contact
-  change <name> <old> <new>        - Update contact's phone
-  remove-phone <name> <phone>      - Remove phone from contact
-  delete-contact <name>            - Delete contact
-  phone <name>                     - Show contact's phone number(s)
   all                              - Show all contacts
-  add-birthday <name> <DD.MM.YYYY> - Add birthday to contact
-  show-birthday <name>             - Show contact's birthday
-  birthdays <amount>               - Show upcoming birthdays for <amount> days ahead or 7 days by default (max=365)
+  change <name> <old> <new>        - Update contact's phone
+  delete-contact <name>            - Delete contact
+  find <search_text>               - Find exact matching names/emails/phones
+  phone <name>                     - Show contact's phone number(s)
+  remove-phone <name> <phone>      - Remove phone from contact
+  search <search_text>             - Search matching (not strict) names/emails/phones
+
+EMAIL:
   add-email <name> <email>         - Add email to contact
   edit-email <name> <new email>    - Edit email address in an existing contact
   remove-email <name>              - Remove email in an existing contact if set
+
+ADDRESS:
   add-address <name> <address>     - Add address to contact
   edit-address <name> <address>    - Edit address in an existing contact
   remove-address <name>            - Remove address in an existing contact if set
-  search <search_text>             - Search matching (not strict) names/emails/phones
-  find <search_text>               - Find exact matching names/emails/phones
-  add-note <text>                  - Add new note
-  show-notes                       - Show all notes
-  show-notes --sort-by-tag         - Show all notes grouped by tags
-  edit-note <id> <new text>        - Edit note by ID
-  delete-note <id>                 - Delete note by ID
+
+BIRTHDAY:
+  add-birthday <name> <DD.MM.YYYY> - Add birthday to contact
+  birthdays <amount>               - Show upcoming birthdays for <amount> days ahead or 7 days by default (max=365)
+  remove-birthday <name>           - Remove birthday from contact
+  show-birthday <name>             - Show contact's birthday
+
+NOTES:
+  add-note <title> <text>          - Add new note with title and text
   add-tag <id> <tag>               - Add a tag to a note
+  delete-note <id>                 - Delete note by ID
+  delete-note-by-tag <tag>         - Delete all notes with specific tag
+  delete-note-by-title <title>     - Delete note(s) by title
+  edit-note <id> <new text>        - Edit note text by ID
+  list-tags                        - List all tags with usage count
   remove-tag <id> <tag>            - Remove a tag from a note
+  rename-note <id> <new title>     - Rename note by ID
   search-notes <query>             - Search notes by text content
   search-notes-by-tag <tag>        - Search notes by tag
-  list-tags                        - List all tags with usage count
+  search-notes-by-title <query>    - Search notes by title
+  show-note <id>                   - Show specific note by ID
+  show-notes                       - Show all notes
+  show-notes --sort-by-tag         - Show all notes grouped by tags
 
-  save <filename>                  - Save address book to file
+FILE OPERATIONS:
   load <filename>                  - Load address book from file
-
-  clear                            - Clear the command-line interface
-  help                             - Show commands list
-  close, exit                      - Exit the bot
+  save <filename>                  - Save address book to file
 """
 
     # NLP mode command list (natural language format)
@@ -81,13 +99,11 @@ ADDRESS:
 BIRTHDAY:
   Add birthday 15.03.1990 to John                      - Set birthday
   Show birthdays for next 30 days                      - Upcoming birthdays
+  Remove birthday from John                            - Delete birthday
 
 NOTES:
-  Add note "Meeting tomorrow at 4:00pm"                       - Create new note
   Show all notes                                              - List all notes
   Show note a1b2c3d4-e5f6-7890-abcd-ef1234567890              - Display note by ID
-  Edit note a1b2c3d4-e5f6-7890-abcd-ef1234567890 "New text"   - Update note
-  Remove note a1b2c3d4-e5f6-7890-abcd-ef1234567890            - Remove note
   Add tag #work to note a1b2c3d4-e5f6-7890-abcd-ef123...      - Tag a note
   Remove tag #work from note a1b2c3d4-e5f6-7890-abcd-...      - Remove tag
   Show all tags                                               - List all tags

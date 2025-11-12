@@ -151,6 +151,9 @@ class NoteService:
             if any(tag_lower == t.value.lower() for t in note.tags)
         ]
 
+    def search_by_tag(self, tag: str) -> list[Note]:
+        return self.search_notes_by_tag(tag)
+
     def list_tags(self) -> dict[str, int]:
         tag_counts = {}
         for note in self.notes.values():
