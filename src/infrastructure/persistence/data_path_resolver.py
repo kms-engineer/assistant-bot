@@ -55,6 +55,10 @@ class DataPathResolver:
                 os.path.basename(filename) != filename,
                 "Filename must not contain directories",
             ),
+            (
+                "/" in filename or "\\" in filename,
+                "Filename must not contain directories",
+            ),
             (len(filename) > 100, "Filename too long (max 100 characters)"),
             (filename.startswith("."), "Filename must not start with '.'"),
             (".." in filename, "Filename must not contain '..'"),

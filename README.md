@@ -180,6 +180,7 @@ Our team proved that by combining solid engineering principles with modern AI ca
   - [Classic Mode](#classic-mode)
   - [NLP Mode](#nlp-mode-ai-powered)
 - [Commands Reference](#-commands-reference)
+  - [Using Quotes in Commands](#-using-quotes-in-commands)
 - [MCP Integration](#-mcp-integration-claude-desktop)
 - [Storage Options](#-storage-options)
 - [Examples](#-examples)
@@ -430,6 +431,33 @@ Models loaded successfully!
 |---------|-------------|---------|
 | `save <filename>` | Save to file | `save my_contacts.db` |
 | `load <filename>` | Load from file | `load my_contacts.db` |
+
+---
+
+### 💡 Using Quotes in Commands
+
+You can use quotes (double `"` or single `'`) to pass arguments with spaces:
+
+```bash
+# With quotes - spaces are preserved
+add-note "Groceries for weekend" "Buy salmon, eggs, oat milk, tomatoes"
+search-notes-by-title "My Project"
+rename-note abc123 "New Title with Spaces"
+edit-note xyz789 "Updated text content"
+delete-note-by-title "Old Note"
+
+# Without quotes - only works for single-word arguments
+add-note SimpleTitle SimpleText
+search-notes-by-title Project
+```
+
+**Commands that support quotes:**
+- `add-note <title> <text>` - Both title and text can contain spaces
+- `search-notes-by-title <query>` - Search for titles with spaces
+- `edit-note <id> <text>` - Text can contain spaces
+- `rename-note <id> <title>` - New title can contain spaces
+- `delete-note-by-title <title>` - Delete notes with spaces in title
+- All other commands with text arguments
 
 ---
 

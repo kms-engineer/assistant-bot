@@ -136,7 +136,7 @@ def delete_note(args: List[str], service: NoteService) -> str:
     if not confirm_action(prompt, default=False):
         return UIMessages.ACTION_CANCELLED
 
-    return service.delete_note(note_id)
+    return service.delete_note_by_id(note_id)
 
 
 def add_tag(args: List[str], service: NoteService) -> str:
