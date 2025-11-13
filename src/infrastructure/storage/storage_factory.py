@@ -28,18 +28,20 @@ class StorageFactory:
     @staticmethod
     def get_storage(filepath: str) -> Storage:
         DataPathResolver.validate_filename(filepath)
-        filepath = Path(filepath.lower())
-        if filepath.suffix.endswith(".json"):
-            return JsonStorage(filepath)
-        elif filepath.suffix.endswith(".pkl") or filepath.suffix.endswith(".pickle"):
-            return PickleStorage(filepath)
-        elif (
-            filepath.suffix.endswith(".db")
-            or filepath.suffix.endswith(".sqlite")
-            or filepath.suffix.endswith(".sqlite3")
+        storage_path = Path(filepath.lower())
+        if storage_path.suffix.endswith(".json"):
+            return JsonStorage(storage_path)
+        elif storage_path.suffix.endswith(".pkl") or storage_path.suffix.endswith(
+            ".pickle"
         ):
-            return SQLiteStorage(DBBase, filepath)
+            return PickleStorage(storage_path)
+        elif (
+            storage_path.suffix.endswith(".db")
+            or storage_path.suffix.endswith(".sqlite")
+            or storage_path.suffix.endswith(".sqlite3")
+        ):
+            return SQLiteStorage(DBBase, storage_path)
         else:
             raise ValueError(
-                f"Unsupported filetype: {filepath}.\nSupported extensions: .json, .pkl, .pickle, .db, .sqlite, .sqlite3"
+                f"Unsupported filetype: {storage_path}.\nSupported extensions: .json, .pkl, .pickle, .db, .sqlite, .sqlite3"
             )

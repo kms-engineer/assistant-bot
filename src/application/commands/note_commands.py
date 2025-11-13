@@ -63,7 +63,7 @@ def show_notes(args: List[str], service: NoteService) -> str:
                 lines.append("")
     else:
         # Regular listing with tag highlighting
-        notes = (
+        notes = list(
             service.get_notes_sorted_by_title()
             if sort_by_title
             else service.get_all_notes()

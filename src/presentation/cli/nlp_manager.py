@@ -3,6 +3,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from src.presentation.nlp import HybridNLP
+
 
 class NLPManager:
 
@@ -17,7 +19,7 @@ class NLPManager:
         self.models_dir = self.project_root / "models"
         self.intent_model_path = self.models_dir / "assistant-bot-intent-classifier"
         self.ner_model_path = self.models_dir / "assistant-bot-ner-model"
-        self.nlp_processor = None
+        self.nlp_processor: Optional[HybridNLP] = None
 
     def check_models_exist(self) -> tuple[bool, bool]:
         intent_exists = (

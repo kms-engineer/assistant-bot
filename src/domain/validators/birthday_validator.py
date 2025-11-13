@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from typing import Union
+from typing import Union, Optional
 
 from src.config import DateFormatConfig, RegexPatterns, ValidationConfig
 from .base_validator import BaseValidator
@@ -11,7 +11,7 @@ class BirthdayValidator(BaseValidator):
     _pattern = re.compile(RegexPatterns.BIRTHDAY_STRICT_PATTERN)
 
     @staticmethod
-    def validate(birthday: str, date_format: str = None) -> Union[str, bool]:
+    def validate(birthday: str, date_format: Optional[str] = None) -> Union[str, bool]:
         if date_format is None:
             date_format = DateFormatConfig.PRIMARY_DATE_FORMAT
 

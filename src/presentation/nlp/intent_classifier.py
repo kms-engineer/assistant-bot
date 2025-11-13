@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Optional
 import torch
 from transformers import AutoModelForSequenceClassification
 from src.config import IntentConfig, ModelConfig
@@ -7,7 +7,7 @@ from .base_model import BaseModel
 
 class IntentClassifier(BaseModel):
 
-    def __init__(self, model_path: str = None):
+    def __init__(self, model_path: Optional[str] = None):
         super().__init__(model_path, ModelConfig.INTENT_MODEL_PATH)
 
         # Load model - num_labels is automatically loaded from model config

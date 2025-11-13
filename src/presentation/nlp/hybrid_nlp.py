@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, List, Union
+from typing import Dict, Tuple, List, Union, Optional
 from .intent_classifier import IntentClassifier
 from .ner_model import NERModel
 from .span_extractor import SpanExtractor
@@ -21,8 +21,8 @@ class HybridNLP:
 
     def __init__(
         self,
-        intent_model_path: str = None,
-        ner_model_path: str = None,
+        intent_model_path: Optional[str] = None,
+        ner_model_path: Optional[str] = None,
         default_region: str = "US",
         use_parallel: bool = True,
         use_category_validation: bool = True,
