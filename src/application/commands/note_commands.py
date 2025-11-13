@@ -63,7 +63,7 @@ def show_notes(args: List[str], service: NoteService) -> str:
                 lines.append("")
     else:
         # Regular listing with tag highlighting
-        notes = (
+        notes = list(
             service.get_notes_sorted_by_title()
             if sort_by_title
             else service.get_all_notes()
@@ -136,7 +136,7 @@ def delete_note(args: List[str], service: NoteService) -> str:
     if not confirm_action(prompt, default=False):
         return UIMessages.ACTION_CANCELLED
 
-    return service.delete_note(note_id)
+    return service.delete_note_by_id(note_id)
 
 
 def add_tag(args: List[str], service: NoteService) -> str:

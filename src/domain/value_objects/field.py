@@ -1,11 +1,12 @@
 from dataclasses import dataclass
+from typing import Any
 
 
 @dataclass
 class Field:
-    value: any
+    value: Any
 
-    def __init__(self, value: any):
+    def __init__(self, value: Any):
         self.value = value
 
     def __str__(self) -> str:

@@ -13,7 +13,7 @@ def migrate_files(src_dir: str, dest_dir: str):
             log.error(f"Source directory '{src_dir}' does not exist.")
             return
 
-        os.makedirs(str(dest_dir), exist_ok=True)
+        os.makedirs(dest_dir, exist_ok=True)
 
         count = 0
         src_dir = os.path.abspath(src_dir)

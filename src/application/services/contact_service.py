@@ -17,14 +17,18 @@ from ...infrastructure.storage.storage import Storage
 
 class ContactService:
 
-    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
+    def __init__(
+        self,
+        storage: Optional[Storage] = None,
+        serializer: Optional[JsonSerializer] = None,
+    ):
         raw_storage = storage if storage else PickleStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
         self.address_book = AddressBook()
         self._current_filename = DEFAULT_CONTACTS_FILE
 
     def load_address_book(
-        self, filename: str = DEFAULT_CONTACTS_FILE, user_provided: bool = False
+        self, filename: str | None = DEFAULT_CONTACTS_FILE, user_provided: bool = False
     ) -> int:
         loaded_book, normalized_filename = self.storage.load_contacts(
             filename, user_provided=user_provided

@@ -1,4 +1,5 @@
 import argparse
+from typing import Optional
 
 from src.domain.utils.styles_utils import stylize_text, stylize_error_message
 from src.infrastructure.storage.storage_factory import StorageFactory
@@ -26,8 +27,8 @@ from ...infrastructure.storage.sqlite_storage import SQLiteStorage
 
 def save_and_exit(
     contact_service: ContactService,
-    note_service: NoteService = None,
-    storage_type: StorageType = None,
+    note_service: Optional[NoteService] = None,
+    storage_type: Optional[StorageType] = None,
 ) -> None:
     print(UIMessages.SAVING)
 

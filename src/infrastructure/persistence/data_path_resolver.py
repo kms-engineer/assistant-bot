@@ -5,7 +5,7 @@ from pathlib import Path
 
 APPLICATION_DIR = ".assistant-bot"
 DEFAULT_DATA_DIR = "data"
-HOME_DATA_DIR = Path.home() / APPLICATION_DIR / DEFAULT_DATA_DIR
+HOME_DATA_DIR = str(Path.home() / APPLICATION_DIR / DEFAULT_DATA_DIR)
 RESERVED_BASENAME = "addressbook"
 DEFAULT_CONTACTS_FILE = RESERVED_BASENAME + ".pkl"
 DEFAULT_ADDRESS_BOOK_DATABASE_NAME = RESERVED_BASENAME + ".db"
@@ -15,7 +15,7 @@ DEFAULT_NOTES_FILE = "notes.json"
 
 class DataPathResolver:
 
-    def __init__(self, data_dir: Path = HOME_DATA_DIR):
+    def __init__(self, data_dir: Path = Path(HOME_DATA_DIR)):
         self.data_dir = data_dir
         self.data_dir.mkdir(parents=True, exist_ok=True)
 

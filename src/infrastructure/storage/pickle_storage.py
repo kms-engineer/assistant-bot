@@ -11,7 +11,7 @@ from ..persistence.data_path_resolver import DataPathResolver, RESERVED_BASENAME
 
 class PickleStorage(Storage):
 
-    def __init__(self, data_dir: Path = None):
+    def __init__(self, data_dir: Optional[Path] = None):
         self.resolver = DataPathResolver(data_dir) if data_dir else DataPathResolver()
 
     @property

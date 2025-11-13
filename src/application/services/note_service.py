@@ -1,4 +1,5 @@
-from typing import Optional, Set
+from collections import defaultdict
+from typing import Optional, Set, Any
 
 from ...domain.entities.note import Note
 from ...domain.utils.id_generator import IDGenerator
@@ -16,10 +17,14 @@ from ...infrastructure.storage.storage_type import StorageType
 
 class NoteService:
 
-    def __init__(self, storage: Storage = None, serializer: JsonSerializer = None):
+    def __init__(
+        self,
+        storage: Optional[Storage] = None,
+        serializer: Optional[JsonSerializer] = None,
+    ):
         raw_storage = storage if storage else JsonStorage()
         self.storage = DomainStorageAdapter(raw_storage, serializer)
-        self.notes = {}
+        self.notes: dict[Any, Any] = {}
         self.raw_storage = raw_storage
         if raw_storage.storage_type == StorageType.SQLITE:
             self._current_filename = DEFAULT_ADDRESS_BOOK_DATABASE_NAME
@@ -34,7 +39,7 @@ class NoteService:
     def get_titles(self) -> Set[str]:
         return set([item for item in self.notes.values()])
 
-    def load_notes(self, filename: str = None) -> int:
+    def load_notes(self, filename: str | None = None) -> int:
         # Use the appropriate default based on storage type
         if filename is None:
             filename = self._default_filename
@@ -155,7 +160,7 @@ class NoteService:
         return self.search_notes_by_tag(tag)
 
     def list_tags(self) -> dict[str, int]:
-        tag_counts = {}
+        tag_counts: dict[str, int] = {}
         for note in self.notes.values():
             for tag in note.tags:
                 tag_value = tag.value
@@ -163,10 +168,14 @@ class NoteService:
         return dict(sorted(tag_counts.items()))
 
     def get_notes_sorted_by_title(self) -> dict[str, list[Note]]:
-        return dict(sorted(self.notes, key=lambda param: param["title"]))
+        groups: defaultdict[str, list[Note]] = defaultdict(list)
+        for note in self.notes.values():
+            title = note.title or ""
+            groups[title].append(note)
+        return dict(sorted(groups.items(), key=lambda item: item[0].lower()))
 
     def get_notes_sorted_by_tag(self) -> dict[str, list[Note]]:
-        tag_groups = {}
+        tag_groups: dict[str, list[Note]] = {}
         for note in self.notes.values():
             if not note.tags:
                 if "untagged" not in tag_groups:

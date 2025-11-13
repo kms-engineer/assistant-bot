@@ -34,7 +34,9 @@ class CommandPipeline:
             return []
 
         pipeline_def = self.PIPELINE_DEFINITIONS[intent]
-        commands = []
+        commands: list[
+            tuple[Any, list[str], str] | tuple[Any, list[str], str, dict[str, Any]]
+        ] = []
 
         # Add primary command
         primary_command = pipeline_def["primary_command"]

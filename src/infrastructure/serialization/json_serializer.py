@@ -55,7 +55,7 @@ class JsonSerializer:
 
     @staticmethod
     def dict_to_note(data: dict[str, Any]) -> Note:
-        note = Note(data["text"], note_id=data["id"])
+        note = Note(data["title"], data["text"], note_id=data["id"])
 
         for tag_str in data.get("tags", []):
             tag_vo = Tag(tag_str)

@@ -19,12 +19,12 @@ from ...config import NLPConfig, RegexPatterns
 
 class PostProcessingRules:
 
-    def __init__(self, default_region: str = None):
+    def __init__(self, default_region: str | None = None):
         self.default_region = default_region or NLPConfig.DEFAULT_REGION
         self._original_text = None  # Store original text for context-aware extraction
 
     def process(
-        self, entities: Dict[str, str], intent: str, original_text: str = None
+        self, entities: Dict[str, str], intent: str, original_text: str | None = None
     ) -> Dict[str, Any]:
         processed: Dict[str, Any] = entities.copy()
 
