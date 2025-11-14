@@ -4,9 +4,9 @@ import tempfile
 from pathlib import Path
 from typing import Optional, Any
 
-from .storage import Storage
-from .storage_type import StorageType
-from ..persistence.data_path_resolver import DataPathResolver, RESERVED_BASENAME
+from src.infrastructure.storage.storage import Storage
+from src.infrastructure.storage.storage_type import StorageType
+from src.infrastructure.persistence.data_path_resolver import DataPathResolver, RESERVED_BASENAME
 
 
 class PickleStorage(Storage):

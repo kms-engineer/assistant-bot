@@ -2,7 +2,7 @@ import re
 
 from typing import List
 
-from .base import Entity, ExtractionStrategy
+from src.presentation.nlp.extractors.base import Entity, ExtractionStrategy
 from src.config import RegexPatterns, ConfidenceConfig, EntityConfig
 
 

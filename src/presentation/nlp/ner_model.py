@@ -2,7 +2,7 @@ from typing import Dict, List, Tuple, Optional, Set
 from transformers import AutoModelForTokenClassification, pipeline
 from src.config import EntityConfig, ModelConfig
 from src.config.intent_requirements import INTENT_REQUIREMENTS
-from .base_model import BaseModel
+from src.presentation.nlp.base_model import BaseModel
 
 
 class NERModel(BaseModel):

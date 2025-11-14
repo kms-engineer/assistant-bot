@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from ..validators.phone_validator import PhoneValidator
-from .field import Field
+from src.domain.validators.phone_validator import PhoneValidator
+from src.domain.value_objects.field import Field
 
 
 @dataclass

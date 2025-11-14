@@ -1,5 +1,5 @@
-from ..base import PipelineStage, NLPContext
-from ...template_parser import TemplateParser
+from src.presentation.nlp.pipeline.base import PipelineStage, NLPContext
+from src.presentation.nlp.template_parser import TemplateParser
 from src.config import NLPConfig, EntityConfig
 
 

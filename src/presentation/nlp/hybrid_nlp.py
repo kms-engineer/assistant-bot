@@ -1,12 +1,12 @@
 from typing import Dict, Tuple, List, Union, Optional
-from .intent_classifier import IntentClassifier
-from .ner_model import NERModel
-from .span_extractor import SpanExtractor
-from .template_parser import TemplateParser
-from .post_rules import PostProcessingRules
-from .validation_adapter import ValidationAdapter
-from .pipeline.executor import NLPPipeline
-from .pipeline.stages import (
+from src.presentation.nlp.intent_classifier import IntentClassifier
+from src.presentation.nlp.ner_model import NERModel
+from src.presentation.nlp.span_extractor import SpanExtractor
+from src.presentation.nlp.template_parser import TemplateParser
+from src.presentation.nlp.post_rules import PostProcessingRules
+from src.presentation.nlp.validation_adapter import ValidationAdapter
+from src.presentation.nlp.pipeline.executor import NLPPipeline
+from src.presentation.nlp.pipeline.stages import (
     ParallelIntentNERStage,
     ValidationStage,
     RegexFallbackStage,

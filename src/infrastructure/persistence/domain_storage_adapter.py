@@ -1,9 +1,9 @@
-from ..serialization.json_serializer import JsonSerializer
-from ..storage.storage import Storage
-from ..storage.storage_type import StorageType
-from ...application.exceptions.base import StorageException
-from ...domain.entities.note import Note
-from ...domain.notebook import Notebook
+from src.infrastructure.serialization.json_serializer import JsonSerializer
+from src.infrastructure.storage.storage import Storage
+from src.infrastructure.storage.storage_type import StorageType
+from src.application.exceptions.base import StorageException
+from src.domain.entities.note import Note
+from src.domain.notebook import Notebook
 
 
 class DomainStorageAdapter:
@@ -49,7 +49,7 @@ class DomainStorageAdapter:
         return self.ensure_suffix(saved_filename)
 
     def load_contacts(self, filename: str, **kwargs):
-        from ...domain.address_book import AddressBook
+        from src.domain.address_book import AddressBook
 
         loaded = self.storage.load(filename, **kwargs)
         normalized_filename = self.ensure_suffix(filename)

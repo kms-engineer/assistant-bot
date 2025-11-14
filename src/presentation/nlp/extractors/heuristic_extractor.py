@@ -1,6 +1,6 @@
 import re
 from typing import List
-from .base import Entity, ExtractionStrategy, is_stop_word
+from src.presentation.nlp.extractors.base import Entity, ExtractionStrategy, is_stop_word
 from src.config import EntityConfig, ConfidenceConfig, RegexPatterns
 
 

@@ -2,7 +2,7 @@ import re
 from typing import Union
 
 from src.config import ValidationConfig, RegexPatterns
-from .base_validator import BaseValidator
+from src.domain.validators.base_validator import BaseValidator
 
 
 class NameValidator(BaseValidator):

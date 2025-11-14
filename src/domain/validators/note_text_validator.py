@@ -1,6 +1,6 @@
 from typing import Union
 from src.config import ValidationConfig
-from .base_validator import BaseValidator
+from src.domain.validators.base_validator import BaseValidator
 
 
 class NoteTextValidator(BaseValidator):

@@ -2,8 +2,8 @@ from collections import UserDict
 from datetime import date, timedelta
 from typing import Optional, Set
 
-from .entities.contact import Contact
-from .utils.birthday_utils import get_next_birthday_date, parse_date
+from src.domain.entities.contact import Contact
+from src.domain.utils.birthday_utils import get_next_birthday_date, parse_date
 
 DATE_FORMAT = "%d.%m.%Y"
 

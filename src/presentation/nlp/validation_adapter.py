@@ -1,5 +1,5 @@
 from typing import Dict
-from ...domain.validators.intent_validator import IntentValidator
+from src.domain.validators.intent_validator import IntentValidator
 
 
 class ValidationAdapter:

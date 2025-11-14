@@ -1,5 +1,5 @@
 from typing import List
-from .base import PipelineStage, NLPContext
+from src.presentation.nlp.pipeline.base import PipelineStage, NLPContext
 
 
 class NLPPipeline:

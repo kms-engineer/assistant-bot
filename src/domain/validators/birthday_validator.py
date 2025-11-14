@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import Union, Optional
 
 from src.config import DateFormatConfig, RegexPatterns, ValidationConfig
-from .base_validator import BaseValidator
+from src.domain.validators.base_validator import BaseValidator
 
 
 class BirthdayValidator(BaseValidator):

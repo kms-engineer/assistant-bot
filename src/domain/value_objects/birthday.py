@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from ..validators.birthday_validator import BirthdayValidator
-from .field import Field
+from src.domain.validators.birthday_validator import BirthdayValidator
+from src.domain.value_objects.field import Field
 
 
 @dataclass

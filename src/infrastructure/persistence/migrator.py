@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from ..logging.logger import setup_logger
+from src.infrastructure.logging.logger import setup_logger
 
 log = setup_logger()
 

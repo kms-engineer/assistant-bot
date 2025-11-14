@@ -2,12 +2,12 @@ from typing import List
 
 from colorama import Style
 
-from ..services.note_service import NoteService
-from ...domain.entities import Note
-from ...domain.utils.styles_utils import stylize_tag
-from ...domain.value_objects.tag import Tag
-from ...presentation.cli.confirmation import confirm_action
-from ...presentation.cli.ui_messages import UIMessages
+from src.application.services.note_service import NoteService
+from src.domain.entities import Note
+from src.domain.utils.styles_utils import stylize_tag
+from src.domain.value_objects.tag import Tag
+from src.presentation.cli.confirmation import confirm_action
+from src.presentation.cli.ui_messages import UIMessages
 
 
 def add_note(args: List[str], service: NoteService) -> str:

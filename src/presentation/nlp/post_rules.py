@@ -2,7 +2,7 @@ import re
 from typing import Dict, Any
 
 # Import normalizers
-from .normalizers import (
+from src.presentation.nlp.normalizers import (
     PhoneNormalizer,
     EmailNormalizer,
     NameNormalizer,
@@ -13,8 +13,8 @@ from .normalizers import (
 )
 
 # Import validators (only for validation)
-from ...domain.validators.intent_validator import IntentValidator
-from ...config import NLPConfig, RegexPatterns
+from src.domain.validators.intent_validator import IntentValidator
+from src.config import NLPConfig, RegexPatterns
 
 
 class PostProcessingRules:

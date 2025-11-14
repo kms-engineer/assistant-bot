@@ -1,16 +1,17 @@
+import datetime
 import os
 from typing import List, Optional
 
-from ..services.contact_service import ContactService
-from ...domain.value_objects.address import Address
-from ...domain.value_objects.birthday import Birthday
-from ...domain.value_objects.email import Email
-from ...domain.value_objects.name import Name
-from ...domain.value_objects.phone import Phone
-from ...presentation.cli.ui_messages import UIMessages
-from ...domain.entities.contact import Contact
-from ...presentation.cli.confirmation import confirm_action
-from ...presentation.cli.selection import select_option, select_from_list
+from src.application.services.contact_service import ContactService
+from src.domain.entities.contact import Contact
+from src.domain.value_objects.address import Address
+from src.domain.value_objects.birthday import Birthday
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.name import Name
+from src.domain.value_objects.phone import Phone
+from src.presentation.cli.confirmation import confirm_action
+from src.presentation.cli.selection import select_option, select_from_list
+from src.presentation.cli.ui_messages import UIMessages
 
 
 def _select_contact_by_name(service: ContactService, name: str) -> Optional[Contact]:
@@ -138,7 +139,7 @@ def delete_contact(args: List[str], service: ContactService) -> str:
         # Multiple contacts found, ask user to select
         print(f"\nFound {len(matching_contacts)} contacts with name '{name}':")
 
-        from ...presentation.cli.selection import select_from_list
+        from src.presentation.cli.selection import select_from_list
 
         selected_idx = select_from_list(
             items=matching_contacts,
@@ -237,7 +238,7 @@ def remove_birthday(args: List[str], service: ContactService) -> str:
         return f"{contact.name.value} has no birthday set."
 
     if not confirm_action(
-        f"Remove birthday {contact.birthday.value} from {contact.name.value}?"
+            f"Remove birthday {contact.birthday.value} from {contact.name.value}?"
     ):
         return UIMessages.ACTION_CANCELLED
 
@@ -261,8 +262,10 @@ def birthdays(args: List[str], service: ContactService) -> str:
         return f"No upcoming birthdays in the next {days} days."
 
     lines = ["Upcoming birthdays:"]
+    today = datetime.datetime.today()
     for contact in upcoming:
-        lines.append(f"{contact['name']}: {contact['birthdays_date']}")
+        delta = abs((contact['birthdays_date'] - today).days)
+        lines.append(f"{contact['name']}: {contact['birthdays_date']} | in {delta} day(s)")
     return "\n".join(lines)
 
 

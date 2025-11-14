@@ -1,4 +1,4 @@
-from .base import (
+from src.application.exceptions.base import (
     StorageException,
 )
 

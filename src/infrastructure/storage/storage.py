@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Any, Optional
 
-from .storage_type import StorageType
+from src.infrastructure.storage.storage_type import StorageType
 
 
 class Storage(ABC):
