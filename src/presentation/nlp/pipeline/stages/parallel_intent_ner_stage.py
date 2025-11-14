@@ -1,10 +1,10 @@
 from concurrent.futures import ThreadPoolExecutor
 from typing import Tuple, Optional
-from ..base import PipelineStage, NLPContext
-from ...intent_classifier import IntentClassifier
-from ...action_category_detector import ActionCategoryDetector
-from ...ner_model import NERModel
-from ...keyword_intent_matcher import KeywordIntentMatcher
+from src.presentation.nlp.pipeline.base import PipelineStage, NLPContext
+from src.presentation.nlp.intent_classifier import IntentClassifier
+from src.presentation.nlp.action_category_detector import ActionCategoryDetector
+from src.presentation.nlp.ner_model import NERModel
+from src.presentation.nlp.keyword_intent_matcher import KeywordIntentMatcher
 from src.config.nlp_config import NLPConfig
 
 

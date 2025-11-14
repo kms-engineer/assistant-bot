@@ -1,7 +1,7 @@
-from ..base import PipelineStage, NLPContext
-from ...span_extractor import SpanExtractor
-from ...validation_adapter import ValidationAdapter
-from ...entity_merger import EntityMerger
+from src.presentation.nlp.pipeline.base import PipelineStage, NLPContext
+from src.presentation.nlp.span_extractor import SpanExtractor
+from src.presentation.nlp.validation_adapter import ValidationAdapter
+from src.presentation.nlp.entity_merger import EntityMerger
 
 
 class RegexFallbackStage(PipelineStage):

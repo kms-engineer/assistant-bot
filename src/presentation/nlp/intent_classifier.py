@@ -2,7 +2,7 @@ from typing import Tuple, Optional
 import torch
 from transformers import AutoModelForSequenceClassification
 from src.config import IntentConfig, ModelConfig
-from .base_model import BaseModel
+from src.presentation.nlp.base_model import BaseModel
 
 
 class IntentClassifier(BaseModel):

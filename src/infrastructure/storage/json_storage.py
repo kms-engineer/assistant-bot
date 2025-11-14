@@ -4,9 +4,9 @@ import tempfile
 from pathlib import Path
 from typing import Any, Optional
 
-from .storage import Storage
-from .storage_type import StorageType
-from ..persistence.data_path_resolver import DataPathResolver
+from src.infrastructure.storage.storage import Storage
+from src.infrastructure.storage.storage_type import StorageType
+from src.infrastructure.persistence.data_path_resolver import DataPathResolver
 
 
 class JsonStorage(Storage):

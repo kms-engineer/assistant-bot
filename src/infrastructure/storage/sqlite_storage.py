@@ -4,15 +4,15 @@ from typing import Any, Optional, List, Type, TypeVar
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker, Session, DeclarativeBase
 
-from .storage_type import StorageType
-from ..persistence.data_path_resolver import DataPathResolver
-from ..storage.storage import Storage
-from ...domain.address_book import AddressBook
-from ...domain.notebook import Notebook
-from ...domain.mappers.contact_mapper import ContactMapper
-from ...domain.mappers.note_mapper import NoteMapper
-from ...domain.models.dbcontact import DBContact
-from ...domain.models.dbnote import DBNote
+from src.infrastructure.storage.storage_type import StorageType
+from src.infrastructure.persistence.data_path_resolver import DataPathResolver
+from src.infrastructure.storage.storage import Storage
+from src.domain.address_book import AddressBook
+from src.domain.notebook import Notebook
+from src.domain.mappers.contact_mapper import ContactMapper
+from src.domain.mappers.note_mapper import NoteMapper
+from src.domain.models.dbcontact import DBContact
+from src.domain.models.dbnote import DBNote
 
 T = TypeVar("T")
 

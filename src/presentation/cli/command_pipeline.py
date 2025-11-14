@@ -1,8 +1,8 @@
 from typing import Dict, List, Any
 
 from src.config import IntentConfig
-from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService
+from src.application.services.contact_service import ContactService
+from src.application.services.note_service import NoteService
 
 
 class CommandPipeline:

@@ -1,18 +1,18 @@
 from collections import defaultdict
 from typing import Optional, Set, Any
 
-from ...domain.entities.note import Note
-from ...domain.utils.id_generator import IDGenerator
-from ...domain.value_objects.tag import Tag
-from ...infrastructure.persistence.data_path_resolver import (
+from src.domain.entities.note import Note
+from src.domain.utils.id_generator import IDGenerator
+from src.domain.value_objects.tag import Tag
+from src.infrastructure.persistence.data_path_resolver import (
     DEFAULT_NOTES_FILE,
     DEFAULT_ADDRESS_BOOK_DATABASE_NAME,
 )
-from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
-from ...infrastructure.serialization.json_serializer import JsonSerializer
-from ...infrastructure.storage.json_storage import JsonStorage
-from ...infrastructure.storage.storage import Storage
-from ...infrastructure.storage.storage_type import StorageType
+from src.infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
+from src.infrastructure.serialization.json_serializer import JsonSerializer
+from src.infrastructure.storage.json_storage import JsonStorage
+from src.infrastructure.storage.storage import Storage
+from src.infrastructure.storage.storage_type import StorageType
 
 
 class NoteService:

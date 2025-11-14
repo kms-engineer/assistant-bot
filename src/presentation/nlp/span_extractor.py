@@ -1,6 +1,6 @@
 from typing import Dict, List, Tuple, Optional, Set
 
-from .extractors import Entity, LibraryExtractor, RegexExtractor, HeuristicExtractor
+from src.presentation.nlp.extractors import Entity, LibraryExtractor, RegexExtractor, HeuristicExtractor
 from src.config.intent_requirements import INTENT_REQUIREMENTS
 
 

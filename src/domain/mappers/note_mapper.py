@@ -1,6 +1,6 @@
-from ..entities.note import Note
-from ..models.dbnote import DBNote
-from ..value_objects.tag import Tag
+from src.domain.entities.note import Note
+from src.domain.models.dbnote import DBNote
+from src.domain.value_objects.tag import Tag
 
 
 class NoteMapper:

@@ -1,5 +1,5 @@
-from ..base import PipelineStage, NLPContext
-from ...validation_adapter import ValidationAdapter
+from src.presentation.nlp.pipeline.base import PipelineStage, NLPContext
+from src.presentation.nlp.validation_adapter import ValidationAdapter
 
 
 class ValidationStage(PipelineStage):

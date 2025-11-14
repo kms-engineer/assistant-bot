@@ -4,25 +4,25 @@ from typing import Optional
 from src.domain.utils.styles_utils import stylize_text, stylize_error_message
 from src.infrastructure.storage.storage_factory import StorageFactory
 from src.infrastructure.storage.storage_type import StorageType
-from .command_handler import CommandHandler
-from .command_parser import CommandParser
-from .input_processor import process_classic_input, process_nlp_input
-from .mode_decider import CLIMode
-from .regex_gate import RegexCommandGate
-from .ui_messages import UIMessages
-from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService
-from ...infrastructure.persistence.data_path_resolver import (
+from src.presentation.cli.command_handler import CommandHandler
+from src.presentation.cli.command_parser import CommandParser
+from src.presentation.cli.input_processor import process_classic_input, process_nlp_input
+from src.presentation.cli.mode_decider import CLIMode
+from src.presentation.cli.regex_gate import RegexCommandGate
+from src.presentation.cli.ui_messages import UIMessages
+from src.application.services.contact_service import ContactService
+from src.application.services.note_service import NoteService
+from src.infrastructure.persistence.data_path_resolver import (
     HOME_DATA_DIR,
     DEFAULT_DATA_DIR,
     DEFAULT_ADDRESS_BOOK_DATABASE_NAME,
     DEFAULT_JSON_FILE,
     DEFAULT_CONTACTS_FILE,
 )
-from ...infrastructure.persistence.migrator import migrate_files
-from ...infrastructure.storage.json_storage import JsonStorage
-from ...infrastructure.storage.pickle_storage import PickleStorage
-from ...infrastructure.storage.sqlite_storage import SQLiteStorage
+from src.infrastructure.persistence.migrator import migrate_files
+from src.infrastructure.storage.json_storage import JsonStorage
+from src.infrastructure.storage.pickle_storage import PickleStorage
+from src.infrastructure.storage.sqlite_storage import SQLiteStorage
 
 
 def save_and_exit(

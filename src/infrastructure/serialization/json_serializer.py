@@ -1,12 +1,12 @@
 from typing import Any
-from ...domain.entities.contact import Contact
-from ...domain.entities.note import Note
-from ...domain.value_objects.name import Name
-from ...domain.value_objects.phone import Phone
-from ...domain.value_objects.email import Email
-from ...domain.value_objects.address import Address
-from ...domain.value_objects.birthday import Birthday
-from ...domain.value_objects.tag import Tag
+from src.domain.entities.contact import Contact
+from src.domain.entities.note import Note
+from src.domain.value_objects.name import Name
+from src.domain.value_objects.phone import Phone
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.address import Address
+from src.domain.value_objects.birthday import Birthday
+from src.domain.value_objects.tag import Tag
 
 
 class JsonSerializer:

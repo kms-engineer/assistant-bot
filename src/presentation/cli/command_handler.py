@@ -1,14 +1,14 @@
 from difflib import get_close_matches
 from typing import Dict, Callable, List, Any
 
-from .command_pipeline import CommandPipeline
-from .error_handler import handle_errors
-from .ui_messages import UIMessages
-from ...application.commands import contact_commands, note_commands
-from ...application.services.contact_service import ContactService
-from ...application.services.note_service import NoteService
-from ...config import UIConfig
-from ...config import IntentConfig
+from src.presentation.cli.command_pipeline import CommandPipeline
+from src.presentation.cli.error_handler import handle_errors
+from src.presentation.cli.ui_messages import UIMessages
+from src.application.commands import contact_commands, note_commands
+from src.application.services.contact_service import ContactService
+from src.application.services.note_service import NoteService
+from src.config import UIConfig
+from src.config import IntentConfig
 
 
 class CommandHandler:

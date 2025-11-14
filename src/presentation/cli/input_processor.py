@@ -1,9 +1,9 @@
 from difflib import get_close_matches
 from typing import Optional
 
-from .command_handler import CommandHandler
-from .command_parser import CommandParser
-from .regex_gate import RegexCommandGate
+from src.presentation.cli.command_handler import CommandHandler
+from src.presentation.cli.command_parser import CommandParser
+from src.presentation.cli.regex_gate import RegexCommandGate
 
 LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
 

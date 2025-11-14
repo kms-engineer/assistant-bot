@@ -1,7 +1,7 @@
 from typing import Callable
 
-from .entity import Entity
-from ..value_objects.tag import Tag
+from src.domain.entities.entity import Entity
+from src.domain.value_objects.tag import Tag
 
 
 class Note(Entity):

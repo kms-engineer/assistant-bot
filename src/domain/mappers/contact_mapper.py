@@ -1,10 +1,10 @@
-from ..entities.contact import Contact
-from ..models.dbcontact import DBContact
-from ..value_objects.name import Name
-from ..value_objects.phone import Phone
-from ..value_objects.email import Email
-from ..value_objects.address import Address
-from ..value_objects.birthday import Birthday
+from src.domain.entities.contact import Contact
+from src.domain.models.dbcontact import DBContact
+from src.domain.value_objects.name import Name
+from src.domain.value_objects.phone import Phone
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.address import Address
+from src.domain.value_objects.birthday import Birthday
 
 
 class ContactMapper:

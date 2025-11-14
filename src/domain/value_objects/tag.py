@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from ..validators.tag_validator import TagValidator
-from .field import Field
+from src.domain.validators.tag_validator import TagValidator
+from src.domain.value_objects.field import Field
 
 
 @dataclass

@@ -1,7 +1,7 @@
-from .base import Entity, ExtractionStrategy
-from .library_extractor import LibraryExtractor
-from .regex_extractor import RegexExtractor
-from .heuristic_extractor import HeuristicExtractor
+from src.presentation.nlp.extractors.base import Entity, ExtractionStrategy
+from src.presentation.nlp.extractors.library_extractor import LibraryExtractor
+from src.presentation.nlp.extractors.regex_extractor import RegexExtractor
+from src.presentation.nlp.extractors.heuristic_extractor import HeuristicExtractor
 
 __all__ = [
     "Entity",

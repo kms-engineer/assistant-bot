@@ -1,6 +1,6 @@
 from sqlalchemy import Column, String
 
-from .dbbase import DBBase
+from src.domain.models.dbbase import DBBase
 
 
 class DBNote(DBBase):

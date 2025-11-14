@@ -1,18 +1,18 @@
 from typing import Optional
 
-from ...domain.address_book import AddressBook
-from ...domain.entities.contact import Contact
-from ...domain.utils.id_generator import IDGenerator
-from ...domain.value_objects.address import Address
-from ...domain.value_objects.birthday import Birthday
-from ...domain.value_objects.email import Email
-from ...domain.value_objects.name import Name
-from ...domain.value_objects.phone import Phone
-from ...infrastructure.persistence.data_path_resolver import DEFAULT_CONTACTS_FILE
-from ...infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
-from ...infrastructure.serialization.json_serializer import JsonSerializer
-from ...infrastructure.storage.pickle_storage import PickleStorage
-from ...infrastructure.storage.storage import Storage
+from src.domain.address_book import AddressBook
+from src.domain.entities.contact import Contact
+from src.domain.utils.id_generator import IDGenerator
+from src.domain.value_objects.address import Address
+from src.domain.value_objects.birthday import Birthday
+from src.domain.value_objects.email import Email
+from src.domain.value_objects.name import Name
+from src.domain.value_objects.phone import Phone
+from src.infrastructure.persistence.data_path_resolver import DEFAULT_CONTACTS_FILE
+from src.infrastructure.persistence.domain_storage_adapter import DomainStorageAdapter
+from src.infrastructure.serialization.json_serializer import JsonSerializer
+from src.infrastructure.storage.pickle_storage import PickleStorage
+from src.infrastructure.storage.storage import Storage
 
 
 class ContactService:
