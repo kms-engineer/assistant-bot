@@ -19,6 +19,9 @@ huggingface_hub>=0.16.0  # For model download/upload
 # MCP
 fastmcp==2.13.0
 
+# UI
+gradio==5.49.1
+
 # Testing
 pytest==8.4.2
 pytest-cov==7.0.0

@@ -138,7 +138,6 @@ Our team encountered and successfully resolved several significant challenges:
 
 Our roadmap includes exciting enhancements:
 
-- 🌐 **Web Interface** for browser-based access
 - 💬 **Telegram Bot** integration for mobile convenience
 - 🔄 **Cloud Sync** (optional) for multi-device access
 - 📱 **Mobile App** for iOS and Android
@@ -179,6 +178,7 @@ Our team proved that by combining solid engineering principles with modern AI ca
 - [Running Modes](#-running-modes)
   - [Classic Mode](#classic-mode)
   - [NLP Mode](#nlp-mode-ai-powered)
+  - [Web UI Mode](#web-ui-mode-gradio)
 - [Commands Reference](#-commands-reference)
   - [Using Quotes in Commands](#-using-quotes-in-commands)
 - [MCP Integration](#-mcp-integration-claude-desktop)
@@ -346,6 +346,55 @@ Models loaded successfully!
 
 ---
 
+### Web UI Mode (Gradio)
+
+Modern web interface with visual controls and real-time updates.
+
+**Start:**
+```bash
+python3 -m src.web.gradio_app
+# or
+python3 src/web/gradio_app.py
+```
+
+The interface will be available at http://localhost:7860
+
+**Features:**
+- 🌐 **Browser-based interface** with clean, modern design
+- 📇 **Contact Management Tab**:
+  - Add contacts with name and phone
+  - Update email, address, and birthday
+  - Search and view all contacts
+  - Track upcoming birthdays with configurable date range
+  - Delete contacts
+- 📝 **Notes Management Tab**:
+  - Create notes with optional tags
+  - Add/remove tags to organize notes
+  - Search by text content or tags
+  - View all notes
+  - Delete notes by ID
+- 🎨 **Customizable Theme** with soft colors and modern styling
+- 💾 **Auto-save** - all changes persist to JSON storage
+- ✅ **Real-time feedback** with status messages
+
+**Best for:**
+- ✅ Visual interface preference
+- ✅ Easier contact/note management
+- ✅ No command memorization needed
+- ✅ Intuitive UI for non-technical users
+- ✅ Multi-tab organization
+
+**Requirements:**
+```bash
+# Included in requirements.txt
+gradio==5.49.1
+```
+
+**Storage:**
+Data is automatically saved to `data/` directory in JSON format and synchronized with CLI modes.
+
+---
+
 ## 📚 Commands Reference
 
 ### 🏠 General Commands
@@ -499,6 +548,26 @@ pwd
 ```
 
 **4. Restart Claude Desktop**
+
+### Running MCP Server
+
+The MCP server can run in two modes:
+
+**Automatic (via Claude Desktop):**
+When you configure Claude Desktop as shown above, it automatically starts the MCP server when needed. No manual action required.
+
+**Manual (for testing):**
+You can also run the MCP server manually for testing or development:
+
+```bash
+# Run MCP server in stdio mode (for Claude Desktop integration)
+python3 -m src.web.server_stdio
+
+# Or run the standalone MCP server
+python3 -m src.web.server
+```
+
+The server will start and wait for connections. Use Ctrl+C to stop it.
 
 ### Using with Claude
 
