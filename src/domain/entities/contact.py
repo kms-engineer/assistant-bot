@@ -74,6 +74,17 @@ class Contact(Entity):
             values.append(str(self.address))
         values.extend(str(phone) for phone in self.phones)
 
+        # Normalize search text for phone number comparison (remove all non-digits)
+        search_normalized = ''.join(c for c in search_text if c.isdigit())
+
+        # Check if search text looks like a phone number (contains digits)
+        if search_normalized:
+            # Check against normalized phone values
+            for phone in self.phones:
+                # Phone.value already contains normalized digits only
+                if search_normalized in phone.value or phone.value in search_normalized:
+                    return True
+
         # Perform search
         if exact:
             return search_text in values
