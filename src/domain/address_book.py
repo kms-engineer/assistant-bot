@@ -68,7 +68,9 @@ class AddressBook(UserDict):
                 upcoming_birthdays.append(
                     {
                         "name": contact.name.value,
-                        "birthdays_date": next_birthday_date.strftime(DATE_FORMAT),
+                        "birthday": contact.birthday.value,  # Original birthday
+                        "congratulation_date": next_birthday_date.strftime(DATE_FORMAT),  # Next celebration date
+                        "birthdays_date": next_birthday_date,  # Date object for calculations
                     }
                 )
 

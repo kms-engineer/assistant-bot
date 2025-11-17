@@ -262,10 +262,10 @@ def birthdays(args: List[str], service: ContactService) -> str:
         return f"No upcoming birthdays in the next {days} days."
 
     lines = ["Upcoming birthdays:"]
-    today = datetime.datetime.today()
+    today = datetime.date.today()
     for contact in upcoming:
         delta = abs((contact['birthdays_date'] - today).days)
-        lines.append(f"{contact['name']}: {contact['birthdays_date']} | in {delta} day(s)")
+        lines.append(f"{contact['name']}: {contact['congratulation_date']} | in {delta} day(s)")
     return "\n".join(lines)
 
 
