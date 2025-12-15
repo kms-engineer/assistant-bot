@@ -100,8 +100,8 @@ class CommandPipeline:
             "add-email",
             "add-address",
             "add-birthday",
-            "edit-email",
-            "edit-address",
+            "change-email",
+            "change-address",
         ]:
             # Get name from primary args (first arg is usually name)
             if primary_args:

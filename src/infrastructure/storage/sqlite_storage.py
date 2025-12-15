@@ -78,21 +78,21 @@ class SQLiteStorage(Storage):
         with self._create_session() as session:
             entity = session.get(model_class, primary_key)
             if entity:
-                session.expunge(entity)  # Від'єднуємо від сесії
+                session.expunge(entity)  # Detach from session
             return entity
 
     def get_all(self, model_class: Type[T]) -> List[T]:
         log.debug(f"Getting all entities for {model_class.__name__}")
         with self._create_session() as session:
             entities = session.query(model_class).all()
-            session.expunge_all()  # Від'єднуємо всі об'єкти
+            session.expunge_all()  # Detach all objects
             return entities
 
     def delete_entity(self, entity: T) -> None:
         log.debug(f"Deleting entity of type {type(entity).__name__}")
         with self._create_session() as session:
             try:
-                # Приєднуємо об'єкт до нової сесії, щоб його можна було видалити
+                # Merge entity into new session so it can be deleted
                 session.delete(session.merge(entity))
                 session.commit()
             except Exception as e:

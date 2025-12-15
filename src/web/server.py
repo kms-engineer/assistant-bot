@@ -12,8 +12,9 @@ from src.application.services.contact_service import ContactService
 
 mcp = FastMCP("AssistantBot")
 
-storage_type = StorageType.JSON
+storage_type = StorageType.SQLITE
 storage = StorageFactory.create_storage(storage_type)
+storage.load('addressbook.db')
 contact_service = ContactService(storage)
 note_service = NoteService(storage)
 

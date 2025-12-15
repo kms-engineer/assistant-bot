@@ -2,14 +2,14 @@ from functools import wraps
 from typing import Callable
 
 from src.application.exceptions.base import StorageException
-from src.domain.utils.styles_utils import stylize_error_message, stylize_success_message
+from src.domain.utils.styles_utils import stylize_error_message
 
 
 def handle_errors(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            return stylize_success_message(func(*args, **kwargs))
+            return func(*args, **kwargs)
         except KeyError as e:
             error_msg = str(e).strip("'\"")
             if "Note" in error_msg:

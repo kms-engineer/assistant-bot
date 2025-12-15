@@ -16,10 +16,9 @@ class TestStylingFunctions:
     """Tests for the styling utility functions."""
 
     def test_stylize_text(self):
-        """Test the default text stylization."""
+        """Test the default text stylization (no color)."""
         message = "Hello, World!"
-        expected = f"{Fore.LIGHTBLUE_EX}{message}{Style.RESET_ALL}"
-        assert stylize_text(message) == expected
+        assert stylize_text(message) == message
 
     def test_stylize_error_message_without_title(self):
         """Test error message stylization without a title."""
@@ -43,14 +42,13 @@ class TestStylingFunctions:
     def test_stylize_warning_message(self):
         """Test warning message stylization."""
         message = "This is a warning."
-        expected = f"{Fore.LIGHTYELLOW_EX}{message}{Style.RESET_ALL}"
+        expected = f"{Fore.YELLOW}{message}{Style.RESET_ALL}"
         assert stylize_warning_message(message) == expected
 
     def test_stylize_tag(self):
-        """Test tag stylization."""
+        """Test tag stylization (no color)."""
         tag = "python"
-        expected = f"{Fore.MAGENTA}{tag}{Style.RESET_ALL}"
-        assert stylize_tag(tag) == expected
+        assert stylize_tag(tag) == tag
 
 
 class TestStylingDecorators:
@@ -83,7 +81,7 @@ class TestStylingDecorators:
         def get_warning_message():
             return "Handle with care."
 
-        expected = f"{Fore.LIGHTYELLOW_EX}Handle with care.{Style.RESET_ALL}"
+        expected = f"{Fore.YELLOW}Handle with care.{Style.RESET_ALL}"
         assert get_warning_message() == expected
 
     def test_decorator_preserves_function_metadata(self):

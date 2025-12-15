@@ -81,16 +81,31 @@ class TestAddContact:
         mock_service.add_phone_to_contact.assert_called_once()
         assert "Phone added" in result or "existing contact" in result
 
-    def test_add_contact_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(
-            ValueError, match="Add command requires 2 arguments: name and phone"
-        ):
-            contact_commands.add_contact(["John Doe"], mock_service)
-        with pytest.raises(
-            ValueError, match="Add command requires 2 arguments: name and phone"
-        ):
-            contact_commands.add_contact([], mock_service)
+    @patch("src.application.commands.contact_commands.interactive_add_contact")
+    def test_add_contact_missing_arguments_triggers_interactive(
+        self, mock_interactive, mock_service
+    ):
+        """Test that missing arguments trigger interactive mode."""
+        mock_interactive.return_value = None
+
+        result = contact_commands.add_contact(["John Doe"], mock_service)
+
+        mock_interactive.assert_called_once()
+        assert result == UIMessages.ACTION_CANCELLED
+
+    @patch("src.application.commands.contact_commands.interactive_add_contact")
+    def test_add_contact_interactive_mode_success(
+        self, mock_interactive, mock_service
+    ):
+        """Test interactive mode completes successfully."""
+        mock_interactive.return_value = (["John Doe", "1234567890"], {})
+        mock_service.find_all_by_name.return_value = []
+        mock_service.add_contact.return_value = "Contact added."
+
+        result = contact_commands.add_contact([], mock_service)
+
+        mock_interactive.assert_called_once()
+        assert result == "Contact added."
 
 
 class TestChangeContact:
@@ -130,10 +145,38 @@ class TestChangeContact:
         assert result == UIMessages.ACTION_CANCELLED
         mock_service.edit_phone_by_id.assert_not_called()
 
-    def test_change_contact_missing_arguments(self, mock_service):
-        """Test that missing arguments raise ValueError."""
-        with pytest.raises(ValueError, match="Change command requires 3 arguments"):
-            contact_commands.change_contact(["John Doe", "1234567890"], mock_service)
+    @patch("src.application.commands.contact_commands.interactive_change_phone")
+    def test_change_contact_missing_arguments_triggers_interactive(
+        self, mock_interactive, mock_service
+    ):
+        """Test that missing arguments trigger interactive mode."""
+        mock_service.get_all_contacts.return_value = []
+        mock_interactive.return_value = None
+
+        result = contact_commands.change_contact(
+            ["John Doe", "1234567890"], mock_service
+        )
+
+        mock_interactive.assert_called_once()
+        assert result == UIMessages.ACTION_CANCELLED
+
+    @patch("src.application.commands.contact_commands.confirm_action")
+    @patch("src.application.commands.contact_commands._select_contact_by_name")
+    @patch("src.application.commands.contact_commands.interactive_change_phone")
+    def test_change_contact_interactive_mode_success(
+        self, mock_interactive, mock_select, mock_confirm, mock_service, sample_contact
+    ):
+        """Test interactive mode completes successfully."""
+        mock_service.get_all_contacts.return_value = []
+        mock_interactive.return_value = ["John Doe", "1234567890", "0987654321"]
+        mock_select.return_value = sample_contact
+        mock_confirm.return_value = True
+        mock_service.edit_phone_by_id.return_value = "Phone number updated."
+
+        result = contact_commands.change_contact([], mock_service)
+
+        mock_interactive.assert_called_once()
+        assert result == "Phone number updated."
 
 
 class TestDeleteContact:

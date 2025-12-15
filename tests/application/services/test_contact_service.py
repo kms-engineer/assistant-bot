@@ -66,14 +66,14 @@ class TestContactService:
         old_phone = Phone("1234567890")
         new_phone = Phone("0987654321")
         result = contact_service.change_phone("John Doe", old_phone, new_phone)
-        assert result == "Contact phone number updated."
+        assert "Contact phone number updated." in result
         assert new_phone in sample_contact.phones
         assert old_phone not in sample_contact.phones
 
     def test_delete_contact_success(self, contact_service, sample_contact):
         """Test deleting a contact."""
         result = contact_service.delete_contact("John Doe")
-        assert result == "Contact deleted."
+        assert "Contact deleted." in result
         with pytest.raises(KeyError):
             contact_service.address_book.find("John Doe")
 
@@ -93,7 +93,7 @@ class TestContactService:
         """Test adding a birthday to a contact."""
         birthday = Birthday("01.01.1990")
         result = contact_service.add_birthday("John Doe", birthday)
-        assert result == "Birthday added for John Doe."
+        assert "Birthday added for John Doe." in result
         assert sample_contact.birthday == birthday
 
     def test_get_birthday_success(self, contact_service, sample_contact):
@@ -120,7 +120,7 @@ class TestContactService:
         """Test adding an email to a contact."""
         email = Email("john.doe@example.com")
         result = contact_service.add_email("John Doe", email)
-        assert result == "Email added for John Doe."
+        assert "Email added for John Doe." in result
         assert sample_contact.email == email
 
     def test_edit_email_success(self, contact_service, sample_contact):
@@ -128,7 +128,7 @@ class TestContactService:
         contact_service.add_email("John Doe", Email("initial@example.com"))
         new_email = Email("updated@example.com")
         result = contact_service.edit_email("John Doe", new_email)
-        assert result == "New email is set for John Doe"
+        assert "New email is set for John Doe" in result
         assert sample_contact.email == new_email
 
     def test_remove_email_success(self, contact_service, sample_contact):
@@ -150,7 +150,7 @@ class TestContactService:
         """Test adding an address to a contact."""
         address = Address("123 Main St")
         result = contact_service.add_address("John Doe", address)
-        assert result == "Address added for John Doe."
+        assert "Address added for John Doe." in result
         assert sample_contact.address == address
 
     def test_edit_address_success(self, contact_service, sample_contact):
@@ -158,7 +158,7 @@ class TestContactService:
         contact_service.add_address("John Doe", Address("Initial Address"))
         new_address = Address("Updated Address")
         result = contact_service.edit_address("John Doe", new_address)
-        assert result == "New address is set for John Doe"
+        assert "New address is set for John Doe" in result
         assert sample_contact.address == new_address
 
     def test_remove_address_success(self, contact_service, sample_contact):

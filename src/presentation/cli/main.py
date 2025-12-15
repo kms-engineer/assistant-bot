@@ -4,6 +4,7 @@ from typing import Optional
 from src.domain.utils.styles_utils import stylize_text, stylize_error_message
 from src.infrastructure.storage.storage_factory import StorageFactory
 from src.infrastructure.storage.storage_type import StorageType
+from src.presentation.cli.cli_session import create_cli_session, CLISession
 from src.presentation.cli.command_handler import CommandHandler
 from src.presentation.cli.command_parser import CommandParser
 from src.presentation.cli.input_processor import process_classic_input, process_nlp_input
@@ -126,41 +127,54 @@ def main() -> None:
     # Create handler with nlp_mode flag
     handler = CommandHandler(contact_service, note_service, nlp_mode=is_nlp_mode)
 
+    # Create CLI session with autocomplete
+    cli_session = create_cli_session(handler, contact_service, note_service)
+
     # Show mode-appropriate help
     print(UIMessages.WELCOME + "\n\n" + UIMessages.get_command_list(is_nlp_mode))
 
-    while True:
-        try:
-            user_input = input(stylize_text("Enter a command: ")).strip()
-            if not user_input:
-                continue
-
-            if mode == CLIMode.CLASSIC:
-                result = process_classic_input(user_input, parser, handler)
-            elif mode == CLIMode.NLP:
-                result = process_nlp_input(user_input, regex_gate, handler, nlp_manager)
-                if not result:
-                    print(
-                        "Could not understand the command. "
-                        "Please try rephrasing or type 'help' for available commands."
-                    )
+    try:
+        while True:
+            try:
+                user_input = cli_session.input(stylize_text("Enter a command: "))
+                if not user_input:
                     continue
-            else:
-                continue
 
-            if result == "exit":
+                if mode == CLIMode.CLASSIC:
+                    result = process_classic_input(
+                        user_input, parser, handler, cli_session
+                    )
+                elif mode == CLIMode.NLP:
+                    result = process_nlp_input(
+                        user_input, regex_gate, handler, nlp_manager
+                    )
+                    if not result:
+                        print(
+                            "Could not understand the command. "
+                            "Please try rephrasing or type 'help' for available commands."
+                        )
+                        continue
+                else:
+                    continue
+
+                if not result:
+                    continue
+
+                if result == "exit":
+                    save_and_exit(contact_service, note_service, storage_type)
+                    break
+
+                if result == "clear":
+                    continue
+
+                print(result)
+
+            except KeyboardInterrupt:
+                print()
                 save_and_exit(contact_service, note_service, storage_type)
                 break
-
-            if result == "clear":
-                continue
-
-            print(result)
-
-        except KeyboardInterrupt:
-            print()
-            save_and_exit(contact_service, note_service, storage_type)
-            break
+    finally:
+        cli_session.teardown()
 
 
 if __name__ == "__main__":

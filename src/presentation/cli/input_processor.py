@@ -1,17 +1,30 @@
 from difflib import get_close_matches
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from src.presentation.cli.command_handler import CommandHandler
 from src.presentation.cli.command_parser import CommandParser
 from src.presentation.cli.regex_gate import RegexCommandGate
 
+if TYPE_CHECKING:
+    from src.presentation.cli.cli_session import CLISession
+
 LOW_CONFIDENCE_THRESHOLD = 0.55  # If confidence < 0.55, suggest alternatives
 
 
 def process_classic_input(
-    user_input: str, parser: CommandParser, handler: CommandHandler
+    user_input: str,
+    parser: CommandParser,
+    handler: CommandHandler,
+    cli_session: Optional["CLISession"] = None,
 ) -> str:
     command, args = parser.parse(user_input)
+
+    if cli_session and command:
+        suggestion = cli_session.validate_command(command)
+        if suggestion is not None:
+            cli_session.show_suggestion(command, suggestion)
+            return ""
+
     return handler.handle(command, args)
 
 
