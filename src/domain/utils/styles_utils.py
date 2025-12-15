@@ -4,7 +4,7 @@ from colorama import Fore, Style
 
 
 def stylize_text(message: str):
-    return f"{Fore.LIGHTBLUE_EX}{message}{Style.RESET_ALL}"
+    return message
 
 
 def stylize_error_message(message: str, title: str = ""):
@@ -19,7 +19,7 @@ def stylize_success_message(message: str):
 
 
 def stylize_warning_message(message: str):
-    return f"{Fore.LIGHTYELLOW_EX}{message}{Style.RESET_ALL}"
+    return f"{Fore.YELLOW}{message}{Style.RESET_ALL}"
 
 
 def stylize_errors(func: Callable) -> Callable:
@@ -47,4 +47,4 @@ def stylize_warning(func: Callable) -> Callable:
 
 
 def stylize_tag(tag: str) -> str:
-    return f"{Fore.MAGENTA}{tag}{Style.RESET_ALL}"
+    return tag

@@ -51,7 +51,7 @@ class TestAddTag:
         note_id = note_service.add_note(test_title, "Test note")
         result = note_service.add_tag(note_id, Tag("test-tag"))
 
-        assert result == "Tag added."
+        assert "Tag added." in result
         note = note_service.notes[note_id]
         assert len(note.tags) == 1
         assert note.tags[0] == Tag("test-tag")
@@ -125,7 +125,7 @@ class TestRemoveTag:
         note_service.add_tag(note_id, Tag("remove-me"))
         result = note_service.remove_tag(note_id, Tag("remove-me"))
 
-        assert result == "Tag removed."
+        assert "Tag removed." in result
         note = note_service.notes[note_id]
         assert len(note.tags) == 0
 

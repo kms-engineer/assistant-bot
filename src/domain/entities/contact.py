@@ -72,6 +72,8 @@ class Contact(Entity):
             values.append(str(self.email))
         if self.address:
             values.append(str(self.address))
+        if self.birthday:
+            values.append(str(self.birthday))
         values.extend(str(phone) for phone in self.phones)
 
         # Normalize search text for phone number comparison (remove all non-digits)

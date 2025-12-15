@@ -3,6 +3,7 @@ from typing import Optional, Set, Any
 
 from src.domain.entities.note import Note
 from src.domain.utils.id_generator import IDGenerator
+from src.domain.utils.styles_utils import stylize_success_message
 from src.domain.value_objects.tag import Tag
 from src.infrastructure.persistence.data_path_resolver import (
     DEFAULT_NOTES_FILE,
@@ -13,6 +14,10 @@ from src.infrastructure.serialization.json_serializer import JsonSerializer
 from src.infrastructure.storage.json_storage import JsonStorage
 from src.infrastructure.storage.storage import Storage
 from src.infrastructure.storage.storage_type import StorageType
+
+
+def _success(message: str) -> str:
+    return stylize_success_message(message)
 
 
 class NoteService:
@@ -74,19 +79,19 @@ class NoteService:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].edit_text(new_text)
-        return "Note updated."
+        return _success("Note updated.")
 
     def rename_note(self, note_id: str, new_title: str) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].edit_title(new_title)
-        return "Note title updated."
+        return _success("Note title updated.")
 
     def delete_note_by_id(self, note_id: str) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         del self.notes[note_id]
-        return "Note deleted."
+        return _success("Note deleted.")
 
     def delete_note_by_title(self, title: str) -> str:
         if not title or not title.strip():
@@ -94,7 +99,7 @@ class NoteService:
         found_notes = list(note for note in self.notes.values() if note.title == title)
         for note in found_notes:
             self.delete_note_by_id(note.id)
-        return "Note(s) deleted"
+        return _success("Note(s) deleted")
 
     def delete_note_by_tags(self, tag: str) -> str:
         if not tag or not tag.strip():
@@ -105,19 +110,19 @@ class NoteService:
         )
         for note in found_notes:
             self.delete_note_by_id(note.id)
-        return "Note(s) deleted"
+        return _success("Note(s) deleted")
 
     def add_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].add_tag(tag)
-        return "Tag added."
+        return _success("Tag added.")
 
     def remove_tag(self, note_id: str, tag: Tag) -> str:
         if note_id not in self.notes:
             raise KeyError("Note not found")
         self.notes[note_id].remove_tag(tag)
-        return "Tag removed."
+        return _success("Tag removed.")
 
     def get_all_notes(self) -> list[Note]:
         return list(self.notes.values())

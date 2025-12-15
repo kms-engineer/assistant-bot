@@ -847,7 +847,7 @@ We welcome contributions! Please follow these guidelines:
 ### Names
 - **Length**: 2-50 characters
 - **Characters**: Letters, spaces, hyphens, apostrophes
-- **International**: Full Unicode support (José, Мария, etc.)
+- **International**: Full Unicode support (José, François, etc.)
 
 ### Phone Numbers
 - **Format**: 10 digits (US format)

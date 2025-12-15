@@ -1,18 +1,35 @@
 from typing import List
 
-from colorama import Style
-
 from src.application.services.note_service import NoteService
 from src.domain.entities import Note
-from src.domain.utils.styles_utils import stylize_tag
+from src.domain.utils.styles_utils import stylize_tag, stylize_success_message
 from src.domain.value_objects.tag import Tag
 from src.presentation.cli.confirmation import confirm_action
+from src.presentation.cli.interactive_commands import interactive_add_note
+from src.presentation.cli.output_formatter import (
+    format_notes_search,
+    format_notes_all,
+    NoteFormatter,
+)
 from src.presentation.cli.ui_messages import UIMessages
 
 
 def add_note(args: List[str], service: NoteService) -> str:
     if not args:
-        raise ValueError("Add-note command requires text argument")
+        result = interactive_add_note()
+        if result is None:
+            return UIMessages.ACTION_CANCELLED
+
+        args, tags = result
+        title = args[0]
+        text = args[1]
+        note_id = service.add_note(title, text)
+
+        if tags:
+            for tag_value in tags:
+                service.add_tag(note_id, Tag(tag_value))
+
+        return stylize_success_message(f"Note added with ID: {note_id}")
 
     # If only one argument provided, use it as both title and text
     if len(args) == 1:
@@ -24,7 +41,7 @@ def add_note(args: List[str], service: NoteService) -> str:
         text = " ".join(args[1:])
 
     note_id = service.add_note(title, text)
-    return f"Note added with ID: {note_id}"
+    return stylize_success_message(f"Note added with ID: {note_id}")
 
 
 def append_notes(lines: List[str], notes: List[Note]):
@@ -39,30 +56,18 @@ def append_notes(lines: List[str], notes: List[Note]):
 
 
 def show_notes(args: List[str], service: NoteService) -> str:
-    # Check if --sort-by-tag flag is present
     sort_by_tag = "--sort-by-tag" in args
     sort_by_title = "--sort-by-title" in args
 
     if sort_by_tag:
-        # Get notes grouped by tags
         tag_groups = service.get_notes_sorted_by_tag()
 
         if not tag_groups:
             return "No notes found."
 
-        lines = ["Notes grouped by tags:"]
-        for tag_name, notes in tag_groups.items():
-            lines.append(f"\n{stylize_tag(f'[{tag_name}]')} ({len(notes)} notes):")
-            for note in notes:
-                lines.append(f"  ID: {note.id}")
-                lines.append(f"  Title: {note.title}")
-                lines.append(f"  Text: {note.text}")
-                if note.tags and tag_name != "untagged":
-                    all_tags = ", ".join(stylize_tag(str(tag)) for tag in note.tags)
-                    lines.append(f"  Tags: {all_tags}")
-                lines.append("")
+        formatter = NoteFormatter()
+        return formatter.format_grouped_by_tag(tag_groups)
     else:
-        # Regular listing with tag highlighting
         notes = list(
             service.get_notes_sorted_by_title()
             if sort_by_title
@@ -72,10 +77,7 @@ def show_notes(args: List[str], service: NoteService) -> str:
         if not notes:
             return "No notes found."
 
-        lines = [f"All notes:{Style.RESET_ALL}"]
-        append_notes(lines, notes)
-
-    return "\n".join(lines)
+        return format_notes_all(notes)
 
 
 def show_note(args: List[str], service: NoteService) -> str:
@@ -167,16 +169,12 @@ def search_notes(args: List[str], service: NoteService) -> str:
         raise ValueError("Search-notes command requires a search query")
 
     query = " ".join(args)
-    # Call the service method expected by tests/mocks
     notes = service.search_notes(query)
 
     if not notes:
         return f"No notes found matching '{query}'"
 
-    lines = [f"Found {len(notes)} note(s) matching '{query}'{Style.RESET_ALL}"]
-    append_notes(lines, notes)
-
-    return "\n".join(lines)
+    return format_notes_search(notes, query)
 
 
 def search_notes_by_tag(args: List[str], service: NoteService) -> str:
@@ -184,16 +182,12 @@ def search_notes_by_tag(args: List[str], service: NoteService) -> str:
         raise ValueError("Search-notes-by-tag command requires a tag")
 
     tag = " ".join(args)
-    # Tests expect the service method name "search_by_tag"
     notes = service.search_by_tag(tag)
 
     if not notes:
         return f"No notes found with tag '{tag}'"
 
-    lines = [f"Found {len(notes)} note(s) with tag {stylize_tag(tag)}"]
-    append_notes(lines, notes)
-
-    return "\n".join(lines)
+    return format_notes_search(notes, tag)
 
 
 def delete_note_by_title(args: List[str], service: NoteService) -> str:
@@ -236,7 +230,8 @@ def save_notes(args: List[str], service: NoteService) -> str:
     filename = None
     if args:
         filename = args[0]
-    return service.save_notes(filename)
+    saved_filename = service.save_notes(filename)
+    return stylize_success_message(f"Notes saved to {saved_filename}.")
 
 
 def load_notes(args: List[str], service: NoteService) -> str:
@@ -244,7 +239,7 @@ def load_notes(args: List[str], service: NoteService) -> str:
     if args:
         filename = args[0]
     count = service.load_notes(filename)
-    return f"Loaded {count} notes."
+    return stylize_success_message(f"Loaded {count} notes.")
 
 
 def get_notes_current_filename(service: NoteService) -> str:
@@ -267,9 +262,7 @@ def search_notes_by_title(args: List[str], service: NoteService) -> str:
     notes = service.search_notes_by_title(title)
     if not notes:
         return f"No notes found with title '{title}'."
-    lines: List[str] = [f"Found {len(notes)} note(s) with title '{title}':"]
-    append_notes(lines, notes)
-    return "\n".join(lines)
+    return format_notes_search(notes, title)
 
 
 def get_note_by_title(args: List[str], service: NoteService) -> str:

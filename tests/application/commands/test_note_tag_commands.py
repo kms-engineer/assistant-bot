@@ -113,8 +113,7 @@ class TestSearchNotes:
 
         mock_service.search_notes.assert_called_once_with("sample")
         assert "Found 1 note(s) matching 'sample'" in result
-        assert sample_note.id in result
-        assert sample_note.text in result
+        assert sample_note.id[:8] in result
 
     def test_search_notes_no_results(self, mock_service):
         """Test searching notes without matches."""
@@ -162,8 +161,8 @@ class TestSearchNotesByTag:
         result = note_commands.search_notes_by_tag(["python"], mock_service)
 
         mock_service.search_by_tag.assert_called_once_with("python")
-        assert "Found 1 note(s) with tag" in result
-        assert sample_note.id in result
+        assert "Found 1 note(s) matching 'python'" in result
+        assert sample_note.id[:8] in result
 
     def test_search_by_tag_no_results(self, mock_service):
         """Test searching by tag without matches."""
@@ -252,16 +251,16 @@ class TestShowNotesWithTags:
     """Tests for show_notes command with tag features."""
 
     def test_show_notes_with_tag_highlighting(self, mock_service, sample_note):
-        """Test that tags are highlighted in note display."""
+        """Test that tags are displayed in note output."""
         sample_note.add_tag(Tag("python"))
         sample_note.add_tag(Tag("testing"))
         mock_service.get_all_notes.return_value = [sample_note]
 
         result = note_commands.show_notes([], mock_service)
 
-        assert sample_note.id in result
-        assert sample_note.text in result
-        assert "Tags:" in result
+        assert sample_note.id[:8] in result
+        assert "python" in result
+        assert "testing" in result
 
     def test_show_notes_sort_by_tag(self, mock_service):
         """Test show-notes --sort-by-tag groups notes by tags."""
@@ -279,11 +278,10 @@ class TestShowNotesWithTags:
 
         result = note_commands.show_notes(["--sort-by-tag"], mock_service)
 
-        assert "Notes grouped by tags:" in result
-        assert "[javascript]" in result
-        assert "(1 notes)" in result
-        assert "[python]" in result
-        assert "(2 notes)" in result
+        assert "javascript" in result
+        assert "python" in result
+        assert "1 notes" in result
+        assert "2 notes" in result
 
     def test_show_notes_with_untagged_notes(self, mock_service):
         """Test that untagged notes are properly grouped."""
@@ -298,8 +296,8 @@ class TestShowNotesWithTags:
 
         result = note_commands.show_notes(["--sort-by-tag"], mock_service)
 
-        assert "[python]" in result
-        assert "[untagged]" in result
+        assert "python" in result
+        assert "untagged" in result
 
     def test_show_notes_with_multi_tags_per_note(self, mock_service):
         """Test displaying notes with multiple tags."""
@@ -311,11 +309,10 @@ class TestShowNotesWithTags:
 
         result = note_commands.show_notes([], mock_service)
 
-        assert "Tags:" in result
-        # All tags should be present in the output
-        assert "python" in result or "python".upper() in result
-        assert "testing" in result or "testing".upper() in result
-        assert "async" in result or "async".upper() in result
+        # All tags should be present in the output (table format)
+        assert "python" in result
+        assert "testing" in result
+        assert "async" in result
 
     def test_show_notes_empty_with_sort(self, mock_service):
         """Test show-notes --sort-by-tag with no notes."""
